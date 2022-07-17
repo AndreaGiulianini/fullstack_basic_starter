@@ -1,0 +1,11 @@
+# Dependency directories
+node_modules/
+
+# Environment based configuration file
+config.js
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache

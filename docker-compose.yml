@@ -1,0 +1,54 @@
+volumes:
+  mysql_volume:
+  api_node_modules_volume:
+  app_node_modules_volume:
+  app_next_volume:
+
+
+services:
+  app:
+    build:
+      context: ./app
+    image: app
+    container_name: app
+    environment:
+      TZ: Europe/Rome
+    volumes:
+      - ./app:/home/node/app
+      - app_node_modules_volume:/home/node/app/node_modules
+      - app_next_volume:/home/node/app/.next
+    ports:
+      - 3000:3000
+    restart: always
+
+  api:
+    build:
+      context: ./api
+    image: api
+    container_name: api
+    environment:
+      TZ: Europe/Rome
+      ENVIRONMENT: development
+    volumes:
+      - ./api:/home/node/api
+      - api_node_modules_volume:/home/node/api/node_modules
+    ports:
+      - 5000:5000
+    restart: always
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    ports:
+      - 7777:3306
+    environment:
+      TZ: Europe/Rome
+      MYSQL_ROOT_PASSWORD: demoPwd
+    command:
+      [
+        "mysqld",
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_unicode_ci"
+      ]
+    volumes:
+      - mysql_volume:/var/lib/mysql
