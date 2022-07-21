@@ -1,11 +1,40 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useEffect } from 'react'
 
 import Counter from '../components/counter/Counter'
 import styles from '../styles/Home.module.css'
 
-const Home: NextPage = () => {
+// This gets called on every request
+export async function getServerSideProps() {
+  // Fetch data from external API - SSR
+  const res = await fetch(`http://api:5000/healthcheck/ping`)
+  const data = await res.json()
+
+  // Pass data to the page via props
+  return { props: { data } }
+}
+
+const Home: NextPage = ({ data }) => {
+
+  useEffect(() => {
+    ping()
+    console.log(data)
+  })
+  
+  const ping = async () => {
+    // NOT SSR
+    let res = await fetch('http://localhost:5000/healthcheck/ping', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const data = await res.json()
+    console.log(data)
+  }
+
   return (
     <div className={styles.container}>
       <Head>
