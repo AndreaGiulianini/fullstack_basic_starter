@@ -3,7 +3,7 @@ const knex_config = {
   development: {
     host: 'mysql',
     user: 'root',
-    password: 'demo1234',
+    password: 'demoPwd',
   },
   testing: {
     host: null,
