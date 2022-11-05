@@ -6,23 +6,21 @@ import { useEffect } from 'react'
 import Counter from '../components/counter/Counter'
 import styles from '../styles/Home.module.css'
 
-// This gets called on every request
 export async function getServerSideProps() {
   // Fetch data from external API - SSR
-  const res = await fetch(`http://api:5000/healthcheck/ping`)
-  const data = await res.json()
+  const res: Response = await fetch(`http://api:5000/healthcheck/ping`)
+  const data: string = await res.json()
 
   // Pass data to the page via props
   return { props: { data } }
 }
 
-const Home: NextPage = ({ data }) => {
-
+const Home: NextPage = (data) => {
   useEffect(() => {
     ping()
     console.log(data)
   })
-  
+
   const ping = async () => {
     // NOT SSR
     let res = await fetch('http://localhost:5000/healthcheck/ping', {

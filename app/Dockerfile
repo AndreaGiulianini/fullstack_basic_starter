@@ -1,10 +1,8 @@
-FROM node:18
+FROM node:19
 
-WORKDIR /home/node
-COPY package.json ./
-RUN npm install && npm cache clean --force
-ENV PATH /home/node/node_modules/.bin:$PATH
-WORKDIR /home/node/app
+WORKDIR /app
+COPY . .
+RUN npm ci
 ENV WATCHPACK_POLLING=true 
 
 CMD [ "npm", "run", "dev" ]

@@ -14,9 +14,9 @@ services:
     environment:
       TZ: Europe/Rome
     volumes:
-      - ./app:/home/node/app
-      - app_node_modules_volume:/home/node/app/node_modules
-      - app_next_volume:/home/node/app/.next
+      - ./app:/app
+      - app_node_modules_volume:/app/node_modules
+      - app_next_volume:/app/.next
     ports:
       - 3000:3000
     restart: always
@@ -30,8 +30,8 @@ services:
       TZ: Europe/Rome
       ENVIRONMENT: development
     volumes:
-      - ./api:/home/node/api
-      - api_node_modules_volume:/home/node/api/node_modules
+      - ./api:/api
+      - api_node_modules_volume:/api/node_modules
     ports:
       - 5000:5000
     restart: always
