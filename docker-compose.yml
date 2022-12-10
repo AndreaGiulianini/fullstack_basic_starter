@@ -40,7 +40,7 @@ services:
     image: mysql:8
     container_name: mysql
     ports:
-      - 7777:3306
+      - 3306:3306
     environment:
       TZ: Europe/Rome
       MYSQL_ROOT_PASSWORD: demoPwd
