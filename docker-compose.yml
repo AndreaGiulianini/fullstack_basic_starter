@@ -36,7 +36,8 @@ services:
     container_name: app
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app.rule=Host(`app.dev`)
+      - traefik.http.routers.app.rule=PathPrefix(`/`)
+      # - traefik.http.routers.app.rule=Host(`app.dev`)
       # - traefik.http.routers.app.tls=true
       # - traefik.http.routers.app.tls.certresolver=letsencrypt
       - traefik.http.services.app.loadbalancer.server.port=3000
