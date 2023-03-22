@@ -8,9 +8,8 @@ import styles from '../styles/Home.module.css'
 
 export async function getServerSideProps() {
   // Fetch data from external API - SSR
-  const res: Response = await fetch(`http://api:5000/healthcheck/ping`)
+  const res: Response = await fetch(`http://traefik/api/healthcheck/ping`)
   const data: string = await res.json()
-
   // Pass data to the page via props
   return { props: { data } }
 }
@@ -23,13 +22,13 @@ const Home: NextPage = (data) => {
 
   const ping = async () => {
     // NOT SSR
-    let res = await fetch('http://localhost:5000/healthcheck/ping', {
+    let res: Response = await fetch('http://traefik/api/healthcheck/ping', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     })
-    const data = await res.json()
+    const data: string = await res.json()
     console.log(data)
   }
 
