@@ -24,4 +24,27 @@ const insertSeedsByEnv = ({ defaultData, developmentData, testingData, stagingDa
   ]
 }
 
-export { insertSeedsByEnv }
+let operationCounter = 0
+const nextOp = () => {
+  operationCounter = operationCounter + 1
+  return operationCounter
+}
+
+const logUpOperation = (operation) => {
+  // eslint-disable-next-line no-restricted-syntax
+  console.log(`${nextOp()} - ${operation}`)
+}
+const logUpOperationSkipped = (operation, reason = 'default reason') => {
+  // eslint-disable-next-line no-restricted-syntax
+  console.log(`${nextOp()} - SKIPPED (${reason}) => ${operation}`)
+}
+const logDownOperation = (operation) => {
+  // eslint-disable-next-line no-restricted-syntax
+  console.log(`${nextOp()} - REVERTING - ${operation}`)
+}
+const logDownOperationSkipped = (operation, reason = 'default reason') => {
+  // eslint-disable-next-line no-restricted-syntax
+  console.log(` ${nextOp()} - REVERTING - ${operation} => SKIPPED (${reason})`)
+}
+
+export { insertSeedsByEnv, logUpOperation, logDownOperation, logUpOperationSkipped, logDownOperationSkipped }

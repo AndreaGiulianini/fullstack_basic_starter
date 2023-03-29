@@ -1,26 +1,32 @@
-const up = (knex) =>
-  knex.schema.hasTable('addresses').then((exist) => {
-    if (!exist) {
-      console.log('Creating table addresses')
-      return knex.schema.createTable('addresses', (table) => {
-        table.increments('id').primary()
-        table.string('street', 255).notNullable()
-        // soft delete
-        table.timestamp('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'))
-        table.timestamp('updated_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
-        table.timestamp('deleted_at').nullable().defaultTo(null)
-      })
-    }
-    console.log('Creating table addresses (already exists)')
-  })
+import { logDownOperation, logDownOperationSkipped, logUpOperation, logUpOperationSkipped } from '../utils/utils.js'
 
-const down = (knex) =>
-  knex.schema.hasTable('addresses').then((exist) => {
-    if (exist) {
-      console.log('Dropping table addresses')
-      return knex.schema.dropTable('addresses')
-    }
-    console.log('Dropping table addresses (doesnt exist).')
-  })
+const operation = 'Creating table addresses'
+
+const up = async (knex) => {
+  const exist = await knex.schema.hasTable('addresses')
+  if (!exist) {
+    logUpOperation(operation)
+    await knex.schema.createTable('addresses', (table) => {
+      table.increments('id').primary()
+      table.string('street', 255).notNullable()
+
+      table.timestamp('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'))
+      table.timestamp('updated_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+      table.timestamp('deleted_at').nullable().defaultTo(null)
+    })
+  } else {
+    logUpOperationSkipped(operation, 'table already exists')
+  }
+}
+
+const down = async (knex) => {
+  const exist = await knex.schema.hasTable('addresses')
+  if (exist) {
+    logDownOperation(operation)
+    await knex.schema.dropTable('addresses')
+  } else {
+    logDownOperationSkipped(operation, 'table doesnt exist')
+  }
+}
 
 export { up, down }

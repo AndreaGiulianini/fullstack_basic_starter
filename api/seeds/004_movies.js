@@ -1,4 +1,4 @@
-import { insertSeedsByEnv } from '../utils/misc.js'
+import { insertSeedsByEnv } from '../utils/utils.js'
 
 const defaultData = [
   { id: 1, name: 'Jurassic Park' },
