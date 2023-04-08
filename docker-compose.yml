@@ -45,6 +45,7 @@ services:
       TZ: Europe/Rome
     volumes:
       - ./app:/home/node/app
+      - /home/node/app/node_modules
     restart: always
 
   api:
@@ -63,6 +64,7 @@ services:
       ENVIRONMENT: development
     volumes:
       - ./api:/home/node/api
+      - /home/node/api/node_modules
     restart: always
 
   mysql:
