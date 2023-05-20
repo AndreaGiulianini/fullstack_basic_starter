@@ -23,11 +23,12 @@ const stagingData = []
 const testingData = []
 const developmentData = []
 
+const tableName = 'identity_documents'
 const seed = (knex) => {
-  return knex('identity_documents')
+  return knex(tableName)
     .del()
     .then(() =>
-      knex('identity_documents').insert(
+      knex(tableName).insert(
         insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData }),
       ),
     )

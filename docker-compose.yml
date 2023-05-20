@@ -5,7 +5,7 @@ volumes:
 services:
   traefik:
     # The official v2 Traefik docker image
-    image: traefik:v2.9
+    image: traefik:v3.0
     container_name: traefik
     # Enables the web UI and tells Traefik to listen to docker
     command:

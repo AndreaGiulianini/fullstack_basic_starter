@@ -1,12 +1,12 @@
 import { logDownOperation, logDownOperationSkipped, logUpOperation, logUpOperationSkipped } from '../utils/utils.js'
 
 const operation = 'Creating table addresses'
-
+const tableName = 'addresses'
 const up = async (knex) => {
-  const exist = await knex.schema.hasTable('addresses')
+  const exist = await knex.schema.hasTable(tableName)
   if (!exist) {
     logUpOperation(operation)
-    await knex.schema.createTable('addresses', (table) => {
+    await knex.schema.createTable(tableName, (table) => {
       table.increments('id').primary()
       table.string('street', 255).notNullable()
 
@@ -20,10 +20,10 @@ const up = async (knex) => {
 }
 
 const down = async (knex) => {
-  const exist = await knex.schema.hasTable('addresses')
+  const exist = await knex.schema.hasTable(tableName)
   if (exist) {
     logDownOperation(operation)
-    await knex.schema.dropTable('addresses')
+    await knex.schema.dropTable(tableName)
   } else {
     logDownOperationSkipped(operation, 'table doesnt exist')
   }
