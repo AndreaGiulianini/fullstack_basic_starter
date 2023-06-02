@@ -1,0 +1,37 @@
+volumes:
+  mysql_volume:
+
+services:
+  api:
+    volumes:
+      - ./api:/home/node/api
+      - /home/node/api/node_modules
+    restart: unless-stopped
+    depends_on:
+      - mysql
+
+  app:
+    volumes:
+      - ./app:/home/node/app
+      - /home/node/app/node_modules
+      - /home/node/app/.next
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      TZ: Europe/Rome
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PWD}
+    command:
+      [
+        "mysqld",
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_unicode_ci",
+      ]
+    volumes:
+      - mysql_volume:/var/lib/mysql
+    restart: unless-stopped

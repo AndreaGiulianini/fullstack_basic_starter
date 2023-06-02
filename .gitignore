@@ -1,0 +1,4 @@
+private
+.env
+docker-compose.override.yml
+lastpass

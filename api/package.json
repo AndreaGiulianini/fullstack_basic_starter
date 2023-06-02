@@ -19,7 +19,7 @@
     "express-promise-router": "^4.1.1",
     "jwt-simple": "^0.5.6",
     "knex": "^2.4.2",
-    "mysql2": "^3.3.1",
+    "mysql2": "^3.3.3",
     "objection": "^3.0.1",
     "objection-js-soft-delete": "^3.0.5",
     "uuid": "^9.0.0"
@@ -30,6 +30,6 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.22",
-    "prettier": "2.8.8"
+    "prettier": "^2.8.8"
   }
 }

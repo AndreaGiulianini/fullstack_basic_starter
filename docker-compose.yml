@@ -1,23 +1,16 @@
-volumes:
-  mysql_volume:
-
-
 services:
   traefik:
-    # The official v2 Traefik docker image
-    image: traefik:v3.0
+    image: traefik:3.0
     container_name: traefik
-    # Enables the web UI and tells Traefik to listen to docker
     command:
       - --api.insecure=true
       - --providers.docker=true
       - --providers.docker.exposedByDefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
-      - --certificatesresolvers.letsencrypt.acme.email=example@mail.com
-      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-
+      # - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      # - --certificatesresolvers.letsencrypt.acme.email=example@mail.com
+      # - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
     ports:
       # The HTTP/S port
       - 80:80
@@ -25,13 +18,16 @@ services:
       # The Web UI (enabled by --api.insecure=true)
       - 8080:8080
     volumes:
-      # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
+    depends_on:
+      - app
+      - api
 
   app:
     build:
       context: ./app
+      target: image-${ENV}
     image: app
     container_name: app
     labels:
@@ -43,14 +39,13 @@ services:
       - traefik.http.services.app.loadbalancer.server.port=3000
     environment:
       TZ: Europe/Rome
-    volumes:
-      - ./app:/home/node/app
-      - /home/node/app/node_modules
+      NEXT_PUBLIC_ENVIRONMENT: ${ENV}
     restart: always
 
   api:
     build:
       context: ./api
+      target: image-${ENV}
     image: api
     container_name: api
     labels:
@@ -61,25 +56,5 @@ services:
       - traefik.http.services.api.loadbalancer.server.port=5000
     environment:
       TZ: Europe/Rome
-      ENVIRONMENT: development
-    volumes:
-      - ./api:/home/node/api
-      - /home/node/api/node_modules
+      ENVIRONMENT: ${ENV}
     restart: always
-
-  mysql:
-    image: mysql:8
-    container_name: mysql
-    ports:
-      - 3306:3306
-    environment:
-      TZ: Europe/Rome
-      MYSQL_ROOT_PASSWORD: demoPwd
-    command:
-      [
-        "mysqld",
-        "--character-set-server=utf8mb4",
-        "--collation-server=utf8mb4_unicode_ci"
-      ]
-    volumes:
-      - mysql_volume:/var/lib/mysql
