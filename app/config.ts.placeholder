@@ -1,0 +1,7 @@
+const env = process.env.NEXT_PUBLIC_ENVIRONMENT;
+
+const s3Config = {
+  url: '___',
+};
+
+export { s3Config, env };

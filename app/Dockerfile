@@ -16,6 +16,8 @@ RUN npx next telemetry disable
 RUN npx next telemetry status
 WORKDIR /home/node/app
 COPY ./ ./
+ARG NEXT_PUBLIC_ENVIRONMENT
+RUN echo 'NEXT_PUBLIC_ENVIRONMENT=${NEXT_PUBLIC_ENVIRONMENT}' > /home/node/app/.env
 RUN npm run build
 
 FROM base-dev as image-development

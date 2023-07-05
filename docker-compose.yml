@@ -28,6 +28,8 @@ services:
     build:
       context: ./app
       target: image-${ENV}
+      args:
+        NEXT_PUBLIC_ENVIRONMENT: ${ENV}
     image: app
     container_name: app
     labels:
