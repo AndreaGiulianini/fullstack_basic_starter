@@ -1,6 +1,6 @@
 const successResponse = async ({ data, res, trx }) => {
   if (trx) {
-    trx.commit()
+    await trx.commit()
   }
   return res.json({
     success: true,
@@ -10,7 +10,7 @@ const successResponse = async ({ data, res, trx }) => {
 
 const errorResponse = async ({ statusCode = 200, err, res, trx }) => {
   if (trx) {
-    trx.rollback()
+    await trx.rollback()
   }
 
   console.log(err)
