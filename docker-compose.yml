@@ -47,7 +47,6 @@ services:
   api:
     build:
       context: ./api
-      target: image-${ENV}
     image: api
     container_name: api
     labels:

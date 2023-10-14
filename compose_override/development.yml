@@ -2,20 +2,38 @@ volumes:
   mysql_volume:
 
 services:
-  api:
+  app:
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /home/node/app
+          ignore:
+            - ./app/node_modules/
+        - action: rebuild
+          path: ./app/package.json
     volumes:
-      - ./api:/home/node/api
-      - /home/node/api/node_modules
+      - /home/node/app/node_modules
+      - /home/node/app/.next
     restart: unless-stopped
     depends_on:
       - mysql
 
-  app:
+  api:
+    develop:
+      watch:
+        - action: sync
+          path: ./api
+          target: /home/node/api
+          ignore:
+            - ./api/node_modules/
+        - action: rebuild
+          path: ./api/package.json
     volumes:
-      - ./app:/home/node/app
-      - /home/node/app/node_modules
-      - /home/node/app/.next
+      - /home/node/api/node_modules
     restart: unless-stopped
+    depends_on:
+      - mysql
 
   mysql:
     image: mysql:8

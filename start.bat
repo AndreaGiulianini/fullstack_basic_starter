@@ -10,4 +10,4 @@ set ENVIRONMENT=development
 
 :environment_ok
 xcopy /s compose_override\%ENVIRONMENT%.yml docker-compose.override.yml* /Y
-docker compose stop && docker compose up --build
+docker compose stop && docker compose watch

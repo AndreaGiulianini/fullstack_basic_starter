@@ -22,7 +22,7 @@ const Home: NextPage = (data) => {
 
   const ping = async () => {
     // NOT SSR
-    let res: Response = await fetch('http://traefik/api/healthcheck/ping', {
+    let res: Response = await fetch('http://localhost/api/healthcheck/ping', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
