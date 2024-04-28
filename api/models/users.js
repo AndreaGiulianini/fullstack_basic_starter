@@ -8,9 +8,10 @@ import Movies from './movies.js'
 const softDelete = objectionSoftDelete.default({
   columnName: 'deleted_at',
   deletedValue: raw('CURRENT_TIMESTAMP'),
-  notDeletedValue: null,
+  notDeletedValue: null
 })
 
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class Users extends softDelete(Model) {
   static get tableName() {
     return 'users'
@@ -33,9 +34,9 @@ class Users extends softDelete(Model) {
         notes: { type: 'string', maxLength: 2000 },
         enabled: { type: 'boolean' },
         money: { type: 'number' },
-        custom_field: { type: 'string', minLength: 0, maxLength: 255 },
+        custom_field: { type: 'string', minLength: 0, maxLength: 255 }
       },
-      required: ['name', 'surname', 'pwd_hash', 'address_id', 'enabled'],
+      required: ['name', 'surname', 'pwd_hash', 'address_id', 'enabled']
     }
   }
 
@@ -46,22 +47,22 @@ class Users extends softDelete(Model) {
         modelClass: Addresses,
         join: {
           from: 'users.address_id',
-          to: 'addresses.id',
+          to: 'addresses.id'
         },
         filter: (f) => {
           f.whereNotDeleted()
-        },
+        }
       },
       identity_document: {
         relation: Model.HasOneRelation,
         modelClass: Identitydocuments,
         join: {
           from: 'users.id',
-          to: 'identity_documents.user_id',
+          to: 'identity_documents.user_id'
         },
         filter: (f) => {
           f.whereNotDeleted().first()
-        },
+        }
       },
       other_movies: {
         relation: Model.ManyToManyRelation,
@@ -71,13 +72,13 @@ class Users extends softDelete(Model) {
           through: {
             from: 'users_movies.user_id',
             to: 'users_movies.movie_id',
-            extra: ['is_favorite'],
+            extra: ['is_favorite']
           },
-          to: 'movies.id',
+          to: 'movies.id'
         },
         filter: (f) => {
           f.whereNotDeleted() /*.where({ is_favorite: false })*/
-        },
+        }
       },
       favorite_movie: {
         relation: Model.HasOneThroughRelation,
@@ -87,14 +88,14 @@ class Users extends softDelete(Model) {
           through: {
             from: 'users_movies.user_id',
             to: 'users_movies.movie_id',
-            extra: ['is_favorite'],
+            extra: ['is_favorite']
           },
-          to: 'movies.id',
+          to: 'movies.id'
         },
         filter: (f) => {
           f.whereNotDeleted().where({ is_favorite: true }).first()
-        },
-      },
+        }
+      }
     }
   }
 
@@ -114,10 +115,10 @@ class Users extends softDelete(Model) {
             ref('notes'),
             ref('enabled'),
             ref('money'),
-            ref('custom_field'),
+            ref('custom_field')
           )
           .withGraphFetched('[address, identity_document]')
-      },
+      }
     }
   }
 }

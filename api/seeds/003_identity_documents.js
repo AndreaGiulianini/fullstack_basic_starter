@@ -4,18 +4,18 @@ const defaultData = [
   {
     id: 1,
     name: 'Identity card',
-    user_id: 1,
+    user_id: 1
   },
   {
     id: 2,
     name: 'Fiscal code',
-    user_id: 2,
+    user_id: 2
   },
   {
     id: 3,
     name: 'Driver license',
-    user_id: 3,
-  },
+    user_id: 3
+  }
 ]
 
 const productionData = []
@@ -29,8 +29,8 @@ const seed = (knex) => {
     .del()
     .then(() =>
       knex(tableName).insert(
-        insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData }),
-      ),
+        insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData })
+      )
     )
 }
 

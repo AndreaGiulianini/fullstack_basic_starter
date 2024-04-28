@@ -4,38 +4,38 @@ const defaultData = [
   {
     user_id: 1,
     movie_id: 1,
-    is_favorite: true,
+    is_favorite: true
   },
   {
     user_id: 1,
     movie_id: 2,
-    is_favorite: false,
+    is_favorite: false
   },
   {
     user_id: 1,
     movie_id: 3,
-    is_favorite: false,
+    is_favorite: false
   },
   {
     user_id: 2,
     movie_id: 1,
-    is_favorite: false,
+    is_favorite: false
   },
   {
     user_id: 2,
     movie_id: 2,
-    is_favorite: true,
+    is_favorite: true
   },
   {
     user_id: 2,
     movie_id: 3,
-    is_favorite: false,
+    is_favorite: false
   },
   {
     user_id: 3,
     movie_id: 3,
-    is_favorite: true,
-  },
+    is_favorite: true
+  }
 ]
 
 const productionData = []
@@ -49,8 +49,8 @@ const seed = (knex) => {
     .del()
     .then(() =>
       knex(tableName).insert(
-        insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData }),
-      ),
+        insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData })
+      )
     )
 }
 

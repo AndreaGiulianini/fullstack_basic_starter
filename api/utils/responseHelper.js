@@ -4,7 +4,7 @@ const successResponse = async ({ data, res, trx }) => {
   }
   return res.json({
     success: true,
-    data,
+    data
   })
 }
 
@@ -16,7 +16,7 @@ const errorResponse = async ({ statusCode = 200, err, res, trx }) => {
   console.log(err)
   return res.status(statusCode).json({
     success: false,
-    err,
+    err
   })
 }
 

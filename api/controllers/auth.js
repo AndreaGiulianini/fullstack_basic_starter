@@ -9,7 +9,7 @@ const _login = async (req, res) => {
     const payload = {
       email: req.body.email,
       exp: dayjs().add(2, 'hours').unix(), // expiration date of the token
-      iat: dayjs().unix(), // the time the token is generated
+      iat: dayjs().unix() // the time the token is generated
     }
     const token = jwt.encode(payload, jwt_secret)
     return successResponse({ data: token, res })

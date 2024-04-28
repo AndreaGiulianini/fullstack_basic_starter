@@ -11,7 +11,7 @@ const defaultData = [
     notes: null,
     enabled: true,
     money: 12.5,
-    custom_field: 'asd',
+    custom_field: 'asd'
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const defaultData = [
     notes: 'notes',
     enabled: true,
     money: 12.5,
-    custom_field: 'asd',
+    custom_field: 'asd'
   },
   {
     id: 3,
@@ -35,8 +35,8 @@ const defaultData = [
     notes: 'another note',
     enabled: true,
     money: 12.75,
-    custom_field: null,
-  },
+    custom_field: null
+  }
 ]
 
 const productionData = []
@@ -50,8 +50,8 @@ const seed = (knex) => {
     .del()
     .then(() =>
       knex(tableName).insert(
-        insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData }),
-      ),
+        insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData })
+      )
     )
 }
 

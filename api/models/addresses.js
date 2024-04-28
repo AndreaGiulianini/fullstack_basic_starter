@@ -6,9 +6,10 @@ import Users from './users.js'
 const softDelete = objectionSoftDelete.default({
   columnName: 'deleted_at',
   deletedValue: raw('CURRENT_TIMESTAMP'),
-  notDeletedValue: null,
+  notDeletedValue: null
 })
 
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class Addresses extends softDelete(Model) {
   static get tableName() {
     return 'addresses'
@@ -23,9 +24,9 @@ class Addresses extends softDelete(Model) {
       type: 'object',
       properties: {
         id: { type: 'integer' },
-        street: { type: 'string', minLength: 1, maxLength: 255 },
+        street: { type: 'string', minLength: 1, maxLength: 255 }
       },
-      required: ['street'],
+      required: ['street']
     }
   }
 
@@ -36,12 +37,12 @@ class Addresses extends softDelete(Model) {
         modelClass: Users,
         join: {
           from: 'addresses.id',
-          to: 'users.address_id',
+          to: 'users.address_id'
         },
         filter: (f) => {
           f.whereNotDeleted()
-        },
-      },
+        }
+      }
     }
   }
 }

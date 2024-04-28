@@ -3,29 +3,29 @@ const knex_config = {
   development: {
     host: 'mysql',
     user: 'root',
-    password: 'demoPwd',
+    password: 'demoPwd'
   },
   testing: {
     host: null,
     port: null,
     user: null,
-    password: null,
+    password: null
   },
   staging: {
     host: null,
     port: null,
     user: null,
-    password: null,
+    password: null
   },
   production: {
     host: null,
     port: null,
     user: null,
-    password: null,
-  },
+    password: null
+  }
 }
 const dev_seeds = [
-  'development',
+  'development'
   // 'testing',
   // 'staging',
   // 'production',

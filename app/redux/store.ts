@@ -3,7 +3,7 @@ import { type Action, type ConfigureStoreOptions, type ThunkAction, configureSto
 import {
   type TypedUseSelectorHook,
   useDispatch as useReduxDispatch,
-  useSelector as useReduxSelector,
+  useSelector as useReduxSelector
 } from 'react-redux'
 
 /* Instruments */
@@ -18,7 +18,7 @@ export const makeReduxStore = (options: ConfigureStoreOptions = configreStoreDef
 }
 
 export const reduxStore = configureStore({
-  reducer,
+  reducer
 })
 export const useDispatch = () => useReduxDispatch<ReduxDispatch>()
 export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector

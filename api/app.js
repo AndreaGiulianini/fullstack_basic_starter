@@ -4,7 +4,6 @@ import promiseRouter from 'express-promise-router'
 
 import registerApi from './routing.js'
 import { isConnected, setupDatabase } from './utils/knexHandler.js'
-
 ;(async () => {
   const res = await isConnected()
   if (res) {

@@ -3,7 +3,7 @@ import { insertSeedsByEnv } from '../utils/utils.js'
 const defaultData = [
   { id: 1, name: 'Jurassic Park' },
   { id: 2, name: 'Shining' },
-  { id: 3, name: 'Titanic' },
+  { id: 3, name: 'Titanic' }
 ]
 
 const productionData = []
@@ -17,8 +17,8 @@ const seed = (knex) => {
     .del()
     .then(() =>
       knex(tableName).insert(
-        insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData }),
-      ),
+        insertSeedsByEnv({ defaultData, developmentData, testingData, stagingData, productionData })
+      )
     )
 }
 

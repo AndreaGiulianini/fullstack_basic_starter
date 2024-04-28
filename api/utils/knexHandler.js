@@ -19,10 +19,13 @@ switch (process.env.ENVIRONMENT) {
     break
 }
 
-const configWithoutDb = { ...config, connection: { ...config.connection, database: undefined } }
+const configWithoutDb = {
+  ...config,
+  connection: { ...config.connection, database: undefined }
+}
 const databaseName = config.connection.database
 
-const MAX_CONNECTION_ATTEMPTS = Infinity
+const MAX_CONNECTION_ATTEMPTS = Number.Infinity
 const CONNECTION_RETRY_AFTER = 3 //s
 
 const isConnected = async (attempt = 1) => {
@@ -41,11 +44,10 @@ const isConnected = async (attempt = 1) => {
       console.error(`API unable to connect to database. Attempt: ${attempt}/${MAX_CONNECTION_ATTEMPTS}`)
       await new Promise((resolve) => setTimeout(resolve, CONNECTION_RETRY_AFTER * 1000))
       return await isConnected(attempt + 1)
-    } else {
-      console.error('API failed connect to database')
-      console.error(error)
-      return false
     }
+    console.error('API failed connect to database')
+    console.error(error)
+    return false
   }
 }
 
@@ -53,13 +55,13 @@ const setupDatabase = async () => {
   try {
     const connection = Knex(configWithoutDb)
     const res = await connection.raw(
-      `SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '${databaseName}';`,
+      `SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '${databaseName}';`
     )
     const alreadyExists = res[0].length > 0
     if (!alreadyExists) {
       // database creation
       await connection.raw(
-        `CREATE DATABASE IF NOT EXISTS ${databaseName} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`,
+        `CREATE DATABASE IF NOT EXISTS ${databaseName} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
       )
     }
     connection.destroy()

@@ -7,7 +7,7 @@ import { errorResponse, successResponse } from '../utils/responseHelper.js'
 
 const addAddress = async (trx) => {
   return await Addresses.query(trx).insert({
-    street: 'Via dalle bombole',
+    street: 'Via dalle bombole'
   })
 }
 
@@ -19,7 +19,7 @@ const addUser = async (trx, addressId) => {
     address_id: addressId,
     birth_date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     money: 0.0,
-    enabled: true,
+    enabled: true
   })
 }
 
