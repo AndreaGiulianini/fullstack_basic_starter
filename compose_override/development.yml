@@ -50,6 +50,8 @@ services:
         "--character-set-server=utf8mb4",
         "--collation-server=utf8mb4_unicode_ci",
       ]
+    networks:
+      - web
     volumes:
       - mysql_volume:/var/lib/mysql
     restart: unless-stopped

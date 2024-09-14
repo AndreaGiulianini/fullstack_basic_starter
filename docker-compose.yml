@@ -1,11 +1,14 @@
+networks:
+  web:
+    external: false
+
 services:
   traefik:
-    image: traefik:3.0
+    image: traefik:v3.1
     container_name: traefik
     command:
       - --api.insecure=true
       - --providers.docker=true
-      - --providers.docker.exposedByDefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       # - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
@@ -20,6 +23,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
+    networks:
+      - web
     depends_on:
       - app
       - api
@@ -42,6 +47,8 @@ services:
     environment:
       TZ: Europe/Rome
       NEXT_PUBLIC_ENVIRONMENT: ${ENV}
+    networks:
+      - web
     restart: always
 
   api:
@@ -58,4 +65,6 @@ services:
     environment:
       TZ: Europe/Rome
       ENVIRONMENT: ${ENV}
+    networks:
+      - web
     restart: always
