@@ -1,5 +1,5 @@
 volumes:
-  mysql_volume:
+  pgdata:
 
 services:
   app:
@@ -17,7 +17,7 @@ services:
       - /home/node/app/.next
     restart: unless-stopped
     depends_on:
-      - mysql
+      - db
 
   api:
     develop:
@@ -33,25 +33,18 @@ services:
       - /home/node/api/node_modules
     restart: always
     depends_on:
-      - mysql
+      - db
 
-  mysql:
-    image: mysql:8
-    container_name: mysql
-    ports:
-      - "3306:3306"
+  db:
+    image: postgres:13  # You can specify a different version if needed
+    container_name: postgres_db
     environment:
-      TZ: Europe/Rome
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PWD}
-    command:
-      [
-        "mysqld",
-        "--character-set-server=utf8mb4",
-        "--collation-server=utf8mb4_unicode_ci",
-      ]
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"  # Maps PostgreSQL to local port 5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Persistent storage for database data
     networks:
       - web
-    volumes:
-      - mysql_volume:/var/lib/mysql
-    restart: unless-stopped

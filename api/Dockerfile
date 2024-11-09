@@ -7,4 +7,4 @@ ENV PATH /home/node/node_modules/.bin:$PATH
 WORKDIR /home/node/api
 COPY ./ ./
 
-CMD [ "npm", "run", "start"]
+CMD [ "npm", "run", "dev"]

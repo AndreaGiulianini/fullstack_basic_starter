@@ -1,4 +1,4 @@
-# Basic Starter for Next.js - Typescript - ReduxTLK - Express.js - Objection.js - Docker
+# Basic Starter for Next.js(AppRouter) - Typescript - ReduxTLK - Fastify - Sequelize - Docker
 
 This a small toy project that I prepared to give some exercises to new colleagues who are approaching web development for the first time, so I can give them a starting point that allows me over time to be able to explain everything to them.
 

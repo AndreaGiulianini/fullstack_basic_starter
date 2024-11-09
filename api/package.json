@@ -5,25 +5,31 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "start": "node --watch .",
-    "migrate_development": "knex migrate:latest --env development",
-    "seed_development": "knex seed:run --env development",
+    "dev": "tsx src/app.ts",
+    "generate": "npx drizzle-kit generate",
+    "migrate": "npx drizzle-kit migrate",
     "check": "npx @biomejs/biome check --apply .",
     "format": "npx @biomejs/biome format . --write",
     "lint": "npx @biomejs/biome lint ."
   },
   "dependencies": {
-    "cors": "^2.8.5",
+    "@fastify/swagger": "^9.2.0",
+    "@fastify/swagger-ui": "^5.1.0",
     "dayjs": "^1.11.13",
-    "express": "^5.0.1",
-    "jwt-simple": "^0.5.6",
-    "knex": "^3.1.0",
-    "mysql2": "^3.11.4",
-    "objection": "^3.1.5",
-    "objection-js-soft-delete": "^3.0.5",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.36.1",
+    "fastify": "^5.1.0",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
     "uuid": "^11.0.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.9.0",
+    "@types/pg": "^8.11.10",
+    "@types/sequelize": "^4.28.20",
+    "drizzle-kit": "^0.28.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
   }
 }

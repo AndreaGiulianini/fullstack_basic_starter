@@ -16,8 +16,5 @@ RUN npm run build
 FROM base AS image-development
 CMD [ "npm", "run", "dev" ]
 
-FROM base-remote AS image-staging
-CMD [ "npm", "run", "start" ]
-
 FROM base-remote AS image-production
 CMD [ "npm", "run", "start" ]
