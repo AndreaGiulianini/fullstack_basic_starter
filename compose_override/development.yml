@@ -31,7 +31,7 @@ services:
           path: ./api/package.json
     volumes:
       - /home/node/api/node_modules
-    restart: unless-stopped
+    restart: always
     depends_on:
       - mysql
 

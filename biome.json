@@ -1,10 +1,16 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
   "files": {
-    "ignore": [".next/*", "node_modules/*"]
+    "ignore": ["node_modules/*"]
   },
   "organizeImports": {
-    "enabled": true
+    "include": ["./*.js"],
+    "ignore": ["node_modules/*"]
   },
   "linter": {
     "enabled": true,
@@ -15,6 +21,15 @@
       },
       "a11y": {
         "useKeyWithClickEvents": "off"
+      },
+      "correctness": {
+        "noUnusedImports": "warn",
+        "noUnreachable": "warn",
+        "noUnusedVariables": "warn",
+        "useArrayLiterals": "warn"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "warn"
       }
     }
   },
@@ -22,6 +37,7 @@
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
+    "lineEnding": "lf",
     "lineWidth": 120
   },
   "javascript": {

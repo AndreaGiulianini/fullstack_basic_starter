@@ -5,7 +5,7 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "start": "nodemon -L --watch . --ext js,json",
+    "start": "node --watch .",
     "migrate_development": "knex migrate:latest --env development",
     "seed_development": "knex seed:run --env development",
     "check": "npx @biomejs/biome check --apply .",
@@ -15,17 +15,15 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
-    "express": "^4.21.0",
-    "express-promise-router": "^4.1.1",
+    "express": "^5.0.1",
     "jwt-simple": "^0.5.6",
     "knex": "^3.1.0",
-    "mysql2": "^3.11.2",
-    "objection": "^3.1.4",
+    "mysql2": "^3.11.4",
+    "objection": "^3.1.5",
     "objection-js-soft-delete": "^3.0.5",
-    "uuid": "^10.0.0"
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.0",
-    "nodemon": "^3.1.4"
+    "@biomejs/biome": "^1.9.4"
   }
 }

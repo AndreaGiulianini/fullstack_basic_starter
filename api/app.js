@@ -1,6 +1,5 @@
 import cors from 'cors'
 import express from 'express'
-import promiseRouter from 'express-promise-router'
 
 import registerApi from './routing.js'
 import { isConnected, setupDatabase } from './utils/knexHandler.js'
@@ -14,6 +13,6 @@ import { isConnected, setupDatabase } from './utils/knexHandler.js'
   }
 })()
 
-const app = express().use(cors()).use(express.json()).use(promiseRouter())
+const app = express().use(cors()).use(express.json())
 
 registerApi(app)
