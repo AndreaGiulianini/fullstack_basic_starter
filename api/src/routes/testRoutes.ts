@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { FastifyReply, FastifyRequest } from 'fastify'
 
 // Define the sleep function
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 async function testRoutes(fastify: FastifyInstance) {
   fastify.get('/api/healthcheck/ping', {
@@ -20,7 +20,7 @@ async function testRoutes(fastify: FastifyInstance) {
       }
     },
     handler: async (_request: FastifyRequest, reply: FastifyReply) => {
-      reply.send({ message: 'pong' })
+      reply.send({ success: true, message: 'pong' })
     }
   })
 
@@ -31,7 +31,7 @@ async function testRoutes(fastify: FastifyInstance) {
       body: {
         type: 'object',
         properties: {
-          amount: { type: 'number', description: 'Value to change' },
+          amount: { type: 'number', description: 'Value to change' }
         },
         required: ['amount']
       },
@@ -40,6 +40,7 @@ async function testRoutes(fastify: FastifyInstance) {
           description: 'Successful response',
           type: 'object',
           properties: {
+            success: { type: 'boolean' },
             amount: { type: 'number' }
           }
         }
@@ -48,7 +49,7 @@ async function testRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const { amount } = request.body as { amount: number }
       await sleep(700)
-      reply.send({ amount })
+      reply.send({ success: true, amount })
     }
   })
 }

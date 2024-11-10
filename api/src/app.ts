@@ -1,10 +1,14 @@
-import Fastify from 'fastify'
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
-import userRoutes from './routes/userRoutes'
+import Fastify from 'fastify'
+import authRoutes from './routes/authRoutes'
 import testRoutes from './routes/testRoutes'
+import userRoutes from './routes/userRoutes'
+import jwtPlugin from './utils/jwtPlugin'
 
 const app = Fastify({ logger: true })
+
+app.register(jwtPlugin)
 
 app.register(swagger, {
   swagger: {
@@ -24,12 +28,27 @@ app.register(swagger, {
 app.register(swaggerUi, {
   routePrefix: '/swagger-ui', // Change this to your desired URL path
   uiConfig: {
-    docExpansion: 'none',
+    docExpansion: 'full',
     deepLinking: false
-  }
+  },
+  uiHooks: {
+    onRequest: (_request, _reply, next) => {
+      next()
+    },
+    preHandler: (_request, _reply, next) => {
+      next()
+    }
+  },
+  staticCSP: true,
+  transformStaticCSP: (header) => header,
+  transformSpecification: (swaggerObject, _request, _reply) => {
+    return swaggerObject
+  },
+  transformSpecificationClone: true
 })
 
 app.register(testRoutes)
+app.register(authRoutes)
 app.register(userRoutes)
 
 const startServer = async () => {

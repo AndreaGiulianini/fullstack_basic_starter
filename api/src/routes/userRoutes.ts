@@ -18,9 +18,12 @@ async function userRoutes(fastify: FastifyInstance) {
           description: 'Successful response',
           type: 'object',
           properties: {
-            id: { type: 'number' },
-            name: { type: 'string' },
-            email: { type: 'string' }
+            success: { type: 'boolean' },
+            user: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+              email: { type: 'string' }
+            }
           }
         }
       }
@@ -33,21 +36,25 @@ async function userRoutes(fastify: FastifyInstance) {
       description: 'Create a User',
       tags: ['User'],
       body: {
-        type: 'object', // The params need to be an object
+        type: 'object',
         properties: {
           name: { type: 'string', description: 'User name' },
-          email: { type: 'string', description: 'User email' }
+          email: { type: 'string', description: 'User email' },
+          password: { type: 'string', description: 'User password' }
         },
-        required: ['name', 'email'] // Mark userId as required inside the params object
+        required: ['name', 'email', 'password']
       },
       response: {
         200: {
           description: 'Successful response',
           type: 'object',
           properties: {
-            id: { type: 'number' },
-            name: { type: 'string' },
-            email: { type: 'string' }
+            success: { type: 'boolean' },
+            user: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+              email: { type: 'string' }
+            }
           }
         }
       }
