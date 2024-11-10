@@ -35,8 +35,7 @@ app.register(userRoutes)
 const startServer = async () => {
   try {
     await app.listen({ port: 5000, host: '0.0.0.0' })
-    console.log('Server is running on http://localhost:5000')
-    console.log('Swagger UI available at http://localhost:5000/api/docs')
+    console.log('Server is running')
   } catch (err) {
     app.log.error(err)
     process.exit(1)

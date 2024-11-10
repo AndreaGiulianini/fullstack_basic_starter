@@ -12,9 +12,8 @@ import { selectCount } from './selectors'
 // typically used to make async requests.
 export const incrementAsync = createAppAsyncThunk('counter/fetchIdentityCount', async (amount: number) => {
   const response = await fetchIdentityCount(amount)
-
   // The value we return becomes the `fulfilled` action payload
-  return response.data
+  return response.amount
 })
 
 // We can also write thunks by hand, which may contain both sync and async logic.

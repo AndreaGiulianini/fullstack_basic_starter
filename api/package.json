@@ -8,7 +8,7 @@
     "dev": "tsx watch src/app.ts",
     "generate": "npx drizzle-kit generate",
     "migrate": "npx drizzle-kit migrate",
-    "check": "npx @biomejs/biome check --apply .",
+    "check": "npx @biomejs/biome check . --write",
     "format": "npx @biomejs/biome format . --write",
     "lint": "npx @biomejs/biome lint ."
   },

@@ -1,4 +1,4 @@
-export const fetchIdentityCount = async (amount = 1): Promise<{ data: number }> => {
+export const fetchIdentityCount = async (amount = 1): Promise<{ amount: number }> => {
   const response = await fetch('/api/identity-count', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -6,11 +6,12 @@
     "useIgnoreFile": false
   },
   "files": {
-    "ignore": ["node_modules/*"]
+    "ignore": [".next/*", "node_modules/*", "./public/img/brand/g_files/*"]
   },
   "organizeImports": {
-    "include": ["./*.js"],
-    "ignore": ["node_modules/*"]
+    "enabled": true,
+    "include": ["./*.js", "./*.jsx"],
+    "ignore": [".next/*", "node_modules/*", "./public/img/brand/g_files/*"]
   },
   "linter": {
     "enabled": true,

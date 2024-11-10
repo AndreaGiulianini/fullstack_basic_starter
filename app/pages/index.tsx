@@ -46,7 +46,6 @@ const Home: NextPage = (data) => {
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
         <Counter />
-        <Button>Testo d'esempio</Button>
 
         <p className={styles.description}>
           Get started by editing <code className={styles.code}>pages/index.tsx</code>

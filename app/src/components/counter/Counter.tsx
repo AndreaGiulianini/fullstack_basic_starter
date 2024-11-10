@@ -1,9 +1,10 @@
 import { useState } from 'react'
 
 /* Instruments */
-import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount,  } from '../../../redux/slices/index'
+import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount } from '../../../redux/slices/index'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './counter.module.css'
+import { Button } from '../Button'
 
 function Counter() {
   const dispatch = useDispatch()
@@ -13,23 +14,15 @@ function Counter() {
   return (
     <div>
       <div className={styles.row}>
-        <button
-          type='button'
-          className={styles.button}
-          aria-label='Decrement value'
-          onClick={() => dispatch(counterSlice.actions.decrement())}
-        >
+        <Button aria-label='Decrement value' onClick={() => dispatch(counterSlice.actions.decrement())}>
           -
-        </button>
+        </Button>
+
         <span className={styles.value}>{count}</span>
-        <button
-          type='button'
-          className={styles.button}
-          aria-label='Increment value'
-          onClick={() => dispatch(counterSlice.actions.increment())}
-        >
+
+        <Button aria-label='Increment value' onClick={() => dispatch(counterSlice.actions.increment())}>
           +
-        </button>
+        </Button>
       </div>
       <div className={styles.row}>
         <input
@@ -38,19 +31,9 @@ function Counter() {
           value={incrementAmount}
           onChange={(e) => setIncrementAmount(Number(e.target.value ?? 0))}
         />
-        <button
-          type='button'
-          className={styles.button}
-          onClick={() => dispatch(counterSlice.actions.incrementByAmount(incrementAmount))}
-        >
-          Add Amount
-        </button>
-        <button type='button' className={styles.asyncButton} onClick={() => dispatch(incrementAsync(incrementAmount))}>
-          Add Async
-        </button>
-        <button type='button' className={styles.button} onClick={() => dispatch(incrementIfOddAsync(incrementAmount))}>
-          Add If Odd
-        </button>
+        <Button onClick={() => dispatch(counterSlice.actions.incrementByAmount(incrementAmount))}>Add Amount</Button>
+        <Button onClick={() => dispatch(incrementAsync(incrementAmount))}>Add Async</Button>
+        <Button onClick={() => dispatch(incrementIfOddAsync(incrementAmount))}>Add if odd</Button>
       </div>
     </div>
   )
