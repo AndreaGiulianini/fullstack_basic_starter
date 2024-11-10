@@ -3,8 +3,9 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect } from 'react'
 
-import Counter from '../components/counter/Counter'
+import Counter from '../src/components/counter/Counter'
 import styles from '../styles/Home.module.css'
+import { Button } from '@/components/Button'
 
 export async function getServerSideProps() {
   // Fetch data from external API - SSR
@@ -45,6 +46,7 @@ const Home: NextPage = (data) => {
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
         <Counter />
+        <Button>Testo d'esempio</Button>
 
         <p className={styles.description}>
           Get started by editing <code className={styles.code}>pages/index.tsx</code>

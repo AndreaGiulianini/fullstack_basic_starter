@@ -1,7 +1,8 @@
 import { useState } from 'react'
 
 /* Instruments */
-import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount, useDispatch, useSelector } from '../../redux'
+import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount,  } from '../../../redux/slices/index'
+import { useDispatch, useSelector } from 'react-redux'
 import styles from './counter.module.css'
 
 function Counter() {
