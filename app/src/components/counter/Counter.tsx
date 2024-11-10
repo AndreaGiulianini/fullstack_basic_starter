@@ -1,10 +1,8 @@
 import { useState } from 'react'
-
-/* Instruments */
-import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount } from '../../../redux/slices/index'
 import { useDispatch, useSelector } from 'react-redux'
-import styles from './counter.module.css'
+import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount } from '../../../redux/slices/index'
 import { Button } from '../Button'
+import styles from './counter.module.css'
 
 function Counter() {
   const dispatch = useDispatch()

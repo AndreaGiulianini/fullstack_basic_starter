@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 
 import Counter from '../src/components/counter/Counter'
 import styles from '../styles/Home.module.css'
-import { Button } from '@/components/Button'
 
 export async function getServerSideProps() {
   // Fetch data from external API - SSR

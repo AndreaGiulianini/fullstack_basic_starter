@@ -10,6 +10,6 @@ To populate the database container launch the file './populate.sh'
 
 Example
  - Example for transaction(https://orm.drizzle.team/docs/transactions#transactions)
- - Implement Auth(https://github.com/fastify/fastify-jwt)
+ - Implement Auth(https://lucia-auth.com/sessions/basic-api/drizzle-orm)
  - Migration to AppRouter
-
+ - Implement Backoffice dashboard

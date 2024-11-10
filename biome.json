@@ -10,7 +10,7 @@
   },
   "organizeImports": {
     "enabled": true,
-    "include": ["./*.js", "./*.jsx"],
+    "include": ["./*.js", "./*.jsx", "./*.ts", "./*.tsx"],
     "ignore": [".next/*", "node_modules/*", "./public/img/brand/g_files/*"]
   },
   "linter": {
