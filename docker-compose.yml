@@ -1,6 +1,7 @@
 networks:
   web:
     external: false
+
 services:
   traefik:
     image: 'traefik:v3.2'
@@ -22,6 +23,7 @@ services:
     depends_on:
       - app
       - api
+
   app:
     build:
       context: ./app
@@ -40,6 +42,7 @@ services:
     networks:
       - web
     restart: always
+
   api:
     build:
       context: ./api
@@ -50,8 +53,13 @@ services:
       - traefik.http.routers.api.rule=PathPrefix(`/api`)
       - traefik.http.routers.swagger-ui.rule=PathPrefix(`/swagger-ui`)
       - traefik.http.services.api.loadbalancer.server.port=5000
-    env_file:
-      - .env
+    environment:
+      ENV: '${ENV}'
+      DB_HOST: '${DB_HOST}'
+      DB_USER: '${DB_USER}'
+      DB_PASS: '${DB_PASS}'
+      DB_NAME: '${DB_NAME}'
+      DB_PORT: '${DB_PORT}'
     networks:
       - web
     restart: always

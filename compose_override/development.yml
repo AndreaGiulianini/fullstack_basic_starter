@@ -2,6 +2,7 @@ volumes:
   pgdata: null
   wordpress: null
   mysqldata: null
+
 services:
   app:
     develop:
@@ -19,6 +20,7 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres_db
+
   api:
     develop:
       watch:
@@ -34,6 +36,7 @@ services:
     restart: always
     depends_on:
       - postgres_db
+
   postgres_db:
     image: 'postgres:17'
     container_name: postgres_db
@@ -47,6 +50,7 @@ services:
       - 'pgdata:/var/lib/postgresql/data'
     networks:
       - web
+
   wordpress:
     image: wordpress
     container_name: wordpress
@@ -58,22 +62,29 @@ services:
       - traefik.http.routers.wordpress.entrypoints=web
     ports:
       - '7000:80'
-    env_file:
-      - .env
+    environment:
+      WORDPRESS_DB_HOST: '${WORDPRESS_DB_HOST}'
+      WORDPRESS_DB_USER: '${WORDPRESS_DB_USER}'
+      WORDPRESS_DB_PASSWORD: '${WORDPRESS_DB_PASSWORD}'
+      WORDPRESS_DB_NAME: '${WORDPRESS_DB_NAME}'
     volumes:
       - 'wordpress:/var/www/html'
     networks:
       - web
     depends_on:
       - mysql_db
+
   mysql_db:
     image: 'mysql:8.0'
     container_name: mysql_db
     restart: always
     ports:
       - '3306:3306'
-    env_file:
-      - .env
+    environment:
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+      MYSQL_RANDOM_ROOT_PASSWORD: '${MYSQL_RANDOM_ROOT_PASSWORD}'
     volumes:
       - 'mysqldata:/var/lib/mysql'
     networks:
