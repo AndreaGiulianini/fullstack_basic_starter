@@ -11,5 +11,4 @@ To populate the database container launch the file './populate.sh'
 Example
  - Example for transaction(https://orm.drizzle.team/docs/transactions#transactions)
  - Create refresh token logic
- - Migration to AppRouter
  - Implement Backoffice dashboard
