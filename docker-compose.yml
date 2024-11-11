@@ -1,56 +1,45 @@
 networks:
   web:
     external: false
-
 services:
   traefik:
-    image: traefik:v3.2
+    image: 'traefik:v3.2'
     container_name: traefik
     command:
-      - --api.insecure=true
-      - --providers.docker=true
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      # - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
-      # - --certificatesresolvers.letsencrypt.acme.email=example@mail.com
-      # - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
     ports:
-      # The HTTP/S port
-      - 80:80
-      - 443:443
-      # The Web UI (enabled by --api.insecure=true)
-      - 8080:8080
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./letsencrypt:/letsencrypt
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - './letsencrypt:/letsencrypt'
     networks:
       - web
     depends_on:
       - app
       - api
-
   app:
     build:
       context: ./app
-      target: image-${ENV}
+      target: 'image-${ENV}'
       args:
-        NEXT_PUBLIC_ENVIRONMENT: ${ENV}
+        NEXT_PUBLIC_ENVIRONMENT: '${ENV}'
     image: app
     container_name: app
     labels:
       - traefik.enable=true
       - traefik.http.routers.app.rule=PathPrefix(`/`)
-      # - traefik.http.routers.app.rule=Host(`app.dev`)
-      # - traefik.http.routers.app.tls=true
-      # - traefik.http.routers.app.tls.certresolver=letsencrypt
       - traefik.http.services.app.loadbalancer.server.port=3000
     environment:
       TZ: Europe/Rome
-      NEXT_PUBLIC_ENVIRONMENT: ${ENV}
+      NEXT_PUBLIC_ENVIRONMENT: '${ENV}'
     networks:
       - web
     restart: always
-
   api:
     build:
       context: ./api
@@ -60,8 +49,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.api.rule=PathPrefix(`/api`)
       - traefik.http.routers.swagger-ui.rule=PathPrefix(`/swagger-ui`)
-      # - traefik.http.routers.api.tls=true
-      # - traefik.http.routers.api.tls.certresolver=letsencrypt
       - traefik.http.services.api.loadbalancer.server.port=5000
     env_file:
       - .env

@@ -1,6 +1,7 @@
 volumes:
-  pgdata:
-
+  pgdata: null
+  wordpress: null
+  mysqldata: null
 services:
   app:
     develop:
@@ -17,8 +18,7 @@ services:
       - /home/node/app/.next
     restart: unless-stopped
     depends_on:
-      - db
-
+      - postgres_db
   api:
     develop:
       watch:
@@ -33,18 +33,48 @@ services:
       - /home/node/api/node_modules
     restart: always
     depends_on:
-      - db
-
-  db:
-    image: postgres:13  # You can specify a different version if needed
+      - postgres_db
+  postgres_db:
+    image: 'postgres:17'
     container_name: postgres_db
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASS}'
+      POSTGRES_DB: '${DB_NAME}'
     ports:
-      - "5432:5432"  # Maps PostgreSQL to local port 5432
+      - '5432:5432'
     volumes:
-      - pgdata:/var/lib/postgresql/data  # Persistent storage for database data
+      - 'pgdata:/var/lib/postgresql/data'
+    networks:
+      - web
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.wordpress.rule=Host(`wordpress.example.com`)
+      - traefik.http.services.wordpress.loadbalancer.server.port=80
+      - traefik.http.routers.wordpress.entrypoints=web
+    ports:
+      - '7000:80'
+    env_file:
+      - .env
+    volumes:
+      - 'wordpress:/var/www/html'
+    networks:
+      - web
+    depends_on:
+      - mysql_db
+  mysql_db:
+    image: 'mysql:8.0'
+    container_name: mysql_db
+    restart: always
+    ports:
+      - '3306:3306'
+    env_file:
+      - .env
+    volumes:
+      - 'mysqldata:/var/lib/mysql'
     networks:
       - web
