@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Counter from '../src/components/counter/Counter'
+import Counter from '../components/counter/Counter'
 import styles from '../styles/Home.module.css'
 
 async function fetchServerData() {
