@@ -7,6 +7,7 @@ This project integrates the following technologies:
 - **Frontend**: [Next.js (App Router)](https://nextjs.org/docs/app), [Shadcn](https://shadcn.dev/), [TypeScript](https://www.typescriptlang.org/), [Redux Toolkit](https://redux-toolkit.js.org/), [i18n](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing).
 - **Backend**: [Fastify](https://www.fastify.io/), [Drizzle ORM](https://orm.drizzle.team/), [WordPress](https://wordpress.org/).
 - **Infrastructure**: [Docker](https://www.docker.com/), [Traefik](https://doc.traefik.io/traefik/).
+- **Database**: [PostgreSQL](https://www.postgresql.org/), [MySQL(for WordPress)](https://www.mysql.com/).
 
 This setup provides a ready-to-use playground for exploring web development concepts and workflows, from frontend UI design to backend services and database interactions.
 
