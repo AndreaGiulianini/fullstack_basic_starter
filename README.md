@@ -8,6 +8,7 @@ This project integrates the following technologies:
 - **Backend**: [Fastify](https://www.fastify.io/), [Drizzle ORM](https://orm.drizzle.team/), [WordPress](https://wordpress.org/).
 - **Infrastructure**: [Docker](https://www.docker.com/), [Traefik](https://doc.traefik.io/traefik/).
 - **Database**: [PostgreSQL](https://www.postgresql.org/), [MySQL(for WordPress)](https://www.mysql.com/).
+- **Linting code**: [BiomeJS](https://biomejs.dev/).
 
 This setup provides a ready-to-use playground for exploring web development concepts and workflows, from frontend UI design to backend services and database interactions.
 
