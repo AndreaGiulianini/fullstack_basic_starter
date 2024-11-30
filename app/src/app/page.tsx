@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import Counter from '../components/counter/Counter'
 import styles from '../styles/Home.module.css'
@@ -8,7 +9,8 @@ async function fetchServerData() {
   return data
 }
 
-export default async function Home() {
+export default async function HomePage() {
+  const t = await getTranslations('HomePage')
   const data = await fetchServerData()
   console.log('server', data)
 
@@ -16,7 +18,7 @@ export default async function Home() {
     <div className={styles.container}>
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href='https://nextjs.org'>Next.js!</a>
+          Welcome to <a href='https://nextjs.org'>{t('title')}</a>
         </h1>
         <Counter />
       </main>
