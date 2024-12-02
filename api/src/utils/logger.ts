@@ -1,5 +1,5 @@
-import pino from 'pino'
 import { ecsFormat } from '@elastic/ecs-pino-format'
+import pino from 'pino'
 import pinoElastic from 'pino-elasticsearch'
 
 const streamToElastic = pinoElastic({
