@@ -4,7 +4,7 @@ import Fastify from 'fastify'
 import authRoutes from './routes/authRoutes'
 import testRoutes from './routes/testRoutes'
 import userRoutes from './routes/userRoutes'
-import jwtPlugin from './utils/jwtPlugin'
+import jwtPlugin from './utils/jwt'
 
 const app = Fastify({ logger: true })
 

@@ -1,7 +1,3 @@
-networks:
-  web:
-    external: false
-
 services:
   traefik:
     image: 'traefik:v3.2'
@@ -18,8 +14,6 @@ services:
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
       - './letsencrypt:/letsencrypt'
-    networks:
-      - web
     depends_on:
       - app
       - api
@@ -39,8 +33,6 @@ services:
     environment:
       TZ: Europe/Rome
       NEXT_PUBLIC_ENVIRONMENT: '${ENV}'
-    networks:
-      - web
     restart: always
 
   api:
@@ -60,6 +52,9 @@ services:
       DB_PASS: '${DB_PASS}'
       DB_NAME: '${DB_NAME}'
       DB_PORT: '${DB_PORT}'
-    networks:
-      - web
+      VALKEY_HOST: '${VALKEY_HOST}'
+      VALKEY_PASS: '${VALKEY_PASS}'
+      VALKEY_PORT: '${VALKEY_PORT}'
+      ELASTICSEARCH_HOST: '${ELASTICSEARCH_HOST}'
+      ELASTICSEARCH_PORT: '${ELASTICSEARCH_PORT}'
     restart: always

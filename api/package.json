@@ -13,16 +13,19 @@
     "lint": "npx @biomejs/biome lint ."
   },
   "dependencies": {
+    "@elastic/ecs-pino-format": "^1.5.0",
     "@fastify/jwt": "^9.0.1",
     "@fastify/swagger": "^9.4.0",
     "@fastify/swagger-ui": "^5.1.0",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
-    "dotenv": "^16.4.5",
     "drizzle-orm": "^0.36.4",
     "fastify": "^5.1.0",
+    "iovalkey": "^0.2.1",
     "pg": "^8.13.1",
-    "pg-hstore": "^2.3.4"
+    "pg-hstore": "^2.3.4",
+    "pino": "^9.5.0",
+    "pino-elasticsearch": "^8.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

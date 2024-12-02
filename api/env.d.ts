@@ -7,6 +7,9 @@ declare global {
       DB_PASS: string
       DB_NAME: string
       DB_PORT: number
+      VALKEY_HOST: string
+      VALKEY_PASS: string
+      VALKEY_PORT: number
     }
   }
 }

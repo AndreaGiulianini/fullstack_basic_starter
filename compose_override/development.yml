@@ -1,9 +1,12 @@
 volumes:
   pgdata: null
+  valkeydata: null
+  esdata: null
   wordpress: null
   mysqldata: null
 
 services:
+
   app:
     develop:
       watch:
@@ -48,8 +51,39 @@ services:
       - '5432:5432'
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
-    networks:
-      - web
+
+  valkey:
+    image: 'valkey/valkey:8'
+    container_name: valkey
+    command: valkey-server --port 6379 --cluster-enabled no --requirepass ${VALKEY_PASS}
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'valkeydata:/data'
+
+  elasticsearch:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:8.16.1'
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - '9200:9200'
+    volumes:
+      - 'esdata:/usr/share/elasticsearch/data'
+
+  kibana:
+    image: 'docker.elastic.co/kibana/kibana:8.16.1'
+    container_name: kibana
+    environment:
+      - 'ELASTICSEARCH_HOSTS=http://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}'
+      - xpack.security.enabled=false
+    ports:
+      - '5601:5601'
+    depends_on:
+      - elasticsearch
 
   wordpress:
     image: wordpress
@@ -69,8 +103,6 @@ services:
       WORDPRESS_DB_NAME: '${WORDPRESS_DB_NAME}'
     volumes:
       - 'wordpress:/var/www/html'
-    networks:
-      - web
     depends_on:
       - mysql_db
 
@@ -87,5 +119,3 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: '${MYSQL_RANDOM_ROOT_PASSWORD}'
     volumes:
       - 'mysqldata:/var/lib/mysql'
-    networks:
-      - web

@@ -1,5 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { FastifyReply, FastifyRequest } from 'fastify'
+import logger from 'src/utils/logger'
+import valkey from 'src/utils/valkey'
 
 // Define the sleep function
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -20,6 +22,11 @@ async function testRoutes(fastify: FastifyInstance) {
       }
     },
     handler: async (_request: FastifyRequest, reply: FastifyReply) => {
+      const data = await valkey.get('test')
+      if (!data) {
+        await valkey.set('test', 'ping')
+        logger.info('ping')
+      }
       reply.send({ success: true, message: 'pong' })
     }
   })
