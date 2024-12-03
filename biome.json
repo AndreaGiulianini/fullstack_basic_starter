@@ -24,6 +24,7 @@
         "useKeyWithClickEvents": "off"
       },
       "correctness": {
+        "noUndeclaredVariables": "warn",
         "noUnusedImports": "warn",
         "noUnreachable": "warn",
         "noUnusedVariables": "warn",
