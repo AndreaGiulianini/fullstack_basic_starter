@@ -107,7 +107,7 @@ services:
       - mysql_db
 
   mysql_db:
-    image: 'mysql:8.0'
+    image: 'mysql:9'
     container_name: mysql_db
     restart: always
     ports:
