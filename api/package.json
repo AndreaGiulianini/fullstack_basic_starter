@@ -31,7 +31,6 @@
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.10.1",
     "@types/pg": "^8.11.10",
-    "@types/sequelize": "^4.28.20",
     "drizzle-kit": "^0.29.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"

@@ -14,13 +14,14 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
     "@reduxjs/toolkit": "^2.4.0",
+    "@tailwindcss/postcss": "^4.0.0-beta.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",
     "next": "^15.0.4",
     "next-intl": "^3.26.0",
-    "react": "^19.0",
-    "react-dom": "^19.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-redux": "^9.1.2",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"
@@ -30,9 +31,7 @@
     "@types/node": "^22.10.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.16",
+    "tailwindcss": "^4.0.0-beta.6",
     "typescript": "^5.7.2"
   }
 }
