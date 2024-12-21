@@ -17,15 +17,39 @@ This setup provides a ready-to-use playground for exploring web development conc
 
 ## **Getting Started**
 
-Create a .env file in the root directory renaming .env.placeholder to .env
+1. **Create Environment File**:
+   - Create a `.env` file in the root directory by renaming `.env.placeholder` to `.env`.
+   - Fill in the necessary environment variables in the `.env` file.
 
-To launch the project using Docker, run the following script:
+2. **Start the Project**:
+   - To launch the project using Docker, run the following script:
 
-```bash
-./start.sh
-```
+   ```bash
+   ./start.sh
+   ```
 
-This script will handle all necessary setup and start the services in a containerized environment.
+   This script will handle all necessary setup and start the services in a containerized environment.
+
+3. **Populate the Database**:
+   - After starting the project, populate the database by running:
+
+   ```bash
+   ./populate.sh
+   ```
+
+---
+
+## **Available URLs**
+
+After starting the project, the following URLs will be available:
+
+- **Frontend (Next.js)**: [http://localhost](http://localhost:80)
+- **Backend API (Fastify)**: [http://localhost/api](http://localhost/api)
+- **Swagger UI**: [http://localhost/swagger-ui](http://localhost/swagger-ui)
+- **Traefik Dashboard**: [http://localhost:8080](http://localhost:8080)
+- **Elasticsearch**: [http://localhost:9200](http://localhost:9200)
+- **Kibana**: [http://localhost:5601](http://localhost:5601)
+- **WordPress**: [http://localhost:7000](http://localhost:7000)
 
 ---
 
