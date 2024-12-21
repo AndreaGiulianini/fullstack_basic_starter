@@ -4,7 +4,7 @@ This is a small toy project that I prepared to give some exercises to new collea
 
 This project integrates the following technologies:
 
-- **Frontend**: [Next.js (App Router)](https://nextjs.org/docs/app), [Shadcn](https://shadcn.dev/), [TypeScript](https://www.typescriptlang.org/), [Redux Toolkit](https://redux-toolkit.js.org/), [i18n](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing).
+- **Frontend**: [Next.js (App Router)](https://nextjs.org/docs/app), [Shadcn](https://ui.shadcn.com/docs/components/accordion), [TypeScript](https://www.typescriptlang.org/), [Redux Toolkit](https://redux-toolkit.js.org/), [i18n](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing).
 - **Backend**: [Fastify](https://www.fastify.io/), [Drizzle ORM](https://orm.drizzle.team/), [Pino](https://getpino.io/#/), [Swagger](https://swagger.io/), [WordPress](https://wordpress.org/).
 - **Infrastructure**: [Docker](https://www.docker.com/), [Traefik](https://doc.traefik.io/traefik/), [Valkey](https://valkey.dev/).
 - **Database**: [PostgreSQL](https://www.postgresql.org/), [MySQL(for WordPress)](https://www.mysql.com/).
@@ -36,17 +36,8 @@ The following features and examples are not yet implemented in the current versi
 1. **Transaction Example**
    - Implement an example of database transactions using [Drizzle ORM transactions](https://orm.drizzle.team/docs/transactions#transactions).
 
-2. **Refresh Token Logic**
-   - Design and implement the logic for generating and managing refresh tokens to improve authentication flows.
-
-3. **Backoffice Dashboard**
+2. **Backoffice Dashboard**
    - Create a functional backoffice dashboard with features like user management, analytics, or content control.
-
----
-
-## **Contributing**
-
-Contributions are welcome! If you'd like to add features, fix bugs, or enhance the documentation, feel free to fork the repository and submit a pull request.
 
 ---
 
@@ -58,6 +49,12 @@ This starter project is intended to evolve with new tools and features. Some pot
 - Adding unit and integration testing.
 - Expanding backend functionalities (e.g., file uploads, advanced authentication).
 - Enhancing Docker configuration for production-ready deployment.
+
+---
+
+## **Contributing**
+
+Contributions are welcome! If you'd like to add features, fix bugs, or enhance the documentation, feel free to fork the repository and submit a pull request.
 
 ---
 

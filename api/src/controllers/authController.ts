@@ -19,12 +19,26 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
       return reply.status(401).send({ message: 'Invalid credentials' })
     }
 
-    // Generate a JWT token
-    const token = request.server.jwt.sign({ id: user.id, email: user.email })
-    reply.send({ success: true, token })
+    // Generate tokens
+    const tokens = await request.server.generateTokens({ id: user.id, email: user.email })
+    reply.send({ success: true, ...tokens })
   } catch (error) {
     console.log(error)
     reply.status(500).send({ message: 'Database error' })
+  }
+}
+
+export const refreshToken = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { refreshToken } = request.body as { refreshToken: string }
+
+  try {
+    const decoded = await request.server.verifyRefreshToken(refreshToken)
+    await request.server.revokeRefreshToken(decoded.id) // Revoke old refresh token
+    const tokens = await request.server.generateTokens({ id: decoded.id, email: decoded.email })
+    reply.send({ success: true, ...tokens })
+  } catch (error) {
+    console.log(error)
+    reply.status(401).send({ message: 'Invalid refresh token' })
   }
 }
 

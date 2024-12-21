@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import { login, profile } from 'src/controllers/authController'
+import { login, profile, refreshToken } from 'src/controllers/authController'
 
 async function authRoutes(fastify: FastifyInstance) {
   fastify.post('/api/login', {
@@ -20,12 +20,39 @@ async function authRoutes(fastify: FastifyInstance) {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
-            token: { type: 'string' }
+            accessToken: { type: 'string' },
+            refreshToken: { type: 'string' }
           }
         }
       }
     },
     handler: login
+  })
+
+  fastify.post('/api/refresh-token', {
+    schema: {
+      description: 'Refresh JWT Token',
+      tags: ['Auth'],
+      body: {
+        type: 'object',
+        properties: {
+          refreshToken: { type: 'string', description: 'Refresh token' }
+        },
+        required: ['refreshToken']
+      },
+      response: {
+        200: {
+          description: 'Successful response',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            accessToken: { type: 'string' },
+            refreshToken: { type: 'string' }
+          }
+        }
+      }
+    },
+    handler: refreshToken
   })
 
   // Protected route
