@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.10.2",
-    "@types/react": "^19.0.2",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
     "tailwindcss": "^4.0.0-beta.8",
     "typescript": "^5.7.2"
