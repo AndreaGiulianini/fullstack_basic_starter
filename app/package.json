@@ -17,7 +17,7 @@
     "@tailwindcss/postcss": "^4.0.0-beta.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.471.0",
+    "lucide-react": "^0.471.1",
     "next": "^15.1.4",
     "next-intl": "^3.26.3",
     "react": "^19.0.0",
@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.10.5",
-    "@types/react": "^19.0.6",
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "tailwindcss": "^4.0.0-beta.9",
     "typescript": "^5.7.3"
