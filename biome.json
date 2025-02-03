@@ -6,7 +6,7 @@
     "useIgnoreFile": false
   },
   "files": {
-    "ignore": [".next/*", "node_modules/*", "./public/img/brand/g_files/*"]
+    "ignore": [".next/*", "node_modules/*", "./public/img/brand/g_files/*", "tailwindcss-animate.css"]
   },
   "organizeImports": {
     "enabled": true,
