@@ -30,7 +30,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/bcrypt": "^5.0.2",
-    "@types/node": "^22.13.0",
+    "@types/node": "^22.13.1",
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.4",
     "tsx": "^4.19.2",
