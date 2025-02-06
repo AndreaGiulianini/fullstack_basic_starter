@@ -1,0 +1,121 @@
+volumes:
+  pgdata: null
+  valkeydata: null
+  esdata: null
+  wordpress: null
+  mysqldata: null
+
+services:
+
+  app:
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /home/node/app
+          ignore:
+            - ./app/node_modules/
+        - action: rebuild
+          path: ./app/package.json
+    volumes:
+      - /home/node/app/node_modules
+      - /home/node/app/.next
+    restart: unless-stopped
+    depends_on:
+      - postgres_db
+
+  api:
+    develop:
+      watch:
+        - action: sync
+          path: ./api
+          target: /home/node/api
+          ignore:
+            - ./api/node_modules/
+        - action: rebuild
+          path: ./api/package.json
+    volumes:
+      - /home/node/api/node_modules
+    restart: always
+    depends_on:
+      - postgres_db
+
+  postgres_db:
+    image: 'postgres:17'
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASS}'
+      POSTGRES_DB: '${DB_NAME}'
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+
+  valkey:
+    image: 'valkey/valkey:8'
+    container_name: valkey
+    command: valkey-server --port 6379 --cluster-enabled no --requirepass ${VALKEY_PASS}
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'valkeydata:/data'
+
+  elasticsearch:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:8.16.1'
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - '9200:9200'
+    volumes:
+      - 'esdata:/usr/share/elasticsearch/data'
+
+  kibana:
+    image: 'docker.elastic.co/kibana/kibana:8.16.1'
+    container_name: kibana
+    environment:
+      - 'ELASTICSEARCH_HOSTS=http://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}'
+      - xpack.security.enabled=false
+    ports:
+      - '5601:5601'
+    depends_on:
+      - elasticsearch
+
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.wordpress.rule=Host(`wordpress.example.com`)
+      - traefik.http.services.wordpress.loadbalancer.server.port=80
+      - traefik.http.routers.wordpress.entrypoints=web
+    ports:
+      - '7000:80'
+    environment:
+      WORDPRESS_DB_HOST: '${WORDPRESS_DB_HOST}'
+      WORDPRESS_DB_USER: '${WORDPRESS_DB_USER}'
+      WORDPRESS_DB_PASSWORD: '${WORDPRESS_DB_PASSWORD}'
+      WORDPRESS_DB_NAME: '${WORDPRESS_DB_NAME}'
+    volumes:
+      - 'wordpress:/var/www/html'
+    depends_on:
+      - mysql_db
+
+  mysql_db:
+    image: 'mysql:9'
+    container_name: mysql_db
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+      MYSQL_RANDOM_ROOT_PASSWORD: '${MYSQL_RANDOM_ROOT_PASSWORD}'
+    volumes:
+      - 'mysqldata:/var/lib/mysql'
