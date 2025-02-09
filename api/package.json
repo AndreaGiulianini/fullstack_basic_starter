@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@elastic/ecs-pino-format": "^1.5.0",
-    "@fastify/jwt": "^9.0.3",
+    "@fastify/jwt": "^9.0.4",
     "@fastify/swagger": "^9.4.2",
     "@fastify/swagger-ui": "^5.2.1",
     "bcrypt": "^5.1.1",
