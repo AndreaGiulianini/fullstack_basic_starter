@@ -13,24 +13,24 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.2",
-    "@reduxjs/toolkit": "^2.5.1",
+    "@reduxjs/toolkit": "^2.6.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.475.0",
-    "next": "^15.1.7",
-    "next-intl": "^3.26.4",
+    "lucide-react": "^0.483.0",
+    "next": "^15.2.3",
+    "next-intl": "^4.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
-    "tailwind-merge": "^3.0.1"
+    "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@tailwindcss/postcss": "^4.0.7",
-    "@types/node": "^22.13.4",
-    "@types/react": "^19.0.10",
+    "@tailwindcss/postcss": "^4.0.14",
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.11",
     "@types/react-dom": "^19.0.4",
     "tailwindcss": "^4.0.7",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   }
 }

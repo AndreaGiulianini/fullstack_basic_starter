@@ -14,15 +14,15 @@
   },
   "dependencies": {
     "@elastic/ecs-pino-format": "^1.5.0",
-    "@fastify/jwt": "^9.0.4",
+    "@fastify/jwt": "^9.1.0",
     "@fastify/swagger": "^9.4.2",
     "@fastify/swagger-ui": "^5.2.2",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
-    "drizzle-orm": "^0.39.3",
+    "drizzle-orm": "^0.40.1",
     "fastify": "^5.2.1",
     "iovalkey": "^0.3.1",
-    "pg": "^8.13.3",
+    "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
     "pino": "^9.6.0",
     "pino-elasticsearch": "^8.1.0"
@@ -30,10 +30,10 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/bcrypt": "^5.0.2",
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.13.10",
     "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.30.4",
+    "drizzle-kit": "^0.30.5",
     "tsx": "^4.19.3",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   }
 }
