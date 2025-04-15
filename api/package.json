@@ -15,12 +15,12 @@
   "dependencies": {
     "@elastic/ecs-pino-format": "^1.5.0",
     "@fastify/jwt": "^9.1.0",
-    "@fastify/swagger": "^9.4.2",
+    "@fastify/swagger": "^9.5.0",
     "@fastify/swagger-ui": "^5.2.2",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
-    "drizzle-orm": "^0.40.1",
-    "fastify": "^5.2.1",
+    "drizzle-orm": "^0.41.0",
+    "fastify": "^5.3.0",
     "iovalkey": "^0.3.1",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
@@ -30,10 +30,10 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/bcrypt": "^5.0.2",
-    "@types/node": "^22.13.10",
-    "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.30.5",
+    "@types/node": "^22.14.1",
+    "@types/pg": "^8.11.13",
+    "drizzle-kit": "^0.30.6",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
