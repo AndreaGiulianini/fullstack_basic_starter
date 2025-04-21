@@ -1,5 +1,5 @@
 /* Core */
-import { type Action, type ConfigureStoreOptions, type ThunkAction, configureStore } from '@reduxjs/toolkit'
+import { type Action, type ConfigureStoreOptions, configureStore, type ThunkAction } from '@reduxjs/toolkit'
 import {
   type TypedUseSelectorHook,
   useDispatch as useReduxDispatch,

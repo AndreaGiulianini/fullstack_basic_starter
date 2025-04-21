@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
-import { eq } from 'drizzle-orm'
 import type { InferSelectModel } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
 

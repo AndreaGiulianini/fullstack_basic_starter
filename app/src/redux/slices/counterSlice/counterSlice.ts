@@ -1,5 +1,5 @@
 /* Core */
-import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 /* Instruments */
 import { incrementAsync } from './thunks'
