@@ -1,7 +1,7 @@
-FROM node:22 AS base
+FROM node:23-slim AS base
 WORKDIR /home/node
 COPY package*.json ./
-ENV PATH /home/node/node_modules/.bin:$PATH
+ENV PATH=/home/node/node_modules/.bin:$PATH
 RUN npm install --force --no-optional --no-audit --loglevel info && npm cache clean --force
 RUN npx next telemetry disable
 RUN npx next telemetry status

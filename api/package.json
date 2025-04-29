@@ -19,21 +19,22 @@
     "@fastify/swagger-ui": "^5.2.2",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
-    "drizzle-orm": "^0.43.0",
+    "drizzle-orm": "^0.43.1",
     "fastify": "^5.3.2",
     "iovalkey": "^0.3.1",
-    "pg": "^8.15.5",
+    "pg": "^8.15.6",
     "pg-hstore": "^2.3.4",
     "pino": "^9.6.0",
-    "pino-elasticsearch": "^8.1.0"
+    "pino-elasticsearch": "^8.1.0",
+    "zod": "^v4.0.0-beta"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.0-beta.1",
     "@types/bcrypt": "^5.0.2",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.3",
     "@types/pg": "^8.11.14",
     "drizzle-kit": "^0.31.0",
-    "tsx": "^4.19.3",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
 }
