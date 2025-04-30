@@ -5,7 +5,7 @@ This is a small toy project that I prepared to give some exercises to new collea
 This project integrates the following technologies:
 
 - **Frontend**: [Next.js (App Router)](https://nextjs.org/docs/app), [TailwindCSS](https://tailwindcss.com/docs/v4-beta), [Shadcn](https://ui.shadcn.com/docs/components/accordion), [TypeScript](https://www.typescriptlang.org/), [Redux Toolkit](https://redux-toolkit.js.org/), [i18n](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing).
-- **Backend**: [Fastify](https://www.fastify.io/), [Drizzle ORM](https://orm.drizzle.team/), [Pino](https://getpino.io/#/), [Swagger](https://swagger.io/), [WordPress](https://wordpress.org/).
+- **Backend**: [Fastify](https://www.fastify.io/), [Drizzle ORM](https://orm.drizzle.team/), [Zod](https://zod.dev/), [Pino](https://getpino.io/#/), [Swagger](https://swagger.io/), [WordPress](https://wordpress.org/).
 - **Infrastructure**: [Docker](https://www.docker.com/), [Traefik](https://doc.traefik.io/traefik/), [Valkey](https://valkey.dev/).
 - **Database**: [PostgreSQL](https://www.postgresql.org/), [MySQL(for WordPress)](https://www.mysql.com/).
 - **Monitoring**: [ELK](https://www.elastic.co/what-is/elk-stack).
