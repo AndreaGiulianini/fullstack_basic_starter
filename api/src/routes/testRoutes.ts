@@ -52,7 +52,7 @@ async function testRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const parsedBody = identityCountBodySchema.safeParse(request.body)
       if (!parsedBody.success) {
-        return reply.status(400).send({ success: false, message: 'Invalid body', errors: parsedBody.error })
+        return reply.status(400).send({ success: false, message: parsedBody.error })
       }
       const { amount } = parsedBody.data
       await sleep(700)

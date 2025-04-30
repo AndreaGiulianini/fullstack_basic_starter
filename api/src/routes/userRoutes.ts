@@ -34,7 +34,7 @@ async function userRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const parsedParams = userParamsSchema.safeParse(request.params)
       if (!parsedParams.success) {
-        return reply.status(400).send({ success: false, message: 'Invalid params', errors: parsedParams.error })
+        return reply.status(400).send({ success: false, message: parsedParams.error  })
       }
       await getUserHandler(request, reply)
     }
@@ -52,7 +52,7 @@ async function userRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const parsedBody = createUserBodySchema.safeParse(request.body)
       if (!parsedBody.success) {
-        return reply.status(400).send({ success: false, message: 'Invalid body', errors: parsedBody.error })
+        return reply.status(400).send({ success: false, message: parsedBody.error })
       }
       await createUserHandler(request, reply)
     }

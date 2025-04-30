@@ -41,7 +41,7 @@ async function authRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const parsedBody = loginBodySchema.safeParse(request.body)
       if (!parsedBody.success) {
-        return reply.status(400).send({ success: false, message: 'Invalid body', errors: parsedBody.error })
+        return reply.status(400).send({ success: false, message: parsedBody.error })
       }
       await login(request, reply)
     }
@@ -57,9 +57,9 @@ async function authRoutes(fastify: FastifyInstance) {
       description: 'Refresh JWT Token'
     },
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const parsed = refreshTokenBodySchema.safeParse(request.body)
-      if (!parsed.success) {
-        return reply.status(400).send({ success: false, message: 'Invalid body', errors: parsed.error })
+      const parsedBody = refreshTokenBodySchema.safeParse(request.body)
+      if (!parsedBody.success) {
+        return reply.status(400).send({ success: false, message: parsedBody.error })
       }
       await refreshToken(request, reply)
     }
