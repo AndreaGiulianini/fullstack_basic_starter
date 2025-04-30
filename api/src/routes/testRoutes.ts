@@ -2,6 +2,21 @@ import type { FastifyInstance } from 'fastify'
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import logger from 'src/utils/logger'
 import valkey from 'src/utils/valkey'
+import { z } from 'zod'
+
+export const identityCountBodySchema = z.object({
+  amount: z.number({ error: 'Amount is required' })
+})
+
+export const identityCountResponseSchema = z.object({
+  success: z.boolean(),
+  amount: z.number()
+})
+
+export const healthcheckResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string()
+})
 
 // Define the sleep function
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -12,13 +27,7 @@ async function testRoutes(fastify: FastifyInstance) {
       description: 'Test Fastify',
       tags: ['Test'],
       response: {
-        200: {
-          description: 'Successful response',
-          type: 'object',
-          properties: {
-            message: { type: 'string' }
-          }
-        }
+        200: z.toJSONSchema(healthcheckResponseSchema)
       }
     },
     handler: async (_request: FastifyRequest, reply: FastifyReply) => {
@@ -35,26 +44,17 @@ async function testRoutes(fastify: FastifyInstance) {
     schema: {
       description: 'Test Redux',
       tags: ['Test'],
-      body: {
-        type: 'object',
-        properties: {
-          amount: { type: 'number', description: 'Value to change' }
-        },
-        required: ['amount']
-      },
+      body: z.toJSONSchema(identityCountBodySchema),
       response: {
-        200: {
-          description: 'Successful response',
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            amount: { type: 'number' }
-          }
-        }
+        200: z.toJSONSchema(identityCountResponseSchema)
       }
     },
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const { amount } = request.body as { amount: number }
+      const parsedBody = identityCountBodySchema.safeParse(request.body)
+      if (!parsedBody.success) {
+        return reply.status(400).send({ success: false, message: 'Invalid body', errors: parsedBody.error })
+      }
+      const { amount } = parsedBody.data
       await sleep(700)
       reply.send({ success: true, amount })
     }

@@ -1,79 +1,77 @@
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { login, profile, refreshToken } from 'src/controllers/authController'
+import { z } from 'zod'
+
+export const loginBodySchema = z.object({
+  email: z.email('Invalid email'),
+  password: z.string().min(1, 'Password required')
+})
+
+export const loginResponseSchema = z.object({
+  success: z.boolean(),
+  accessToken: z.string(),
+  refreshToken: z.string()
+})
+
+export const refreshTokenBodySchema = z.object({
+  refreshToken: z.string()
+})
+
+export const refreshTokenResponseSchema = loginResponseSchema
+
+export const profileResponseSchema = z.object({
+  success: z.boolean(),
+  user: z.object({
+    id: z.string(),
+    name: z.string().nullable(),
+    email: z.email()
+  })
+})
 
 async function authRoutes(fastify: FastifyInstance) {
   fastify.post('/api/login', {
     schema: {
-      description: 'Get a JWT Token',
-      tags: ['Auth'],
-      body: {
-        type: 'object',
-        properties: {
-          email: { type: 'string', description: 'User email' },
-          password: { type: 'string', description: 'User password' }
-        },
-        required: ['email', 'password']
-      },
+      body:  z.toJSONSchema(loginBodySchema),
       response: {
-        200: {
-          description: 'Successful response',
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            accessToken: { type: 'string' },
-            refreshToken: { type: 'string' }
-          }
-        }
-      }
+        200:  z.toJSONSchema(loginResponseSchema)
+      },
+      tags: ['Auth'],
+      description: 'Get a JWT Token'
     },
-    handler: login
+    handler: async (request: FastifyRequest, reply: FastifyReply) => {
+      const parsedBody = loginBodySchema.safeParse(request.body)
+      if (!parsedBody.success) {
+        return reply.status(400).send({ success: false, message: 'Invalid body', errors: parsedBody.error })
+      }
+      await login(request, reply)
+    }
   })
 
   fastify.post('/api/refresh-token', {
     schema: {
-      description: 'Refresh JWT Token',
-      tags: ['Auth'],
-      body: {
-        type: 'object',
-        properties: {
-          refreshToken: { type: 'string', description: 'Refresh token' }
-        },
-        required: ['refreshToken']
-      },
+      body: z.toJSONSchema(refreshTokenBodySchema),
       response: {
-        200: {
-          description: 'Successful response',
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            accessToken: { type: 'string' },
-            refreshToken: { type: 'string' }
-          }
-        }
-      }
+        200: z.toJSONSchema(refreshTokenResponseSchema)
+      },
+      tags: ['Auth'],
+      description: 'Refresh JWT Token'
     },
-    handler: refreshToken
+    handler: async (request: FastifyRequest, reply: FastifyReply) => {
+      const parsed = refreshTokenBodySchema.safeParse(request.body)
+      if (!parsed.success) {
+        return reply.status(400).send({ success: false, message: 'Invalid body', errors: parsed.error })
+      }
+      await refreshToken(request, reply)
+    }
   })
 
-  // Protected route
   fastify.get('/api/profile', {
     schema: {
-      description: 'Get a user by JWT',
-      tags: ['Auth'],
       response: {
-        200: {
-          description: 'Successful response',
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            user: {
-              id: { type: 'string' },
-              name: { type: 'string' },
-              email: { type: 'string' }
-            }
-          }
-        }
-      }
+        200: z.toJSONSchema(profileResponseSchema)
+      },
+      tags: ['Auth'],
+      description: 'Get a user by JWT'
     },
     preHandler: [fastify.authenticate],
     handler: profile
