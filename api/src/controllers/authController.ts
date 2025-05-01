@@ -4,50 +4,46 @@ import type { FastifyReply, FastifyRequest } from 'fastify'
 import { users } from '../models/user'
 import db from '../utils/db'
 
-export const login = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { email, password } = request.body as { email: string; password: string }
-
+export const login = async (email: string, password: string, generateTokens: Function) => {
   try {
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1)
     if (!user) {
-      return reply.status(400).send({ message: 'User not found' })
+      return Error('User not found')
     }
 
     // Verify password
     const match = await bcrypt.compare(password, user.password)
     if (!match) {
-      return reply.status(401).send({ message: 'Invalid credentials' })
+      return Error('Invalid credentials')
     }
 
     // Generate tokens
-    const tokens = await request.server.generateTokens({ id: user.id, email: user.email })
-    reply.send({ success: true, ...tokens })
+    const token = await generateTokens({ id: user.id, email: user.email })
+    return token
   } catch (error) {
     console.log(error)
-    reply.status(500).send({ message: 'Database error' })
+    return Error('Database error')
   }
 }
 
-export const refreshToken = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { refreshToken } = request.body as { refreshToken: string }
-
+export const refreshToken = async (refreshToken: string, verifyRefreshToken:Function, revokeRefreshToken:Function, generateTokens:Function) => {
   try {
-    const decoded = await request.server.verifyRefreshToken(refreshToken)
-    await request.server.revokeRefreshToken(decoded.id) // Revoke old refresh token
-    const tokens = await request.server.generateTokens({ id: decoded.id, email: decoded.email })
-    reply.send({ success: true, ...tokens })
+    const decoded = await verifyRefreshToken(refreshToken)
+    await revokeRefreshToken(decoded.id) // Revoke old refresh token
+    const token = await generateTokens({ id: decoded.id, email: decoded.email })
+    return token
   } catch (error) {
     console.log(error)
-    reply.status(401).send({ message: 'Invalid refresh token' })
+    return Error('Invalid refresh token')
   }
 }
 
-export const profile = async (request: FastifyRequest, reply: FastifyReply) => {
+export const profile = async (userId: string) => {
   try {
-    const [userProfile] = await db.select().from(users).where(eq(users.id, request.user.id)).limit(1)
-    reply.send({ success: true, user: userProfile })
+    const [userProfile] = await db.select().from(users).where(eq(users.id, userId)).limit(1)
+    return userProfile
   } catch (error) {
     console.log(error)
-    reply.status(500).send({ message: 'Database error' })
+    return Error('Database error')
   }
 }

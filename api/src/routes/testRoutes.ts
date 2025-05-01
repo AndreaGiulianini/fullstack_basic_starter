@@ -36,7 +36,12 @@ async function testRoutes(fastify: FastifyInstance) {
         await valkey.set('test', 'ping')
         logger.info('ping')
       }
-      reply.send({ success: true, message: 'pong' })
+      const response = { success: true, message: 'pong' }
+      const responseParsed = healthcheckResponseSchema.safeParse(response)
+      if (!responseParsed.success) {
+        return reply.status(500).send({ success: false, message: responseParsed.error })
+      }
+      reply.send(response)
     }
   })
 
@@ -56,7 +61,12 @@ async function testRoutes(fastify: FastifyInstance) {
       }
       const { amount } = parsedBody.data
       await sleep(700)
-      reply.send({ success: true, amount })
+      const response = { success: true, amount }
+      const responseParsed = identityCountResponseSchema.safeParse(response)
+      if (!responseParsed.success) {
+        return reply.status(500).send({ success: false, message: responseParsed.error })
+      }
+      reply.send(response)
     }
   })
 }

@@ -36,7 +36,14 @@ async function userRoutes(fastify: FastifyInstance) {
       if (!parsedParams.success) {
         return reply.status(400).send({ success: false, message: parsedParams.error  })
       }
-      await getUserHandler(request, reply)
+      const { userId } = parsedParams.data
+      const user = await getUserHandler(userId)
+      const response = { success: true, user }
+      const parsedResponse = userResponseSchema.safeParse(response)
+      if (!parsedResponse.success) {
+        return reply.status(500).send({ success: false, message: parsedResponse.error })
+      }
+      reply.send(response)
     }
   })
 
@@ -54,7 +61,14 @@ async function userRoutes(fastify: FastifyInstance) {
       if (!parsedBody.success) {
         return reply.status(400).send({ success: false, message: parsedBody.error })
       }
-      await createUserHandler(request, reply)
+      const { name, email, password } = parsedBody.data
+      const user = await createUserHandler(name, email, password)
+      const response = { success: true, user }
+      const parsedResponse = userResponseSchema.safeParse(response)
+      if (!parsedResponse.success) {
+        return reply.status(500).send({ success: false, message: parsedResponse.error })
+      }
+      reply.send(response)
     }
   })
 }

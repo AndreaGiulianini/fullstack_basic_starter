@@ -31,9 +31,9 @@ export const profileResponseSchema = z.object({
 async function authRoutes(fastify: FastifyInstance) {
   fastify.post('/api/login', {
     schema: {
-      body:  z.toJSONSchema(loginBodySchema),
+      body: z.toJSONSchema(loginBodySchema),
       response: {
-        200:  z.toJSONSchema(loginResponseSchema)
+        200: z.toJSONSchema(loginResponseSchema)
       },
       tags: ['Auth'],
       description: 'Get a JWT Token'
@@ -43,7 +43,17 @@ async function authRoutes(fastify: FastifyInstance) {
       if (!parsedBody.success) {
         return reply.status(400).send({ success: false, message: parsedBody.error })
       }
-      await login(request, reply)
+      const { email, password } = parsedBody.data
+      const token = await login(email, password, fastify.generateTokens)
+      if (token instanceof Error) {
+        return reply.status(401).send({ success: false, message: token.message })
+      }
+      const result = { success: true, ...token }
+      const parsedResponse = loginResponseSchema.safeParse(result)
+      if (!parsedResponse.success) {
+        return reply.status(500).send({ success: false, message: parsedResponse.error })
+      }
+      reply.send(result)
     }
   })
 
@@ -61,7 +71,17 @@ async function authRoutes(fastify: FastifyInstance) {
       if (!parsedBody.success) {
         return reply.status(400).send({ success: false, message: parsedBody.error })
       }
-      await refreshToken(request, reply)
+      const { refreshToken: refreshTokenValue } = parsedBody.data
+      const token = await refreshToken(refreshTokenValue, request.server.verifyRefreshToken, request.server.revokeRefreshToken, request.server.generateTokens)
+      if (token instanceof Error) {
+        return reply.status(401).send({ success: false, message: token.message })
+      }
+      const response = { success: true, ...token }
+      const parsedResponse = refreshTokenResponseSchema.safeParse(response)
+      if (!parsedResponse.success) {
+        return reply.status(500).send({ success: false, message: parsedResponse.error })
+      }
+      reply.send(response)
     }
   })
 
@@ -71,10 +91,28 @@ async function authRoutes(fastify: FastifyInstance) {
         200: z.toJSONSchema(profileResponseSchema)
       },
       tags: ['Auth'],
-      description: 'Get a user by JWT'
+      description: 'Get a user by JWT',
+      security: [{ bearerAuth: [] }]
     },
     preHandler: [fastify.authenticate],
-    handler: profile
+    handler: async (request: FastifyRequest, reply: FastifyReply) => {
+      // user is attached to request by fastify.authenticate preHandler
+      // Make sure fastify.authenticate sets request.user = { id, ... }
+      const { user } = request as any // Type assertion if needed
+      if (!user || !user.id) {
+        return reply.status(401).send({ success: false, message: 'Unauthorized' })
+      }
+      const userProfile = await profile(user.id)
+      if (userProfile instanceof Error) {
+        return reply.status(500).send({ success: false, message: userProfile.message })
+      }
+      const response = { success: true, user: userProfile }
+      const parsedResponse = profileResponseSchema.safeParse(response)
+      if (!parsedResponse.success) {
+        return reply.status(500).send({ success: false, message: parsedResponse.error })
+      }
+      reply.send(response)
+    }
   })
 }
 
