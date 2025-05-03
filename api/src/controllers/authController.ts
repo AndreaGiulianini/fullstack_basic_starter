@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt'
 import { eq } from 'drizzle-orm'
-import type { FastifyReply, FastifyRequest } from 'fastify'
 import { users } from '../models/user'
 import db from '../utils/db'
 
@@ -26,7 +25,12 @@ export const login = async (email: string, password: string, generateTokens: Fun
   }
 }
 
-export const refreshToken = async (refreshToken: string, verifyRefreshToken:Function, revokeRefreshToken:Function, generateTokens:Function) => {
+export const refreshToken = async (
+  refreshToken: string,
+  verifyRefreshToken: Function,
+  revokeRefreshToken: Function,
+  generateTokens: Function
+) => {
   try {
     const decoded = await verifyRefreshToken(refreshToken)
     await revokeRefreshToken(decoded.id) // Revoke old refresh token

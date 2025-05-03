@@ -34,7 +34,7 @@ async function userRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const parsedParams = userParamsSchema.safeParse(request.params)
       if (!parsedParams.success) {
-        return reply.status(400).send({ success: false, message: parsedParams.error  })
+        return reply.status(400).send({ success: false, message: parsedParams.error })
       }
       const { userId } = parsedParams.data
       const user = await getUserHandler(userId)

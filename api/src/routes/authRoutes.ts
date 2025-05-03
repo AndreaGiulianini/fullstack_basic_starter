@@ -72,7 +72,12 @@ async function authRoutes(fastify: FastifyInstance) {
         return reply.status(400).send({ success: false, message: parsedBody.error })
       }
       const { refreshToken: refreshTokenValue } = parsedBody.data
-      const token = await refreshToken(refreshTokenValue, request.server.verifyRefreshToken, request.server.revokeRefreshToken, request.server.generateTokens)
+      const token = await refreshToken(
+        refreshTokenValue,
+        request.server.verifyRefreshToken,
+        request.server.revokeRefreshToken,
+        request.server.generateTokens
+      )
       if (token instanceof Error) {
         return reply.status(401).send({ success: false, message: token.message })
       }
