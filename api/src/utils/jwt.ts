@@ -12,7 +12,7 @@ export default fp(async (fastify: FastifyInstance) => {
     try {
       await request.jwtVerify()
     } catch (err) {
-      reply.send({ message: err })
+      reply.send({ success: false, message: err })
     }
   })
 
@@ -23,9 +23,9 @@ export default fp(async (fastify: FastifyInstance) => {
     return { accessToken, refreshToken }
   })
 
-  fastify.decorate('verifyRefreshToken', async (refreshToken: string) => {
+  fastify.decorate('verifyRefreshToken', async (refreshToken: string): Promise<{ id: string; email: string }> => {
     try {
-      const decoded = fastify.jwt.verify(refreshToken)
+      const decoded = fastify.jwt.verify<{ id: string; email: string }>(refreshToken)
       const storedToken = await valkey.get(`refresh_${decoded.id}`)
       if (storedToken !== refreshToken) {
         throw new Error('Invalid refresh token')

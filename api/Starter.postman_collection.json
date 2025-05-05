@@ -1,0 +1,185 @@
+{
+  "info": {
+    "_postman_id": "894dbd5b-95ff-472d-9cb5-8f05d4d8c734",
+    "name": "Starter",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "6610193"
+  },
+  "item": [
+    {
+      "name": "http://localhost/api/login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"test@example.com\",\"password\":\"testpass\"}"
+        },
+        "url": {
+          "raw": "http://localhost/api/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "path": ["api", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost/api/healthcheck/ping",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost/api/healthcheck/ping",
+          "protocol": "http",
+          "host": ["localhost"],
+          "path": ["api", "healthcheck", "ping"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost/api/identity-count",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"amount\": 5}"
+        },
+        "url": {
+          "raw": "http://localhost/api/identity-count",
+          "protocol": "http",
+          "host": ["localhost"],
+          "path": ["api", "identity-count"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost/api/users",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Test User\",\"email\":\"test@example.com\",\"password\":\"testpass\"}"
+        },
+        "url": {
+          "raw": "http://localhost/api/users",
+          "protocol": "http",
+          "host": ["localhost"],
+          "path": ["api", "users"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost/api/users/123bec0a-d50e-44e7-a470-bb0e72b861c6",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost/api/users/123bec0a-d50e-44e7-a470-bb0e72b861c6",
+          "protocol": "http",
+          "host": ["localhost"],
+          "path": ["api", "users", "123bec0a-d50e-44e7-a470-bb0e72b861c6"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost/api/login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"test@example.com\",\"password\":\"testpass\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost/api/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "path": ["api", "login"]
+        },
+        "description": "Generated from cURL: curl -X POST http://localhost/api/login \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"email\":\"test@example.com\",\"password\":\"testpass\"}'"
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost/api/refresh-token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"refreshToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyM2JlYzBhLWQ1MGUtNDRlNy1hNDcwLWJiMGU3MmI4NjFjNiIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTc0NjQ0Mjg2MiwiZXhwIjoxNzQ3MDQ3NjYyfQ.m6PRTpQV_MFz-YMs_pONDzGoHe7r4MtN1sXM7yS8Z08\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost/api/refresh-token",
+          "protocol": "http",
+          "host": ["localhost"],
+          "path": ["api", "refresh-token"]
+        },
+        "description": "Generated from cURL: curl -X POST http://localhost/api/refresh-token \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"refreshToken\":\"<REFRESH_TOKEN>\"}'"
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost/api/profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <ACCESS_TOKEN>"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost/api/profile",
+          "protocol": "http",
+          "host": ["localhost"],
+          "path": ["api", "profile"]
+        },
+        "description": "Generated from cURL: curl -X GET http://localhost/api/profile \\\n  -H \"Authorization: Bearer <ACCESS_TOKEN>\""
+      },
+      "response": []
+    }
+  ]
+}

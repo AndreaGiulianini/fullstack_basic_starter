@@ -6,19 +6,20 @@ export const userParamsSchema = z.object({
   userId: z.string()
 })
 
+export const createUserBodySchema = z.object({
+  name: z.string(),
+  email: z.email(),
+  password: z.string()
+})
+
 export const userResponseSchema = z.object({
   success: z.boolean(),
   user: z.object({
     id: z.string(),
     name: z.string().nullable(),
     email: z.string()
-  })
-})
-
-export const createUserBodySchema = z.object({
-  name: z.string(),
-  email: z.email(),
-  password: z.string()
+  }).optional(),
+  message: z.string().optional()
 })
 
 async function userRoutes(fastify: FastifyInstance) {

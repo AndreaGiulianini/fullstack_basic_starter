@@ -1,5 +1,4 @@
-import type { FastifyInstance } from 'fastify'
-import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import logger from 'src/utils/logger'
 import valkey from 'src/utils/valkey'
 import { z } from 'zod'
@@ -10,7 +9,8 @@ export const identityCountBodySchema = z.object({
 
 export const identityCountResponseSchema = z.object({
   success: z.boolean(),
-  amount: z.number()
+  amount: z.number().optional(),
+  message: z.string().optional()
 })
 
 export const healthcheckResponseSchema = z.object({

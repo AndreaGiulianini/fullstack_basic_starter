@@ -26,14 +26,14 @@
     "pg-hstore": "^2.3.4",
     "pino": "^9.6.0",
     "pino-elasticsearch": "^8.1.0",
-    "zod": "^v4.0.0-beta"
+    "zod": "^4.0.0-beta.20250505T012514"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.0.0-beta.1",
+    "@biomejs/biome": "2.0.0-beta.2",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.15.3",
     "@types/pg": "^8.11.14",
-    "drizzle-kit": "^0.31.0",
+    "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }

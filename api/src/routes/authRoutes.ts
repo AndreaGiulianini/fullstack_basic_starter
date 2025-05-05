@@ -7,25 +7,29 @@ export const loginBodySchema = z.object({
   password: z.string().min(1, 'Password required')
 })
 
-export const loginResponseSchema = z.object({
-  success: z.boolean(),
-  accessToken: z.string(),
+export const refreshTokenBodySchema = z.object({
   refreshToken: z.string()
 })
 
-export const refreshTokenBodySchema = z.object({
-  refreshToken: z.string()
+export const loginResponseSchema = z.object({
+  success: z.boolean(),
+  accessToken: z.string().optional(),
+  refreshToken: z.string().optional(),
+  message: z.string().optional()
 })
 
 export const refreshTokenResponseSchema = loginResponseSchema
 
 export const profileResponseSchema = z.object({
   success: z.boolean(),
-  user: z.object({
-    id: z.string(),
-    name: z.string().nullable(),
-    email: z.email()
-  })
+  user: z
+    .object({
+      id: z.string(),
+      name: z.string().nullable(),
+      email: z.email()
+    })
+    .optional(),
+  message: z.string().optional()
 })
 
 async function authRoutes(fastify: FastifyInstance) {
@@ -101,9 +105,8 @@ async function authRoutes(fastify: FastifyInstance) {
     },
     preHandler: [fastify.authenticate],
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      // user is attached to request by fastify.authenticate preHandler
-      // Make sure fastify.authenticate sets request.user = { id, ... }
-      const { user } = request as any // Type assertion if needed
+      console.log('Profile route')
+      const { user } = request as any // Type assertion to do
       if (!user || !user.id) {
         return reply.status(401).send({ success: false, message: 'Unauthorized' })
       }
