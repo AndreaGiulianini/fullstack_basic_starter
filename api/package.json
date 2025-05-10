@@ -15,7 +15,7 @@
   "dependencies": {
     "@elastic/ecs-pino-format": "^1.5.0",
     "@fastify/jwt": "^9.1.0",
-    "@fastify/swagger": "^9.5.0",
+    "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.2",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
@@ -26,13 +26,13 @@
     "pg-hstore": "^2.3.4",
     "pino": "^9.6.0",
     "pino-elasticsearch": "^8.1.0",
-    "zod": "^4.0.0-beta.20250505T012514"
+    "zod": "^4.0.0-beta.20250505T195954"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.0-beta.2",
     "@types/bcrypt": "^5.0.2",
-    "@types/node": "^22.15.3",
-    "@types/pg": "^8.11.14",
+    "@types/node": "^22.15.17",
+    "@types/pg": "^8.15.1",
     "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
