@@ -14,11 +14,13 @@ export const createUserBodySchema = z.object({
 
 export const userResponseSchema = z.object({
   success: z.boolean(),
-  user: z.object({
-    id: z.string(),
-    name: z.string().nullable(),
-    email: z.string()
-  }).optional(),
+  user: z
+    .object({
+      id: z.string(),
+      name: z.string().nullable(),
+      email: z.string()
+    })
+    .optional(),
   message: z.string().optional()
 })
 
