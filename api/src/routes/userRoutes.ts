@@ -46,7 +46,7 @@ async function userRoutes(fastify: FastifyInstance) {
       if (!parsedResponse.success) {
         return reply.status(500).send({ success: false, message: parsedResponse.error })
       }
-      reply.send(response)
+      reply.send(parsedResponse.data)
     }
   })
 
@@ -71,7 +71,7 @@ async function userRoutes(fastify: FastifyInstance) {
       if (!parsedResponse.success) {
         return reply.status(500).send({ success: false, message: parsedResponse.error })
       }
-      reply.send(response)
+      reply.send(parsedResponse.data)
     }
   })
 }

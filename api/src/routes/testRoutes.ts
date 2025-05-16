@@ -37,11 +37,11 @@ async function testRoutes(fastify: FastifyInstance) {
         logger.info('ping')
       }
       const response = { success: true, message: 'pong' }
-      const responseParsed = healthcheckResponseSchema.safeParse(response)
-      if (!responseParsed.success) {
-        return reply.status(500).send({ success: false, message: responseParsed.error })
+      const parsedResponse = healthcheckResponseSchema.safeParse(response)
+      if (!parsedResponse.success) {
+        return reply.status(500).send({ success: false, message: parsedResponse.error })
       }
-      reply.send(response)
+      reply.send(parsedResponse.data)
     }
   })
 
@@ -62,11 +62,11 @@ async function testRoutes(fastify: FastifyInstance) {
       const { amount } = parsedBody.data
       await sleep(700)
       const response = { success: true, amount }
-      const responseParsed = identityCountResponseSchema.safeParse(response)
-      if (!responseParsed.success) {
-        return reply.status(500).send({ success: false, message: responseParsed.error })
+      const parsedResponse = identityCountResponseSchema.safeParse(response)
+      if (!parsedResponse.success) {
+        return reply.status(500).send({ success: false, message: parsedResponse.error })
       }
-      reply.send(response)
+      reply.send(parsedResponse.data)
     }
   })
 }

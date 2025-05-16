@@ -57,7 +57,7 @@ async function authRoutes(fastify: FastifyInstance) {
       if (!parsedResponse.success) {
         return reply.status(500).send({ success: false, message: parsedResponse.error })
       }
-      reply.send(result)
+      reply.send(parsedResponse.data)
     }
   })
 
@@ -90,7 +90,7 @@ async function authRoutes(fastify: FastifyInstance) {
       if (!parsedResponse.success) {
         return reply.status(500).send({ success: false, message: parsedResponse.error })
       }
-      reply.send(response)
+      reply.send(parsedResponse.data)
     }
   })
 
@@ -119,7 +119,7 @@ async function authRoutes(fastify: FastifyInstance) {
       if (!parsedResponse.success) {
         return reply.status(500).send({ success: false, message: parsedResponse.error })
       }
-      reply.send(response)
+      reply.send(parsedResponse.data)
     }
   })
 }
