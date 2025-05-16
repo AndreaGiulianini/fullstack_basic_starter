@@ -29,10 +29,10 @@
     "zod": "^4.0.0-beta.20250505T195954"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.0.0-beta.3",
+    "@biomejs/biome": "2.0.0-beta.4",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.15.18",
-    "@types/pg": "^8.15.1",
+    "@types/pg": "^8.15.2",
     "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
