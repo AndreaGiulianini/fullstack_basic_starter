@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.0-beta.3/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.0.0-beta.5/schema.json",
 	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
@@ -29,7 +29,6 @@
 				"noCommaOperator": "error",
 				"useNodejsImportProtocol": "error",
 				"useAsConstAssertion": "error",
-				"useNumericLiterals": "error",
 				"useEnumInitializers": "error",
 				"useSelfClosingElements": "error",
 				"useConst": "error",
@@ -55,8 +54,7 @@
 				"noUndeclaredVariables": "warn",
 				"noUnusedImports": "warn",
 				"noUnreachable": "warn",
-				"noUnusedVariables": "warn",
-				"useArrayLiterals": "warn"
+				"noUnusedVariables": "warn"
 			},
 			"nursery": {
 				"useSortedClasses": "warn"
