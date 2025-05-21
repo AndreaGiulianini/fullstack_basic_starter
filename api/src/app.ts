@@ -1,5 +1,5 @@
 import swagger from '@fastify/swagger'
-import swaggerUi from '@fastify/swagger-ui'
+import scalar from '@scalar/fastify-api-reference'
 import Fastify from 'fastify'
 import authRoutes from './routes/authRoutes'
 import testRoutes from './routes/testRoutes'
@@ -20,31 +20,23 @@ app.register(swagger, {
     host: 'localhost', // Update as needed for your environment
     schemes: ['http'],
     consumes: ['application/json'],
-    produces: ['application/json']
+    produces: ['application/json'],
+    securityDefinitions: {
+      bearerAuth: {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+        description: 'Enter JWT Bearer token **_only_**'
+      }
+    }
   }
 })
 
-// Register @fastify/swagger-ui to expose Swagger UI
-app.register(swaggerUi, {
-  routePrefix: '/swagger-ui', // Change this to your desired URL path
-  uiConfig: {
-    docExpansion: 'full',
-    deepLinking: false
-  },
-  uiHooks: {
-    onRequest: (_request, _reply, next) => {
-      next()
-    },
-    preHandler: (_request, _reply, next) => {
-      next()
-    }
-  },
-  staticCSP: true,
-  transformStaticCSP: (header) => header,
-  transformSpecification: (swaggerObject, _request, _reply) => {
-    return swaggerObject
-  },
-  transformSpecificationClone: true
+app.register(scalar, {
+  routePrefix: '/reference',
+  configuration: {
+    theme: 'fastify'
+  }
 })
 
 app.register(testRoutes)

@@ -43,7 +43,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.api.rule=PathPrefix(`/api`)
-      - traefik.http.routers.swagger-ui.rule=PathPrefix(`/swagger-ui`)
+      - traefik.http.routers.reference.rule=PathPrefix(`/reference`)
       - traefik.http.services.api.loadbalancer.server.port=5000
     environment:
       ENV: '${ENV}'
