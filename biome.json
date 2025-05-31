@@ -8,9 +8,9 @@
 	"files": {
 		"includes": [
 			"**",
-			"!**/.next/*",
-			"!**/node_modules/*",
-			"!public/img/brand/g_files/*",
+			"!**/.next/**",
+			"!**/node_modules/**",
+			"!**/public/img/brand/g_files/**",
 			"!**/tailwindcss-animate.css"
 		]
 	},
