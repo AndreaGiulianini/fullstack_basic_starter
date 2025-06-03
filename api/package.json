@@ -16,10 +16,10 @@
     "@elastic/ecs-pino-format": "^1.5.0",
     "@fastify/jwt": "^9.1.0",
     "@fastify/swagger": "^9.5.1",
-    "@scalar/fastify-api-reference": "^1.31.0",
+    "@scalar/fastify-api-reference": "^1.31.2",
     "bcrypt": "^6.0.0",
     "dayjs": "^1.11.13",
-    "drizzle-orm": "^0.44.0",
+    "drizzle-orm": "^0.44.1",
     "fastify": "^5.3.3",
     "iovalkey": "^0.3.2",
     "pg": "^8.16.0",
@@ -28,10 +28,10 @@
     "zod": "^4.0.0-beta.20250505T195954"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.0.0-beta.5",
+    "@biomejs/biome": "2.0.0-beta.6",
     "@types/bcrypt": "^5.0.2",
-    "@types/node": "^22.15.24",
-    "@types/pg": "^8.15.2",
+    "@types/node": "^22.15.29",
+    "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
