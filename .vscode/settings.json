@@ -1,5 +1,5 @@
 {
-    "biome.configurationPath": "./biome.json",
+    "biome.configurationPath": "biome.json",
     "biome.suggestInstallingGlobally": true,
     "biome.lsp.bin": "./api/node_modules/.bin/biome", //TODO: fix
   }

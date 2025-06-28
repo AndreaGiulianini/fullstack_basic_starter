@@ -1,28 +1,15 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { z } from 'zod'
 import { createUserHandler, getUserHandler } from '../controllers/userController'
-
-export const userParamsSchema = z.object({
-  userId: z.string()
-})
-
-export const createUserBodySchema = z.object({
-  name: z.string(),
-  email: z.email(),
-  password: z.string()
-})
-
-export const userResponseSchema = z.object({
-  success: z.boolean(),
-  user: z
-    .object({
-      id: z.string(),
-      name: z.string().nullable(),
-      email: z.string()
-    })
-    .optional(),
-  message: z.string().optional()
-})
+import {
+  type CreateUserBody,
+  createUserBodySchema,
+  createUserResponseSchema,
+  getUserResponseSchema,
+  type UserParams,
+  userParamsSchema,
+  z
+} from '../schemas'
+import { routeHandler, sendSuccess, validateBody, validateParams } from '../utils/routeHelpers'
 
 async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/api/users/:userId', {
@@ -31,23 +18,14 @@ async function userRoutes(fastify: FastifyInstance) {
       tags: ['User'],
       params: z.toJSONSchema(userParamsSchema),
       response: {
-        200: z.toJSONSchema(userResponseSchema)
+        200: z.toJSONSchema(getUserResponseSchema)
       }
     },
-    handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const parsedParams = userParamsSchema.safeParse(request.params)
-      if (!parsedParams.success) {
-        return reply.status(400).send({ success: false, message: parsedParams.error })
-      }
-      const { userId } = parsedParams.data
+    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+      const { userId }: UserParams = validateParams(userParamsSchema, request.params)
       const user = await getUserHandler(userId)
-      const response = { success: true, user }
-      const parsedResponse = userResponseSchema.safeParse(response)
-      if (!parsedResponse.success) {
-        return reply.status(500).send({ success: false, message: parsedResponse.error })
-      }
-      reply.send(parsedResponse.data)
-    }
+      return sendSuccess(reply, user)
+    })
   })
 
   fastify.post('/api/users', {
@@ -56,23 +34,14 @@ async function userRoutes(fastify: FastifyInstance) {
       tags: ['User'],
       body: z.toJSONSchema(createUserBodySchema),
       response: {
-        200: z.toJSONSchema(userResponseSchema)
+        200: z.toJSONSchema(createUserResponseSchema)
       }
     },
-    handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const parsedBody = createUserBodySchema.safeParse(request.body)
-      if (!parsedBody.success) {
-        return reply.status(400).send({ success: false, message: parsedBody.error })
-      }
-      const { name, email, password } = parsedBody.data
+    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+      const { name, email, password }: CreateUserBody = validateBody(createUserBodySchema, request.body)
       const user = await createUserHandler(name, email, password)
-      const response = { success: true, user }
-      const parsedResponse = userResponseSchema.safeParse(response)
-      if (!parsedResponse.success) {
-        return reply.status(500).send({ success: false, message: parsedResponse.error })
-      }
-      reply.send(parsedResponse.data)
-    }
+      return sendSuccess(reply, user, 'User created successfully')
+    })
   })
 }
 

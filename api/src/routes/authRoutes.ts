@@ -1,36 +1,21 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { login, profile, refreshToken } from 'src/controllers/authController'
-import { z } from 'zod'
-
-export const loginBodySchema = z.object({
-  email: z.email('Invalid email'),
-  password: z.string().min(1, 'Password required')
-})
-
-export const refreshTokenBodySchema = z.object({
-  refreshToken: z.string()
-})
-
-export const loginResponseSchema = z.object({
-  success: z.boolean(),
-  accessToken: z.string().optional(),
-  refreshToken: z.string().optional(),
-  message: z.string().optional()
-})
-
-export const refreshTokenResponseSchema = loginResponseSchema
-
-export const profileResponseSchema = z.object({
-  success: z.boolean(),
-  user: z
-    .object({
-      id: z.string(),
-      name: z.string().nullable(),
-      email: z.email()
-    })
-    .optional(),
-  message: z.string().optional()
-})
+import { AuthenticationError } from '../errors/appError'
+import {
+  type JWTPayload,
+  type LoginBody,
+  type LoginResponse,
+  loginBodySchema,
+  loginResponseSchema,
+  type ProfileResponse,
+  profileResponseSchema,
+  type RefreshTokenBody,
+  refreshTokenBodySchema,
+  refreshTokenResponseSchema,
+  z
+} from '../schemas'
+import type { AuthenticatedFastifyRequest } from '../types/fastify'
+import { routeHandler, validateBody } from '../utils/routeHelpers'
 
 async function authRoutes(fastify: FastifyInstance) {
   fastify.post('/api/login', {
@@ -42,23 +27,12 @@ async function authRoutes(fastify: FastifyInstance) {
       tags: ['Auth'],
       description: 'Get a JWT Token'
     },
-    handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const parsedBody = loginBodySchema.safeParse(request.body)
-      if (!parsedBody.success) {
-        return reply.status(400).send({ success: false, message: parsedBody.error })
-      }
-      const { email, password } = parsedBody.data
-      const token = await login(email, password, fastify.generateTokens)
-      if (token instanceof Error) {
-        return reply.status(401).send({ success: false, message: token.message })
-      }
-      const result = { success: true, ...token }
-      const parsedResponse = loginResponseSchema.safeParse(result)
-      if (!parsedResponse.success) {
-        return reply.status(500).send({ success: false, message: parsedResponse.error })
-      }
-      reply.send(parsedResponse.data)
-    }
+    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+      const { email, password }: LoginBody = validateBody(loginBodySchema, request.body)
+      const tokens = await login(email, password, fastify.generateTokens)
+      const response: LoginResponse = { success: true, ...tokens }
+      return reply.send(response)
+    })
   })
 
   fastify.post('/api/refresh-token', {
@@ -70,28 +44,17 @@ async function authRoutes(fastify: FastifyInstance) {
       tags: ['Auth'],
       description: 'Refresh JWT Token'
     },
-    handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const parsedBody = refreshTokenBodySchema.safeParse(request.body)
-      if (!parsedBody.success) {
-        return reply.status(400).send({ success: false, message: parsedBody.error })
-      }
-      const { refreshToken: refreshTokenValue } = parsedBody.data
-      const token = await refreshToken(
+    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+      const { refreshToken: refreshTokenValue }: RefreshTokenBody = validateBody(refreshTokenBodySchema, request.body)
+      const tokens = await refreshToken(
         refreshTokenValue,
         request.server.verifyRefreshToken,
         request.server.revokeRefreshToken,
         request.server.generateTokens
       )
-      if (token instanceof Error) {
-        return reply.status(401).send({ success: false, message: token.message })
-      }
-      const response = { success: true, ...token }
-      const parsedResponse = refreshTokenResponseSchema.safeParse(response)
-      if (!parsedResponse.success) {
-        return reply.status(500).send({ success: false, message: parsedResponse.error })
-      }
-      reply.send(parsedResponse.data)
-    }
+      const response: LoginResponse = { success: true, ...tokens }
+      return reply.send(response)
+    })
   })
 
   fastify.get('/api/profile', {
@@ -104,23 +67,16 @@ async function authRoutes(fastify: FastifyInstance) {
       security: [{ bearerAuth: [] }]
     },
     preHandler: [fastify.authenticate],
-    handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      console.log('Profile route')
-      const { user } = request as any // Type assertion to do
+    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+      const authenticatedRequest = request as AuthenticatedFastifyRequest
+      const { user }: { user: JWTPayload } = authenticatedRequest
       if (!user || !user.id) {
-        return reply.status(401).send({ success: false, message: 'Unauthorized' })
+        throw new AuthenticationError('Unauthorized')
       }
       const userProfile = await profile(user.id)
-      if (userProfile instanceof Error) {
-        return reply.status(500).send({ success: false, message: userProfile.message })
-      }
-      const response = { success: true, user: userProfile }
-      const parsedResponse = profileResponseSchema.safeParse(response)
-      if (!parsedResponse.success) {
-        return reply.status(500).send({ success: false, message: parsedResponse.error })
-      }
-      reply.send(parsedResponse.data)
-    }
+      const response: ProfileResponse = { success: true, user: userProfile }
+      return reply.send(response)
+    })
   })
 }
 

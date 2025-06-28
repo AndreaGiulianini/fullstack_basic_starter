@@ -1,53 +1,67 @@
 import bcrypt from 'bcrypt'
 import { eq } from 'drizzle-orm'
+import { InvalidCredentialsError, NotFoundError } from '../errors/appError'
 import { users } from '../models/user'
+import type {
+  GenerateTokensFunction,
+  JWTPayload,
+  RevokeRefreshTokenFunction,
+  TokenPair,
+  VerifyRefreshTokenFunction
+} from '../types/auth'
 import db from '../utils/db'
+import { dbHandler } from '../utils/errorHelpers'
+import { sanitizeInput } from '../utils/validation'
 
-export const login = async (email: string, password: string, generateTokens: Function) => {
-  try {
-    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1)
+export const login = dbHandler(
+  async (email: string, password: string, generateTokens: GenerateTokensFunction): Promise<TokenPair> => {
+    // Validate and sanitize email
+    const validatedEmail = sanitizeInput.email(email)
+
+    const [user] = await db.select().from(users).where(eq(users.email, validatedEmail)).limit(1)
     if (!user) {
-      return Error('User not found')
+      throw new NotFoundError('User', 'User not found')
     }
 
     // Verify password
     const match = await bcrypt.compare(password, user.password)
     if (!match) {
-      return Error('Invalid credentials')
+      throw new InvalidCredentialsError('Invalid credentials')
     }
 
     // Generate tokens
-    const token = await generateTokens({ id: user.id, email: user.email })
-    return token
-  } catch (error) {
-    console.log(error)
-    return Error('Database error')
+    const jwtPayload: JWTPayload = { id: user.id, email: validatedEmail }
+    const tokens = await generateTokens(jwtPayload)
+    return tokens
   }
-}
+)
 
-export const refreshToken = async (
-  refreshToken: string,
-  verifyRefreshToken: Function,
-  revokeRefreshToken: Function,
-  generateTokens: Function
-) => {
-  try {
+export const refreshToken = dbHandler(
+  async (
+    refreshToken: string,
+    verifyRefreshToken: VerifyRefreshTokenFunction,
+    revokeRefreshToken: RevokeRefreshTokenFunction,
+    generateTokens: GenerateTokensFunction
+  ): Promise<TokenPair> => {
     const decoded = await verifyRefreshToken(refreshToken)
     await revokeRefreshToken(decoded.id) // Revoke old refresh token
-    const token = await generateTokens({ id: decoded.id, email: decoded.email })
-    return token
-  } catch (error) {
-    console.log(error)
-    return Error('Invalid refresh token')
+    const tokens = await generateTokens(decoded)
+    return tokens
   }
-}
+)
 
-export const profile = async (userId: string) => {
-  try {
-    const [userProfile] = await db.select().from(users).where(eq(users.id, userId)).limit(1)
-    return userProfile
-  } catch (error) {
-    console.log(error)
-    return Error('Database error')
+export const profile = dbHandler(async (userId: string) => {
+  // Validate UUID
+  const validatedUserId = sanitizeInput.uuid(userId, 'userId')
+
+  const [userProfile] = await db.select().from(users).where(eq(users.id, validatedUserId)).limit(1)
+  if (!userProfile) {
+    throw new NotFoundError('User', 'User profile not found')
   }
-}
+  // Return only safe user data
+  return {
+    id: userProfile.id,
+    email: userProfile.email,
+    name: userProfile.name
+  }
+})

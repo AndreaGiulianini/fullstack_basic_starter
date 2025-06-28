@@ -2,8 +2,6 @@ volumes:
   pgdata: null
   valkeydata: null
   esdata: null
-  wordpress: null
-  mysqldata: null
 
 services:
 
@@ -84,38 +82,3 @@ services:
       - '5601:5601'
     depends_on:
       - elasticsearch
-
-  wordpress:
-    image: wordpress
-    container_name: wordpress
-    restart: always
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.wordpress.rule=Host(`wordpress.example.com`)
-      - traefik.http.services.wordpress.loadbalancer.server.port=80
-      - traefik.http.routers.wordpress.entrypoints=web
-    ports:
-      - '7000:80'
-    environment:
-      WORDPRESS_DB_HOST: '${WORDPRESS_DB_HOST}'
-      WORDPRESS_DB_USER: '${WORDPRESS_DB_USER}'
-      WORDPRESS_DB_PASSWORD: '${WORDPRESS_DB_PASSWORD}'
-      WORDPRESS_DB_NAME: '${WORDPRESS_DB_NAME}'
-    volumes:
-      - 'wordpress:/var/www/html'
-    depends_on:
-      - mysql_db
-
-  mysql_db:
-    image: 'mysql:9'
-    container_name: mysql_db
-    restart: always
-    ports:
-      - '3306:3306'
-    environment:
-      MYSQL_DATABASE: '${MYSQL_DATABASE}'
-      MYSQL_USER: '${MYSQL_USER}'
-      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
-      MYSQL_RANDOM_ROOT_PASSWORD: '${MYSQL_RANDOM_ROOT_PASSWORD}'
-    volumes:
-      - 'mysqldata:/var/lib/mysql'
