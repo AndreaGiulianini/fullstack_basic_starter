@@ -13,6 +13,9 @@
       "@models/*": ["src/models/*"]
     }
   },
+  "watchOptions": {
+    "watchFile": "dynamicPriorityPolling"
+  },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
