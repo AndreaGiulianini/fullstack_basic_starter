@@ -72,7 +72,7 @@ export interface UploadedFile {
 
 // Environment types
 export interface EnvironmentConfig {
-  NODE_ENV: 'development' | 'production' | 'test'
+  ENV: 'development' | 'production' | 'test'
   PORT: number
   DATABASE_URL: string
   JWT_SECRET: string

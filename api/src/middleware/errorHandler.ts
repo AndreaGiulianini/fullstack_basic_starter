@@ -52,7 +52,7 @@ export const errorHandler = async (error: Error, request: FastifyRequest, reply:
     // Se l'errore ha già uno statusCode, lo usiamo
     statusCode = (error as ErrorWithStatusCode).statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR
     message = error.message
-  } else if (process.env.NODE_ENV !== 'production') {
+  } else if (process.env.ENV !== 'production') {
     // In sviluppo, mostra il messaggio originale
     message = error.message
   }
