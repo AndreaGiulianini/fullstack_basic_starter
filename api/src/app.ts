@@ -10,7 +10,6 @@ import jwtPlugin from './utils/jwt'
 
 const app = Fastify({ logger: true })
 
-// Register error handler first
 app.register(errorHandlerPlugin)
 
 app.register(jwtPlugin)
@@ -52,8 +51,6 @@ const startServer = async () => {
   try {
     await app.listen({ port: SERVER.PORT, host: SERVER.HOST })
     console.log(MESSAGES.SERVER_RUNNING)
-    console.log('🔥 Hot reload test - server restarted!')
-    console.log('✅ Testing nodemon with polling - attempt 2')
   } catch (err) {
     app.log.error(err)
     process.exit(1)

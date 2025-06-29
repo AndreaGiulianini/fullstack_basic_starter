@@ -3,8 +3,8 @@ import type { InferSelectModel } from 'drizzle-orm'
 import { eq } from 'drizzle-orm'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
-import { DATABASE, MESSAGES, SECURITY } from '../constants'
-import { ConflictError, DatabaseError } from '../errors/appError'
+import { DATABASE, ERROR_MESSAGES, HTTP_STATUS, SECURITY } from '../constants'
+import { AppError, ConflictError } from '../errors/appError'
 import { sanitizeInput } from '../utils/validation'
 
 export const users = pgTable(DATABASE.TABLE_NAMES.USERS, {
@@ -26,7 +26,7 @@ export async function createUser(db: NodePgDatabase, name: string, email: string
   // Check if the user already exists
   const existingUser = await db.select().from(users).where(eq(users.email, validatedEmail)).limit(1)
   if (existingUser.length > 0) {
-    throw new ConflictError(MESSAGES.USER_ALREADY_EXISTS)
+    throw new ConflictError(ERROR_MESSAGES.USER_ALREADY_EXISTS)
   }
 
   try {
@@ -46,13 +46,13 @@ export async function createUser(db: NodePgDatabase, name: string, email: string
 
     return newUser
   } catch (_error) {
-    throw new DatabaseError()
+    throw new AppError(ERROR_MESSAGES.DATABASE_OPERATION_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR)
   }
 }
 
 export async function getUser(db: NodePgDatabase, id: string): Promise<User | undefined> {
   // Validate UUID
-  const validatedId = sanitizeInput.uuid(id, 'id')
+  const validatedId = sanitizeInput.uuid(id)
 
   const [user] = await db.select().from(users).where(eq(users.id, validatedId)).limit(1)
   return user

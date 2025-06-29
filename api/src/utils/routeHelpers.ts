@@ -1,52 +1,38 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { ZodSchema } from 'zod'
-import { SchemaValidationError } from '../errors/appError'
+import { ERROR_MESSAGES } from '../constants'
+import { ValidationError } from '../errors/appError'
 import type { SuccessResponse } from '../types/common'
 
 /**
- * Validates request body using Zod schema and throws SchemaValidationError if invalid
+ * Validates request body using Zod schema and throws ValidationError if invalid
  */
 export const validateBody = <T>(schema: ZodSchema<T>, body: unknown): T => {
   const result = schema.safeParse(body)
   if (!result.success) {
-    const details = result.error.issues.map((issue) => ({
-      field: issue.path.join('.'),
-      message: issue.message,
-      code: issue.code || 'validation_error'
-    }))
-    throw new SchemaValidationError('Request body validation failed', details)
+    throw new ValidationError(ERROR_MESSAGES.REQUEST_BODY_VALIDATION_FAILED)
   }
   return result.data
 }
 
 /**
- * Validates request params using Zod schema and throws SchemaValidationError if invalid
+ * Validates request params using Zod schema and throws ValidationError if invalid
  */
 export const validateParams = <T>(schema: ZodSchema<T>, params: unknown): T => {
   const result = schema.safeParse(params)
   if (!result.success) {
-    const details = result.error.issues.map((issue) => ({
-      field: issue.path.join('.'),
-      message: issue.message,
-      code: issue.code || 'validation_error'
-    }))
-    throw new SchemaValidationError('Request params validation failed', details)
+    throw new ValidationError(ERROR_MESSAGES.REQUEST_PARAMS_VALIDATION_FAILED)
   }
   return result.data
 }
 
 /**
- * Validates request query using Zod schema and throws SchemaValidationError if invalid
+ * Validates request query using Zod schema and throws ValidationError if invalid
  */
 export const validateQuery = <T>(schema: ZodSchema<T>, query: unknown): T => {
   const result = schema.safeParse(query)
   if (!result.success) {
-    const details = result.error.issues.map((issue) => ({
-      field: issue.path.join('.'),
-      message: issue.message,
-      code: issue.code || 'validation_error'
-    }))
-    throw new SchemaValidationError('Request query validation failed', details)
+    throw new ValidationError(ERROR_MESSAGES.REQUEST_QUERY_VALIDATION_FAILED)
   }
   return result.data
 }

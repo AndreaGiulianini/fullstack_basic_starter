@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import logger from 'src/utils/logger'
 import valkey from 'src/utils/valkey'
 import { z } from 'zod'
+import { CACHE_KEYS, ERROR_MESSAGES, HTTP_STATUS, TIMEOUTS } from '../constants'
 
 export const identityCountBodySchema = z.object({
   amount: z.number({ error: 'Amount is required' })
@@ -31,15 +32,15 @@ async function testRoutes(fastify: FastifyInstance) {
       }
     },
     handler: async (_request: FastifyRequest, reply: FastifyReply) => {
-      const data = await valkey.get('test')
+      const data = await valkey.get(CACHE_KEYS.TEST_KEY)
       if (!data) {
-        await valkey.set('test', 'ping')
+        await valkey.set(CACHE_KEYS.TEST_KEY, CACHE_KEYS.TEST_VALUE)
         logger.info('ping')
       }
-      const response = { success: true, message: 'pong' }
+      const response = { success: true, message: ERROR_MESSAGES.SUCCESS_RESPONSE_MESSAGE }
       const parsedResponse = healthcheckResponseSchema.safeParse(response)
       if (!parsedResponse.success) {
-        return reply.status(500).send({ success: false, message: parsedResponse.error })
+        return reply.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({ success: false, message: parsedResponse.error })
       }
       reply.send(parsedResponse.data)
     }
@@ -57,14 +58,14 @@ async function testRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const parsedBody = identityCountBodySchema.safeParse(request.body)
       if (!parsedBody.success) {
-        return reply.status(400).send({ success: false, message: parsedBody.error })
+        return reply.status(HTTP_STATUS.BAD_REQUEST).send({ success: false, message: parsedBody.error })
       }
       const { amount } = parsedBody.data
-      await sleep(700)
+      await sleep(TIMEOUTS.IDENTITY_COUNT_DELAY)
       const response = { success: true, amount }
       const parsedResponse = identityCountResponseSchema.safeParse(response)
       if (!parsedResponse.success) {
-        return reply.status(500).send({ success: false, message: parsedResponse.error })
+        return reply.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({ success: false, message: parsedResponse.error })
       }
       reply.send(parsedResponse.data)
     }

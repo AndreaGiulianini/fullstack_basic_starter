@@ -1,13 +1,14 @@
 import { ecsFormat } from '@elastic/ecs-pino-format'
 import pino from 'pino'
 import pinoElastic from 'pino-elasticsearch'
+import { TIMEOUTS } from '../constants'
 
 const streamToElastic = pinoElastic({
   index: 'info',
   node: `http://${process.env.ELASTICSEARCH_HOST}:${process.env.ELASTICSEARCH_PORT}`,
   opType: 'index',
   esVersion: 8,
-  flushBytes: 1000
+  flushBytes: TIMEOUTS.ELASTICSEARCH_FLUSH_BYTES
 })
 
 const level = 'trace'

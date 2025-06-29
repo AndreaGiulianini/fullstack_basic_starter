@@ -1,7 +1,7 @@
 import jwt from '@fastify/jwt'
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import fp from 'fastify-plugin'
-import { SECURITY } from '../constants'
+import { CACHE_KEYS, ERROR_MESSAGES, SECURITY } from '../constants'
 import type {
   GenerateTokensFunction,
   JWTPayload,
@@ -28,25 +28,25 @@ export default fp(async (fastify: FastifyInstance) => {
   const generateTokens: GenerateTokensFunction = async (user: JWTPayload): Promise<TokenPair> => {
     const accessToken = fastify.jwt.sign(user, { expiresIn: SECURITY.TOKEN_EXPIRY })
     const refreshToken = fastify.jwt.sign(user, { expiresIn: SECURITY.REFRESH_TOKEN_EXPIRY })
-    await valkey.set(`refresh_${user.id}`, refreshToken)
+    await valkey.set(`${CACHE_KEYS.REFRESH_TOKEN_PREFIX}${user.id}`, refreshToken)
     return { accessToken, refreshToken }
   }
 
   const verifyRefreshToken: VerifyRefreshTokenFunction = async (refreshToken: string): Promise<JWTPayload> => {
     try {
       const decoded = fastify.jwt.verify<JWTPayload>(refreshToken)
-      const storedToken = await valkey.get(`refresh_${decoded.id}`)
+      const storedToken = await valkey.get(`${CACHE_KEYS.REFRESH_TOKEN_PREFIX}${decoded.id}`)
       if (storedToken !== refreshToken) {
-        throw new Error('Invalid refresh token')
+        throw new Error(ERROR_MESSAGES.INVALID_REFRESH_TOKEN)
       }
       return decoded
     } catch (err) {
-      throw new Error(`Invalid refresh token ${err}`)
+      throw new Error(`${ERROR_MESSAGES.INVALID_REFRESH_TOKEN} ${err}`)
     }
   }
 
   const revokeRefreshToken: RevokeRefreshTokenFunction = async (userId: string): Promise<void> => {
-    await valkey.del(`refresh_${userId}`)
+    await valkey.del(`${CACHE_KEYS.REFRESH_TOKEN_PREFIX}${userId}`)
   }
 
   fastify.decorate('authenticate', authenticate)
