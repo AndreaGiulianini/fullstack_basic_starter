@@ -21,7 +21,10 @@ export default fp(async (fastify: FastifyInstance) => {
     try {
       await request.jwtVerify()
     } catch (err) {
-      reply.send({ success: false, message: err })
+      reply.code(401).send({ 
+        success: false, 
+        message: ERROR_MESSAGES.AUTHENTICATION_FAILED 
+      })
     }
   }
 

@@ -35,6 +35,7 @@ export type {
   DeleteUserFunction,
   GetUserFunction,
   SafeUser,
+  SafeUserApi,
   UpdateUserData,
   UpdateUserFunction,
   User,

@@ -19,6 +19,14 @@ export interface SafeUser {
   createdAt: Date
 }
 
+// API-specific user type with ISO string dates (for JSON serialization)
+export interface SafeUserApi {
+  id: string
+  email: string
+  name: string | null
+  createdAt: string
+}
+
 export interface CreateUserData {
   name: string
   email: string

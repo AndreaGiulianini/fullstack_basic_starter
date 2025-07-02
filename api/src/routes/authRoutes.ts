@@ -74,8 +74,7 @@ async function authRoutes(fastify: FastifyInstance) {
         throw new AuthenticationError('Unauthorized')
       }
       const userProfile = await profile(user.id)
-      const response: ProfileResponse = { success: true, user: userProfile }
-      return reply.send(response)
+      return reply.send({ success: true, user: userProfile })
     }
   })
 }
