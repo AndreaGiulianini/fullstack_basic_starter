@@ -2,16 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { ZodError } from 'zod/v4'
 import { ERROR_MESSAGES, HTTP_STATUS, JWT_ERROR_NAMES } from '../constants'
 import { AppError } from '../errors/appError'
-
-interface ErrorResponse {
-  success: false
-  error: {
-    message: string
-    statusCode: number
-    timestamp: string
-    path: string
-  }
-}
+import type { ErrorResponse } from '../types/common'
 
 // Tipo per errori che potrebbero avere statusCode
 interface ErrorWithStatusCode {
@@ -61,6 +52,7 @@ export const errorHandler = async (error: Error, request: FastifyRequest, reply:
     success: false,
     error: {
       message,
+      code: error.name || 'UNKNOWN_ERROR',
       statusCode,
       timestamp,
       path

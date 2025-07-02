@@ -1,7 +1,7 @@
 import swagger from '@fastify/swagger'
 import scalar from '@scalar/fastify-api-reference'
 import Fastify from 'fastify'
-import { API_DOCS, MESSAGES, SECURITY_DEFINITIONS, SERVER } from './constants'
+import { API_DOCS, ERROR_MESSAGES, SECURITY_DEFINITIONS, SERVER } from './constants'
 import errorHandlerPlugin from './middleware/errorHandler'
 import authRoutes from './routes/authRoutes'
 import testRoutes from './routes/testRoutes'
@@ -50,7 +50,7 @@ app.register(userRoutes)
 const startServer = async () => {
   try {
     await app.listen({ port: SERVER.PORT, host: SERVER.HOST })
-    console.log(MESSAGES.SERVER_RUNNING)
+    console.log(ERROR_MESSAGES.SERVER_RUNNING)
   } catch (err) {
     app.log.error(err)
     process.exit(1)

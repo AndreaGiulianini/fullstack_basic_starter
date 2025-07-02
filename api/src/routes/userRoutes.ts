@@ -8,8 +8,8 @@ import {
   type UserParams,
   userParamsSchema
 } from '../schemas'
-import { sendSuccess, validateBody, validateParams } from '../utils/routeHelpers'
 import { toFastifySchema } from '../utils/schemaHelper'
+import { validateBody, validateParams } from '../utils/validation'
 
 async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/api/users/:userId', {
@@ -24,7 +24,7 @@ async function userRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const { userId }: UserParams = validateParams(userParamsSchema, request.params)
       const user = await getUserHandler(userId)
-      return sendSuccess(reply, user)
+      return reply.send({ success: true, data: user })
     }
   })
 
@@ -40,7 +40,7 @@ async function userRoutes(fastify: FastifyInstance) {
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const { name, email, password }: CreateUserBody = validateBody(createUserBodySchema, request.body)
       const user = await createUserHandler(name, email, password)
-      return sendSuccess(reply, user, 'User created successfully')
+      return reply.send({ success: true, data: user, message: 'User created successfully' })
     }
   })
 }

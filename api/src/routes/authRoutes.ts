@@ -14,8 +14,8 @@ import {
   refreshTokenResponseSchema
 } from '../schemas'
 import type { AuthenticatedFastifyRequest } from '../types/fastify'
-import { validateBody } from '../utils/routeHelpers'
 import { toFastifySchema } from '../utils/schemaHelper'
+import { validateBody } from '../utils/validation'
 
 async function authRoutes(fastify: FastifyInstance) {
   fastify.post('/api/login', {
