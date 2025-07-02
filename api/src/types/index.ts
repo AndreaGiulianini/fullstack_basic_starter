@@ -46,9 +46,7 @@ export type {
 export type {
   AuthenticatedFastifyRequest,
   AuthenticatedPreHandler,
-  AuthenticatedRouteHandler,
   PreHandler,
-  RouteHandler,
   RouteOptions,
   RouteSchema
 } from './fastify'

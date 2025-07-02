@@ -36,33 +36,6 @@ export const validateUUID = (uuid: string, fieldName = 'id'): string => {
 }
 
 /**
- * Validates multiple fields at once
- */
-export const validateFields = <T extends Record<string, unknown>>(
-  data: T,
-  validators: Partial<Record<keyof T, (value: unknown) => unknown>>
-): T => {
-  const validatedData = { ...data }
-  const errors: string[] = []
-
-  for (const [field, validator] of Object.entries(validators)) {
-    if (validator && field in data) {
-      try {
-        validatedData[field as keyof T] = validator(data[field as keyof T]) as T[keyof T]
-      } catch (error) {
-        errors.push(`${field}: ${error instanceof Error ? error.message : 'Validation failed'}`)
-      }
-    }
-  }
-
-  if (errors.length > 0) {
-    throw new ValidationError(`Validation failed: ${errors.join(', ')}`)
-  }
-
-  return validatedData
-}
-
-/**
  * Sanitizes and validates common input data
  */
 export const sanitizeInput = {

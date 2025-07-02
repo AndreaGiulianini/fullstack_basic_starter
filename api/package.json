@@ -25,12 +25,12 @@
     "pg": "^8.16.3",
     "pino": "^9.7.0",
     "pino-elasticsearch": "^8.1.0",
-    "zod": "^4.0.0-beta.20250505T195954"
+    "zod": "^3.25.68"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
     "@types/bcrypt": "^5.0.2",
-    "@types/node": "^24.0.7",
+    "@types/node": "^24.0.10",
     "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.4",
     "tsx": "^4.20.3",

@@ -6,42 +6,42 @@ import {
   createUserResponseSchema,
   getUserResponseSchema,
   type UserParams,
-  userParamsSchema,
-  z
+  userParamsSchema
 } from '../schemas'
-import { routeHandler, sendSuccess, validateBody, validateParams } from '../utils/routeHelpers'
+import { sendSuccess, validateBody, validateParams } from '../utils/routeHelpers'
+import { toFastifySchema } from '../utils/schemaHelper'
 
 async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/api/users/:userId', {
     schema: {
       description: 'Get a user by ID',
       tags: ['User'],
-      params: z.toJSONSchema(userParamsSchema),
+      params: toFastifySchema(userParamsSchema),
       response: {
-        200: z.toJSONSchema(getUserResponseSchema)
+        200: toFastifySchema(getUserResponseSchema)
       }
     },
-    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+    handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const { userId }: UserParams = validateParams(userParamsSchema, request.params)
       const user = await getUserHandler(userId)
       return sendSuccess(reply, user)
-    })
+    }
   })
 
   fastify.post('/api/users', {
     schema: {
       description: 'Create a User',
       tags: ['User'],
-      body: z.toJSONSchema(createUserBodySchema),
+      body: toFastifySchema(createUserBodySchema),
       response: {
-        200: z.toJSONSchema(createUserResponseSchema)
+        200: toFastifySchema(createUserResponseSchema)
       }
     },
-    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+    handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const { name, email, password }: CreateUserBody = validateBody(createUserBodySchema, request.body)
       const user = await createUserHandler(name, email, password)
       return sendSuccess(reply, user, 'User created successfully')
-    })
+    }
   })
 }
 

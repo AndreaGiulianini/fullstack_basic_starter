@@ -11,40 +11,40 @@ import {
   profileResponseSchema,
   type RefreshTokenBody,
   refreshTokenBodySchema,
-  refreshTokenResponseSchema,
-  z
+  refreshTokenResponseSchema
 } from '../schemas'
 import type { AuthenticatedFastifyRequest } from '../types/fastify'
-import { routeHandler, validateBody } from '../utils/routeHelpers'
+import { validateBody } from '../utils/routeHelpers'
+import { toFastifySchema } from '../utils/schemaHelper'
 
 async function authRoutes(fastify: FastifyInstance) {
   fastify.post('/api/login', {
     schema: {
-      body: z.toJSONSchema(loginBodySchema),
+      body: toFastifySchema(loginBodySchema),
       response: {
-        200: z.toJSONSchema(loginResponseSchema)
+        200: toFastifySchema(loginResponseSchema)
       },
       tags: ['Auth'],
       description: 'Get a JWT Token'
     },
-    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+    handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const { email, password }: LoginBody = validateBody(loginBodySchema, request.body)
       const tokens = await login(email, password, fastify.generateTokens)
       const response: LoginResponse = { success: true, ...tokens }
       return reply.send(response)
-    })
+    }
   })
 
   fastify.post('/api/refresh-token', {
     schema: {
-      body: z.toJSONSchema(refreshTokenBodySchema),
+      body: toFastifySchema(refreshTokenBodySchema),
       response: {
-        200: z.toJSONSchema(refreshTokenResponseSchema)
+        200: toFastifySchema(refreshTokenResponseSchema)
       },
       tags: ['Auth'],
       description: 'Refresh JWT Token'
     },
-    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+    handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const { refreshToken: refreshTokenValue }: RefreshTokenBody = validateBody(refreshTokenBodySchema, request.body)
       const tokens = await refreshToken(
         refreshTokenValue,
@@ -54,20 +54,20 @@ async function authRoutes(fastify: FastifyInstance) {
       )
       const response: LoginResponse = { success: true, ...tokens }
       return reply.send(response)
-    })
+    }
   })
 
   fastify.get('/api/profile', {
     schema: {
       response: {
-        200: z.toJSONSchema(profileResponseSchema)
+        200: toFastifySchema(profileResponseSchema)
       },
       tags: ['Auth'],
       description: 'Get a user by JWT',
       security: [{ bearerAuth: [] }]
     },
     preHandler: [fastify.authenticate],
-    handler: routeHandler(async (request: FastifyRequest, reply: FastifyReply) => {
+    handler: async (request: FastifyRequest, reply: FastifyReply) => {
       const authenticatedRequest = request as AuthenticatedFastifyRequest
       const { user }: { user: JWTPayload } = authenticatedRequest
       if (!user || !user.id) {
@@ -76,7 +76,7 @@ async function authRoutes(fastify: FastifyInstance) {
       const userProfile = await profile(user.id)
       const response: ProfileResponse = { success: true, user: userProfile }
       return reply.send(response)
-    })
+    }
   })
 }
 

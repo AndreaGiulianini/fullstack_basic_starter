@@ -10,47 +10,46 @@ import type {
   VerifyRefreshTokenFunction
 } from '../types/auth'
 import db from '../utils/db'
-import { asyncHandler } from '../utils/errorHelpers'
 import { sanitizeInput } from '../utils/validation'
 
-export const login = asyncHandler(
-  async (email: string, password: string, generateTokens: GenerateTokensFunction): Promise<TokenPair> => {
-    // Validate and sanitize email
-    const validatedEmail = sanitizeInput.email(email)
+export const login = async (
+  email: string,
+  password: string,
+  generateTokens: GenerateTokensFunction
+): Promise<TokenPair> => {
+  // Validate and sanitize email
+  const validatedEmail = sanitizeInput.email(email)
 
-    const [user] = await db.select().from(users).where(eq(users.email, validatedEmail)).limit(1)
-    if (!user) {
-      throw new NotFoundError('User not found')
-    }
-
-    // Verify password
-    const match = await bcrypt.compare(password, user.password)
-    if (!match) {
-      throw new AuthenticationError('Invalid credentials')
-    }
-
-    // Generate tokens
-    const jwtPayload: JWTPayload = { id: user.id, email: validatedEmail }
-    const tokens = await generateTokens(jwtPayload)
-    return tokens
+  const [user] = await db.select().from(users).where(eq(users.email, validatedEmail)).limit(1)
+  if (!user) {
+    throw new NotFoundError('User not found')
   }
-)
 
-export const refreshToken = asyncHandler(
-  async (
-    refreshToken: string,
-    verifyRefreshToken: VerifyRefreshTokenFunction,
-    revokeRefreshToken: RevokeRefreshTokenFunction,
-    generateTokens: GenerateTokensFunction
-  ): Promise<TokenPair> => {
-    const decoded = await verifyRefreshToken(refreshToken)
-    await revokeRefreshToken(decoded.id) // Revoke old refresh token
-    const tokens = await generateTokens(decoded)
-    return tokens
+  // Verify password
+  const match = await bcrypt.compare(password, user.password)
+  if (!match) {
+    throw new AuthenticationError('Invalid credentials')
   }
-)
 
-export const profile = asyncHandler(async (userId: string) => {
+  // Generate tokens
+  const jwtPayload: JWTPayload = { id: user.id, email: validatedEmail }
+  const tokens = await generateTokens(jwtPayload)
+  return tokens
+}
+
+export const refreshToken = async (
+  refreshToken: string,
+  verifyRefreshToken: VerifyRefreshTokenFunction,
+  revokeRefreshToken: RevokeRefreshTokenFunction,
+  generateTokens: GenerateTokensFunction
+): Promise<TokenPair> => {
+  const decoded = await verifyRefreshToken(refreshToken)
+  await revokeRefreshToken(decoded.id) // Revoke old refresh token
+  const tokens = await generateTokens(decoded)
+  return tokens
+}
+
+export const profile = async (userId: string) => {
   // Validate UUID
   const validatedUserId = sanitizeInput.uuid(userId)
 
@@ -64,4 +63,4 @@ export const profile = asyncHandler(async (userId: string) => {
     email: userProfile.email,
     name: userProfile.name
   }
-})
+}

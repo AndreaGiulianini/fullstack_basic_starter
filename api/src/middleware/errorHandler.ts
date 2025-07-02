@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { ZodError } from 'zod'
+import { ZodError } from 'zod/v4'
 import { ERROR_MESSAGES, HTTP_STATUS, JWT_ERROR_NAMES } from '../constants'
 import { AppError } from '../errors/appError'
 

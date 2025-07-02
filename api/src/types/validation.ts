@@ -1,4 +1,4 @@
-import type { ZodIssue } from 'zod'
+import type { ZodIssue } from 'zod/v4'
 
 // Validation error details types
 export interface ValidationErrorDetail {

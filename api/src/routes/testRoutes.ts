@@ -1,8 +1,9 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import logger from 'src/utils/logger'
 import valkey from 'src/utils/valkey'
-import { z } from 'zod'
+import * as z from 'zod/v4'
 import { CACHE_KEYS, ERROR_MESSAGES, HTTP_STATUS, TIMEOUTS } from '../constants'
+import { toFastifySchema } from '../utils/schemaHelper'
 
 export const identityCountBodySchema = z.object({
   amount: z.number({ error: 'Amount is required' })
@@ -28,7 +29,7 @@ async function testRoutes(fastify: FastifyInstance) {
       description: 'Test Fastify',
       tags: ['Test'],
       response: {
-        200: z.toJSONSchema(healthcheckResponseSchema)
+        200: toFastifySchema(healthcheckResponseSchema)
       }
     },
     handler: async (_request: FastifyRequest, reply: FastifyReply) => {
@@ -50,9 +51,9 @@ async function testRoutes(fastify: FastifyInstance) {
     schema: {
       description: 'Test Redux',
       tags: ['Test'],
-      body: z.toJSONSchema(identityCountBodySchema),
+      body: toFastifySchema(identityCountBodySchema),
       response: {
-        200: z.toJSONSchema(identityCountResponseSchema)
+        200: toFastifySchema(identityCountResponseSchema)
       }
     },
     handler: async (request: FastifyRequest, reply: FastifyReply) => {

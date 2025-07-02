@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { z } from 'zod'
+import * as z from 'zod/v4'
 import { BOOLEAN_STRINGS, MESSAGES, SECURITY } from '../constants'
 import { passwordSchema } from './common'
 

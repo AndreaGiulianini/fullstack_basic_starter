@@ -1,8 +1,3 @@
-// Export all common schemas
-
-// Re-export zod for convenience
-export { z } from 'zod'
-
 // Export all auth schemas
 export * from './auth'
 export * from './common'

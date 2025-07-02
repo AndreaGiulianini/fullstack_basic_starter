@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from 'zod/v4'
 import { emailSchema, passwordSchema, uuidSchema } from './common'
 
 // JWT Payload schema

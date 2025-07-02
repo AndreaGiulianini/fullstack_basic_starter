@@ -6,26 +6,6 @@ export interface AuthenticatedFastifyRequest extends FastifyRequest {
   user: JWTPayload
 }
 
-// Route handler types
-export type RouteHandler<TParams = unknown, TQuery = unknown, TBody = unknown, TResponse = unknown> = (
-  request: FastifyRequest<{
-    Params: TParams
-    Querystring: TQuery
-    Body: TBody
-  }>,
-  reply: FastifyReply
-) => Promise<TResponse>
-
-export type AuthenticatedRouteHandler<TParams = unknown, TQuery = unknown, TBody = unknown, TResponse = unknown> = (
-  request: AuthenticatedFastifyRequest &
-    FastifyRequest<{
-      Params: TParams
-      Querystring: TQuery
-      Body: TBody
-    }>,
-  reply: FastifyReply
-) => Promise<TResponse>
-
 // Pre-handler types
 export type PreHandler = (request: FastifyRequest, reply: FastifyReply) => Promise<void>
 
@@ -51,7 +31,6 @@ export interface RouteOptions<TBody = unknown, TParams = unknown, TQuery = unkno
   url: string
   schema?: RouteSchema<TBody, TParams, TQuery, TResponse>
   preHandler?: PreHandler | PreHandler[]
-  handler: RouteHandler<TParams, TQuery, TBody, TResponse>
 }
 
 // Note: FastifyInstance extensions are declared in utils/jwt.ts

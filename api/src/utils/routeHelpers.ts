@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
-import type { ZodSchema } from 'zod'
+import type { FastifyReply } from 'fastify'
+import type { ZodSchema } from 'zod/v4'
 import { ERROR_MESSAGES } from '../constants'
 import { ValidationError } from '../errors/appError'
 import type { SuccessResponse } from '../types/common'
@@ -35,28 +35,6 @@ export const validateQuery = <T>(schema: ZodSchema<T>, query: unknown): T => {
     throw new ValidationError(ERROR_MESSAGES.REQUEST_QUERY_VALIDATION_FAILED)
   }
   return result.data
-}
-
-/**
- * Route handler wrapper that automatically handles errors and sends success responses
- */
-export const routeHandler = <TResult = unknown>(
-  handler: (request: FastifyRequest, reply: FastifyReply) => Promise<TResult>
-) => {
-  return async (request: FastifyRequest, reply: FastifyReply) => {
-    const result = await handler(request, reply)
-
-    // If the result is already sent (reply.sent is true), don't send again
-    if (reply.sent) {
-      return
-    }
-
-    // Send success response
-    reply.send({
-      success: true,
-      data: result
-    })
-  }
 }
 
 /**
