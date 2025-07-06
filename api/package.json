@@ -25,7 +25,7 @@
     "pg": "^8.16.3",
     "pino": "^9.7.0",
     "pino-elasticsearch": "^8.1.0",
-    "zod": "^3.25.68"
+    "zod": "^3.25.74"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
