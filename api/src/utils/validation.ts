@@ -7,9 +7,7 @@ import { emailSchema, passwordSchema, uuidSchema } from '../schemas'
  * Matches Zod's SafeParseResult structure
  */
 interface ParseableSchema<T> {
-  safeParse: (data: unknown) => 
-    | { success: true; data: T }
-    | { success: false; error: unknown }
+  safeParse: (data: unknown) => { success: true; data: T } | { success: false; error: unknown }
 }
 
 /**

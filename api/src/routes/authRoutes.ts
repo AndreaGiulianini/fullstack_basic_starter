@@ -7,7 +7,6 @@ import {
   type LoginResponse,
   loginBodySchema,
   loginResponseSchema,
-  type ProfileResponse,
   profileResponseSchema,
   type RefreshTokenBody,
   refreshTokenBodySchema,

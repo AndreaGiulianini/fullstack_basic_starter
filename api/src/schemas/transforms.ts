@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import * as z from 'zod/v4'
+import * as z from 'zod'
 import { BOOLEAN_STRINGS, ERROR_MESSAGES, SECURITY } from '../constants'
 import { emailSchema, passwordSchema } from './common'
 
@@ -54,8 +54,12 @@ export const flexibleBooleanSchema = z.union([
   z.boolean(),
   z.string().transform((str) => {
     const lower = str.toLowerCase().trim()
-    if ((BOOLEAN_STRINGS.TRUE_VALUES as readonly string[]).includes(lower)) return true
-    if ((BOOLEAN_STRINGS.FALSE_VALUES as readonly string[]).includes(lower)) return false
+    if ((BOOLEAN_STRINGS.TRUE_VALUES as readonly string[]).includes(lower)) {
+      return true
+    }
+    if ((BOOLEAN_STRINGS.FALSE_VALUES as readonly string[]).includes(lower)) {
+      return false
+    }
     throw new Error(ERROR_MESSAGES.INVALID_BOOLEAN_VALUE)
   }),
   z.number().transform((num) => Boolean(num))

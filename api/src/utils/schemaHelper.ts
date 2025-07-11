@@ -1,5 +1,5 @@
-import type { ZodSchema } from 'zod/v4'
-import * as z from 'zod/v4'
+import type { ZodSchema } from 'zod'
+import * as z from 'zod'
 
 // Type definition for JSON Schema objects
 interface JsonSchemaObject {

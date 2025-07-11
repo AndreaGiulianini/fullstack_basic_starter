@@ -1,4 +1,4 @@
-import * as z from 'zod/v4'
+import * as z from 'zod'
 import { emailSchema, nameSchema, paginationSchema, passwordSchema, timestampSchema, uuidSchema } from './common'
 
 // Base user schema (matches database)

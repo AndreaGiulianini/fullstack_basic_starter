@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import logger from 'src/utils/logger'
 import valkey from 'src/utils/valkey'
-import * as z from 'zod/v4'
+import * as z from 'zod'
 import { CACHE_KEYS, ERROR_MESSAGES, HTTP_STATUS, TIMEOUTS } from '../constants'
 import { toFastifySchema } from '../utils/schemaHelper'
 

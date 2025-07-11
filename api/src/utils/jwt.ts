@@ -20,10 +20,10 @@ export default fp(async (fastify: FastifyInstance) => {
   const authenticate: PreHandler = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       await request.jwtVerify()
-    } catch (err) {
-      reply.code(401).send({ 
-        success: false, 
-        message: ERROR_MESSAGES.AUTHENTICATION_FAILED 
+    } catch {
+      reply.code(401).send({
+        success: false,
+        message: ERROR_MESSAGES.AUTHENTICATION_FAILED
       })
     }
   }

@@ -1,5 +1,5 @@
 declare global {
-  namespace NodeJS {
+  namespace NodeJs {
     interface ProcessEnv {
       ENV: string
       DB_HOST: string

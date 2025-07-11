@@ -1,4 +1,4 @@
-import * as z from 'zod/v4'
+import * as z from 'zod'
 
 // Common field schemas
 export const emailSchema = z.email('Invalid email format').toLowerCase()
