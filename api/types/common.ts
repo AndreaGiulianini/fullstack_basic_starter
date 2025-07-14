@@ -69,12 +69,3 @@ export interface UploadedFile {
   size: number
   path: string
 }
-
-// Environment types
-export interface EnvironmentConfig {
-  ENV: 'development' | 'production' | 'test'
-  PORT: number
-  DATABASE_URL: string
-  JWT_SECRET: string
-  REDIS_URL?: string
-}

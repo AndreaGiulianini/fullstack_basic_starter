@@ -17,7 +17,6 @@ export type {
 export type {
   ApiResponse,
   DatabaseConfig,
-  EnvironmentConfig,
   ErrorResponse,
   FileUploadOptions,
   PaginatedResponse,

@@ -12,6 +12,7 @@ declare global {
       VALKEY_PORT: number
       ELASTICSEARCH_HOST: string
       ELASTICSEARCH_PORT: number
+      JWT_SECRET: string
     }
   }
 }
