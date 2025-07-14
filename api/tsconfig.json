@@ -10,12 +10,12 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@models/*": ["src/models/*"]
+      "@models/*": ["models/*"]
     }
   },
   "watchOptions": {
     "watchFile": "dynamicPriorityPolling"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["**/*.ts", "app.ts"],
   "exclude": ["node_modules"]
 }

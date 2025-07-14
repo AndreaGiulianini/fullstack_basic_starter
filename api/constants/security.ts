@@ -1,6 +1,6 @@
 // Security Configuration
 export const SECURITY = {
-  JWT_SECRET: 'superdupersecret', // TODO: Move to environment variable
+  JWT_SECRET: process.env.JWT_SECRET || 'superdupersecret',
   BCRYPT_SALT_ROUNDS: 10,
   TOKEN_EXPIRY: '15m',
   REFRESH_TOKEN_EXPIRY: '7d'

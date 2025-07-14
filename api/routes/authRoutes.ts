@@ -1,5 +1,5 @@
+import { login, profile, refreshToken } from 'controllers/authController'
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { login, profile, refreshToken } from 'src/controllers/authController'
 import { AuthenticationError } from '../errors/appError'
 import {
   type JWTPayload,
