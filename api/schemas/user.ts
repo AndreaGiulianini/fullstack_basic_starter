@@ -1,18 +1,18 @@
 import * as z from 'zod'
 import {
   emailSchema,
+  emailSchemaForDocs,
   idParamsSchema,
+  idParamsSchemaForDocs,
   nameSchema,
+  nameSchemaForDocs,
   paginatedResponseSchema,
   paginationSchema,
   passwordSchema,
   successResponseSchema,
   textIdSchema,
-  timestampSchema,
-  emailSchemaForDocs,
-  nameSchemaForDocs,
   textIdSchemaForDocs,
-  idParamsSchemaForDocs
+  timestampSchema
 } from './common'
 
 // =============================================================================

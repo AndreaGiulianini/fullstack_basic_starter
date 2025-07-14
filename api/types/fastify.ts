@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import type { AuthenticatedUser } from './auth'
 
 // =============================================================================
@@ -149,7 +149,10 @@ export interface PluginOptions {
 }
 
 // Plugin function type
-export type FastifyPlugin<T extends PluginOptions = PluginOptions> = (fastify: any, options: T) => Promise<void>
+export type FastifyPlugin<T extends PluginOptions = PluginOptions> = (
+  fastify: FastifyInstance,
+  options: T
+) => Promise<void>
 
 // =============================================================================
 // UTILITY TYPES

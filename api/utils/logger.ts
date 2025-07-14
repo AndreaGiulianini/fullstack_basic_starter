@@ -237,7 +237,7 @@ const logUtils = {
     entityType?: string
     entityId?: string
     action?: string
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   }) => {
     logger.info(
       {

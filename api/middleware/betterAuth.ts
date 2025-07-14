@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import { AuthenticationError } from '../errors/appError'
 import type { AuthenticatedUser } from '../types/auth'
+import type { AuthenticatedFastifyRequest } from '../types/fastify'
 import { auth } from '../utils/betterAuth'
 import { logUtils } from '../utils/logger'
 
@@ -8,13 +9,13 @@ import { logUtils } from '../utils/logger'
 // AUTHENTICATION MIDDLEWARE
 // =============================================================================
 
-export const betterAuthMiddleware = async (request: FastifyRequest, reply: FastifyReply) => {
+export const betterAuthMiddleware = async (request: FastifyRequest, _reply: FastifyReply) => {
   const startTime = Date.now()
 
   try {
     // Get session from better-auth with timeout
     const sessionPromise = auth.api.getSession({
-      headers: request.headers as any
+      headers: request.headers as unknown as Headers
     })
 
     // Add timeout to prevent hanging requests
@@ -22,7 +23,9 @@ export const betterAuthMiddleware = async (request: FastifyRequest, reply: Fasti
       setTimeout(() => reject(new Error('Authentication timeout')), 5000)
     })
 
-    const session = (await Promise.race([sessionPromise, timeoutPromise])) as any
+    const session = (await Promise.race([sessionPromise, timeoutPromise])) as {
+      user: { id: string; email: string; name?: string }
+    } | null
 
     if (!session) {
       // Log failed authentication attempt
@@ -51,7 +54,7 @@ export const betterAuthMiddleware = async (request: FastifyRequest, reply: Fasti
     }
 
     // Attach user to request for compatibility with existing code
-    const authenticatedRequest = request as any
+    const authenticatedRequest = request as AuthenticatedFastifyRequest
     authenticatedRequest.user = {
       id: session.user.id,
       email: session.user.email,
@@ -73,7 +76,7 @@ export const betterAuthMiddleware = async (request: FastifyRequest, reply: Fasti
     logUtils.logPerformance({
       operation: 'authentication',
       duration,
-      requestId: (request as any).requestId
+      requestId: (request as AuthenticatedFastifyRequest).requestId
     })
   } catch (error) {
     // Log authentication failure
@@ -134,7 +137,7 @@ export const requireRole = (requiredRole: 'admin' | 'user') => {
     // First ensure user is authenticated
     await betterAuthMiddleware(request, reply)
 
-    const authenticatedRequest = request as any
+    const authenticatedRequest = request as AuthenticatedFastifyRequest
     const user = authenticatedRequest.user
 
     // For now, we'll implement a simple role check

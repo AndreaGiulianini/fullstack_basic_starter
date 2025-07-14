@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { emailSchema, textIdSchema, emailSchemaForDocs, textIdSchemaForDocs } from './common'
+import { emailSchema, emailSchemaForDocs, textIdSchema, textIdSchemaForDocs } from './common'
 
 // Profile schemas
 export const profileResponseSchema = z.object({

@@ -1,3 +1,4 @@
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import { ERROR_MESSAGES } from '../constants'
 import { ValidationError } from '../errors/appError'
 import { emailSchema, passwordSchema, uuidSchema } from '../schemas'
@@ -79,32 +80,66 @@ export const createValidationMiddleware = <T>(
   schema: ParseableSchema<T>,
   target: 'body' | 'params' | 'query' = 'body'
 ) => {
-  return async (request: any, reply: any) => {
-    try {
-      const dataToValidate = target === 'body' ? request.body : target === 'params' ? request.params : request.query
+  return async (request: FastifyRequest, _reply: FastifyReply) => {
+    const dataToValidate = getDataToValidate(request, target)
 
-      const result = schema.safeParse(dataToValidate)
-      if (!result.success) {
-        const errorMessage =
-          target === 'body'
-            ? ERROR_MESSAGES.REQUEST_BODY_VALIDATION_FAILED
-            : target === 'params'
-              ? ERROR_MESSAGES.REQUEST_PARAMS_VALIDATION_FAILED
-              : ERROR_MESSAGES.REQUEST_QUERY_VALIDATION_FAILED
-        throw new ValidationError(errorMessage)
-      }
-
-      // Attach validated data to request
-      if (target === 'body') {
-        request.validatedBody = result.data
-      } else if (target === 'params') {
-        request.validatedParams = result.data
-      } else {
-        request.validatedQuery = result.data
-      }
-    } catch (error) {
-      throw error
+    const result = schema.safeParse(dataToValidate)
+    if (!result.success) {
+      const errorMessage = getErrorMessage(target)
+      throw new ValidationError(errorMessage)
     }
+
+    // Attach validated data to request
+    attachValidatedData(request, result.data, target)
+  }
+}
+
+/**
+ * Helper function to get data to validate based on target
+ */
+const getDataToValidate = (request: FastifyRequest, target: 'body' | 'params' | 'query') => {
+  switch (target) {
+    case 'body':
+      return request.body
+    case 'params':
+      return request.params
+    case 'query':
+      return request.query
+    default:
+      return request.body
+  }
+}
+
+/**
+ * Helper function to get appropriate error message
+ */
+const getErrorMessage = (target: 'body' | 'params' | 'query') => {
+  switch (target) {
+    case 'body':
+      return ERROR_MESSAGES.REQUEST_BODY_VALIDATION_FAILED
+    case 'params':
+      return ERROR_MESSAGES.REQUEST_PARAMS_VALIDATION_FAILED
+    case 'query':
+      return ERROR_MESSAGES.REQUEST_QUERY_VALIDATION_FAILED
+    default:
+      return ERROR_MESSAGES.REQUEST_BODY_VALIDATION_FAILED
+  }
+}
+
+/**
+ * Helper function to attach validated data to request
+ */
+const attachValidatedData = <T>(request: FastifyRequest, data: T, target: 'body' | 'params' | 'query') => {
+  switch (target) {
+    case 'body':
+      ;(request as FastifyRequest & { validatedBody: T }).validatedBody = data
+      break
+    case 'params':
+      ;(request as FastifyRequest & { validatedParams: T }).validatedParams = data
+      break
+    case 'query':
+      ;(request as FastifyRequest & { validatedQuery: T }).validatedQuery = data
+      break
   }
 }
 
@@ -177,9 +212,9 @@ export const sanitizeInput = {
 /**
  * Batch validation utility for multiple fields
  */
-export const validateMultiple = <T extends Record<string, any>>(
+export const validateMultiple = <T extends Record<string, unknown>>(
   data: T,
-  validators: Partial<Record<keyof T, (value: any) => any>>
+  validators: Partial<Record<keyof T, (value: unknown) => unknown>>
 ): T => {
   const validated = { ...data }
   const errors: ValidationErrorDetail[] = []
@@ -187,7 +222,7 @@ export const validateMultiple = <T extends Record<string, any>>(
   for (const [field, validator] of Object.entries(validators)) {
     if (validator && field in data) {
       try {
-        validated[field as keyof T] = validator(data[field as keyof T])
+        validated[field as keyof T] = validator(data[field as keyof T]) as T[keyof T]
       } catch (error) {
         errors.push({
           field: field,

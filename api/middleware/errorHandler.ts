@@ -3,6 +3,7 @@ import { ZodError } from 'zod'
 import { BETTER_AUTH_ERROR_NAMES, ERROR_MESSAGES, HTTP_STATUS } from '../constants'
 import { AppError } from '../errors/appError'
 import type { ErrorResponse } from '../types/common'
+import type { AuthenticatedFastifyRequest } from '../types/fastify'
 import type { ValidationDetails } from '../types/validation'
 
 // Enhanced error interface with more context
@@ -33,7 +34,7 @@ const generateRequestId = (): string => {
 const extractErrorContext = (request: FastifyRequest): ErrorContext => {
   return {
     requestId: generateRequestId(),
-    userId: (request as any).user?.id,
+    userId: (request as AuthenticatedFastifyRequest).user?.id,
     method: request.method,
     url: request.url,
     userAgent: request.headers['user-agent'],
@@ -131,7 +132,7 @@ export const errorHandler = async (error: Error, request: FastifyRequest, reply:
   }
 
   if (process.env.ENV !== 'production') {
-    ;(response.error as any).requestId = context.requestId
+    ;(response.error as ErrorResponse['error'] & { requestId?: string }).requestId = context.requestId
   }
 
   // Set security headers
@@ -147,15 +148,15 @@ export const errorHandlerPlugin = async (fastify: FastifyInstance) => {
 
   // Add request ID to all requests for tracing
   fastify.addHook('onRequest', async (request) => {
-    ;(request as any).requestId = generateRequestId()
+    ;(request as AuthenticatedFastifyRequest).requestId = generateRequestId()
   })
 
   // Add response time tracking
   fastify.addHook('onResponse', async (request, reply) => {
-    const responseTime = Date.now() - (request as any).startTime
+    const responseTime = Date.now() - ((request as AuthenticatedFastifyRequest).startTime || 0)
     request.log.info(
       {
-        requestId: (request as any).requestId,
+        requestId: (request as AuthenticatedFastifyRequest).requestId,
         method: request.method,
         url: request.url,
         statusCode: reply.statusCode,
@@ -167,7 +168,7 @@ export const errorHandlerPlugin = async (fastify: FastifyInstance) => {
 
   // Track request start time
   fastify.addHook('onRequest', async (request) => {
-    ;(request as any).startTime = Date.now()
+    ;(request as AuthenticatedFastifyRequest).startTime = Date.now()
   })
 }
 
