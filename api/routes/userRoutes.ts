@@ -1,29 +1,34 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { createUserHandler, getUserHandler } from '../controllers/userController'
+import { betterAuthMiddleware } from '../middleware/betterAuth'
 import {
   type CreateUserBody,
   createUserBodySchema,
-  createUserResponseSchema,
-  getUserResponseSchema,
+  createUserBodySchemaForDocs,
+  createUserResponseSchemaForDocs,
+  getUserResponseSchemaForDocs,
   type UserParams,
-  userParamsSchema
+  userParamsSchema,
+  userParamsSchemaForDocs
 } from '../schemas'
 import { toFastifySchema } from '../utils/schemaHelper'
 import { validateBody, validateParams } from '../utils/validation'
 
 async function userRoutes(fastify: FastifyInstance) {
-  fastify.get('/api/users/:userId', {
+  fastify.get('/api/users/:id', {
     schema: {
       description: 'Get a user by ID',
       tags: ['User'],
-      params: toFastifySchema(userParamsSchema),
+      params: toFastifySchema(userParamsSchemaForDocs),
       response: {
-        200: toFastifySchema(getUserResponseSchema)
-      }
+        200: toFastifySchema(getUserResponseSchemaForDocs)
+      },
+      security: [{ bearerAuth: [] }]
     },
+    preHandler: [betterAuthMiddleware],
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const { userId }: UserParams = validateParams(userParamsSchema, request.params)
-      const user = await getUserHandler(userId)
+      const { id }: UserParams = validateParams(userParamsSchema, request.params)
+      const user = await getUserHandler(id)
       return reply.send({ success: true, data: user })
     }
   })
@@ -32,9 +37,9 @@ async function userRoutes(fastify: FastifyInstance) {
     schema: {
       description: 'Create a User',
       tags: ['User'],
-      body: toFastifySchema(createUserBodySchema),
+      body: toFastifySchema(createUserBodySchemaForDocs),
       response: {
-        200: toFastifySchema(createUserResponseSchema)
+        200: toFastifySchema(createUserResponseSchemaForDocs)
       }
     },
     handler: async (request: FastifyRequest, reply: FastifyReply) => {

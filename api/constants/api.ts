@@ -1,3 +1,12 @@
+// Base URL Configuration
+export const BASE_URL = process.env.BASE_URL || 'http://localhost'
+
+// API Response Headers
+export const RESPONSE_HEADERS = {
+  CONTENT_TYPE: 'application/json',
+  CACHE_CONTROL: 'no-cache'
+} as const
+
 // API Documentation
 export const API_DOCS = {
   TITLE: 'Fastify API',
@@ -16,6 +25,6 @@ export const SECURITY_DEFINITIONS = {
     TYPE: 'apiKey',
     NAME: 'Authorization',
     IN: 'header',
-    DESCRIPTION: 'Enter JWT Bearer token **_only_**'
+    DESCRIPTION: 'Enter Bearer token **_only_**'
   }
 } as const

@@ -1,59 +1,71 @@
-import bcrypt from 'bcrypt'
 import type { InferSelectModel } from 'drizzle-orm'
 import { eq } from 'drizzle-orm'
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
-import { pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
-import { DATABASE, ERROR_MESSAGES, HTTP_STATUS, SECURITY } from '../constants'
+import { ERROR_MESSAGES, HTTP_STATUS } from '../constants'
 import { AppError, ConflictError } from '../errors/appError'
+import { user } from '../schemas/betterAuthSchema'
+import { auth } from '../utils/betterAuth'
+import type db from '../utils/db'
 import { sanitizeInput } from '../utils/validation'
 
-export const users = pgTable(DATABASE.TABLE_NAMES.USERS, {
-  id: uuid().defaultRandom().primaryKey(),
-  name: text(DATABASE.COLUMN_NAMES.NAME),
-  email: varchar(DATABASE.COLUMN_NAMES.EMAIL, { length: DATABASE.CONSTRAINTS.EMAIL_MAX_LENGTH }).notNull(),
-  password: varchar(DATABASE.COLUMN_NAMES.PASSWORD, { length: DATABASE.CONSTRAINTS.PASSWORD_MAX_LENGTH }).notNull(),
-  createdAt: timestamp(DATABASE.COLUMN_NAMES.CREATED_AT).notNull().defaultNow()
-})
+// Export the better-auth user table
+export const users = user
 
-export type User = InferSelectModel<typeof users>
+export type User = InferSelectModel<typeof user>
 
-export async function createUser(db: NodePgDatabase, name: string, email: string, password: string): Promise<User> {
+export async function createUser(dbInstance: typeof db, name: string, email: string, password: string): Promise<User> {
   // Validate and sanitize input using Zod schemas
   const validatedEmail = sanitizeInput.email(email)
   const validatedName = sanitizeInput.name(name)
   const validatedPassword = sanitizeInput.password(password)
 
   // Check if the user already exists
-  const existingUser = await db.select().from(users).where(eq(users.email, validatedEmail)).limit(1)
+  const existingUser = await dbInstance.select().from(user).where(eq(user.email, validatedEmail)).limit(1)
   if (existingUser.length > 0) {
     throw new ConflictError(ERROR_MESSAGES.USER_ALREADY_EXISTS)
   }
 
   try {
-    // Hash the password
-    const saltRounds = SECURITY.BCRYPT_SALT_ROUNDS
-    const hashedPassword = await bcrypt.hash(validatedPassword, saltRounds)
-
-    // Insert the new user
-    const [newUser] = await db
-      .insert(users)
-      .values({
+    // Use better-auth's sign-up API to create the user
+    const result = await auth.api.signUpEmail({
+      body: {
         name: validatedName,
         email: validatedEmail,
-        password: hashedPassword
-      })
-      .returning()
+        password: validatedPassword
+      }
+    })
 
-    return newUser
-  } catch (_error) {
+    if (!result.user) {
+      throw new AppError(ERROR_MESSAGES.DATABASE_OPERATION_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    }
+
+    // Convert the better-auth user to our User type
+    const userRecord: User = {
+      id: result.user.id,
+      name: result.user.name,
+      email: result.user.email,
+      emailVerified: result.user.emailVerified,
+      image: result.user.image || null,
+      createdAt: result.user.createdAt,
+      updatedAt: result.user.updatedAt
+    }
+
+    return userRecord
+  } catch (error) {
+    // If it's already our custom error, re-throw it
+    if (error instanceof AppError) {
+      throw error
+    }
     throw new AppError(ERROR_MESSAGES.DATABASE_OPERATION_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR)
   }
 }
 
-export async function getUser(db: NodePgDatabase, id: string): Promise<User | undefined> {
-  // Validate UUID
-  const validatedId = sanitizeInput.uuid(id)
+export async function getUser(dbInstance: typeof db, id: string): Promise<User | undefined> {
+  // Validate the ID (better-auth uses text IDs, not UUIDs)
+  const validatedId = id.trim()
+  if (!validatedId) {
+    throw new AppError(ERROR_MESSAGES.INVALID_REQUEST_DATA, HTTP_STATUS.BAD_REQUEST)
+  }
 
-  const [user] = await db.select().from(users).where(eq(users.id, validatedId)).limit(1)
-  return user
+  const [userRecord] = await dbInstance.select().from(user).where(eq(user.id, validatedId)).limit(1)
+  return userRecord
 }

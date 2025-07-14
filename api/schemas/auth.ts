@@ -1,39 +1,22 @@
 import * as z from 'zod'
-import { emailSchema, passwordSchema, uuidSchema } from './common'
-
-// JWT Payload schema
-export const jwtPayloadSchema = z.object({
-  id: uuidSchema,
-  email: emailSchema,
-  iat: z.number().optional(), // Issued at
-  exp: z.number().optional() // Expires at
-})
-
-// Login schemas
-export const loginBodySchema = z.object({
-  email: emailSchema,
-  password: z.string().min(1, 'Password is required')
-})
-
-export const loginResponseSchema = z.object({
-  success: z.literal(true),
-  accessToken: z.string().min(1, 'Access token is required'),
-  refreshToken: z.string().min(1, 'Refresh token is required')
-})
-
-// Refresh token schemas
-export const refreshTokenBodySchema = z.object({
-  refreshToken: z.string().min(1, 'Refresh token is required')
-})
-
-export const refreshTokenResponseSchema = loginResponseSchema
+import { emailSchema, textIdSchema, emailSchemaForDocs, textIdSchemaForDocs } from './common'
 
 // Profile schemas
 export const profileResponseSchema = z.object({
   success: z.literal(true),
   user: z.object({
-    id: uuidSchema,
+    id: textIdSchema,
     email: emailSchema,
+    name: z.string().nullable()
+  })
+})
+
+// Profile response schema without transforms for JSON Schema generation
+export const profileResponseSchemaForDocs = z.object({
+  success: z.literal(true),
+  user: z.object({
+    id: textIdSchemaForDocs,
+    email: emailSchemaForDocs,
     name: z.string().nullable()
   })
 })
@@ -46,7 +29,7 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z
   .object({
     token: z.string().min(1, 'Reset token is required'),
-    password: passwordSchema,
+    password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string()
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -58,7 +41,7 @@ export const resetPasswordSchema = z
 export const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, 'Current password is required'),
-    newPassword: passwordSchema,
+    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string()
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -71,7 +54,7 @@ export const registerSchema = z
   .object({
     name: z.string().min(1, 'Name is required').max(255, 'Name too long').trim(),
     email: emailSchema,
-    password: passwordSchema,
+    password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string()
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -85,10 +68,6 @@ export const verifyTokenSchema = z.object({
 })
 
 // Export types derived from schemas
-export type JWTPayload = z.infer<typeof jwtPayloadSchema>
-export type LoginBody = z.infer<typeof loginBodySchema>
-export type LoginResponse = z.infer<typeof loginResponseSchema>
-export type RefreshTokenBody = z.infer<typeof refreshTokenBodySchema>
 export type ProfileResponse = z.infer<typeof profileResponseSchema>
 export type ForgotPassword = z.infer<typeof forgotPasswordSchema>
 export type ResetPassword = z.infer<typeof resetPasswordSchema>

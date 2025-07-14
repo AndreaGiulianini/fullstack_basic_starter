@@ -2,11 +2,13 @@ import { NotFoundError } from '../errors/appError'
 import { createUser, getUser } from '../models/user'
 import type { SafeUserApi, User } from '../types/database'
 import db from '../utils/db'
-import { sanitizeInput } from '../utils/validation'
 
 export const getUserHandler = async (userId: string): Promise<SafeUserApi> => {
-  // Validate UUID
-  const validatedUserId = sanitizeInput.uuid(userId)
+  // Validate text ID (better-auth uses text IDs, not UUIDs)
+  const validatedUserId = userId.trim()
+  if (!validatedUserId) {
+    throw new NotFoundError('Invalid user ID')
+  }
 
   const user: User | undefined = await getUser(db, validatedUserId)
   if (!user) {
@@ -18,6 +20,7 @@ export const getUserHandler = async (userId: string): Promise<SafeUserApi> => {
     id: user.id,
     email: user.email,
     name: user.name,
+    image: user.image,
     createdAt: user.createdAt.toISOString()
   }
 }
@@ -31,6 +34,7 @@ export const createUserHandler = async (name: string, email: string, password: s
     id: user.id,
     email: user.email,
     name: user.name,
+    image: user.image,
     createdAt: user.createdAt.toISOString()
   }
 }

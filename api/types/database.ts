@@ -3,13 +3,15 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 // Database instance type
 export type DatabaseInstance = NodePgDatabase
 
-// User model types (matching the actual Drizzle schema)
+// User model types (matching the better-auth schema)
 export interface User {
   id: string
   email: string
   name: string | null
-  password: string
+  emailVerified: boolean
+  image: string | null
   createdAt: Date
+  updatedAt: Date
 }
 
 export interface SafeUser {
@@ -24,6 +26,7 @@ export interface SafeUserApi {
   id: string
   email: string
   name: string | null
+  image: string | null
   createdAt: string
 }
 

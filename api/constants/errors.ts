@@ -14,9 +14,6 @@ export const ERROR_MESSAGES = {
   REQUEST_PARAMS_VALIDATION_FAILED: 'Request params validation failed',
   REQUEST_QUERY_VALIDATION_FAILED: 'Request query validation failed',
 
-  // JWT errors
-  INVALID_REFRESH_TOKEN: 'Invalid refresh token',
-
   // Response messages
   SUCCESS_RESPONSE_MESSAGE: 'pong',
 
@@ -39,8 +36,8 @@ export const ERROR_MESSAGES = {
   FAILED_TO_CREATE_USER: 'Failed to create user'
 } as const
 
-// JWT Error Names
-export const JWT_ERROR_NAMES = {
-  JSON_WEB_TOKEN_ERROR: 'JsonWebTokenError',
-  TOKEN_EXPIRED_ERROR: 'TokenExpiredError'
+// Better-Auth Error Names
+export const BETTER_AUTH_ERROR_NAMES = {
+  INVALID_SESSION: 'InvalidSession',
+  EXPIRED_SESSION: 'ExpiredSession'
 } as const

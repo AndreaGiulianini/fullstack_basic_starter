@@ -76,7 +76,7 @@ graph TB
 - **[PostgreSQL](https://www.postgresql.org/)** - Primary relational database
 
 ### Security & Authentication
-- **[JWT](https://jwt.io/)** - JSON Web Tokens for authentication
+- **[Better-Auth](https://better-auth.com/)** - Modern authentication library
 - **[bcrypt](https://github.com/kelektiv/node.bcrypt.js)** - Password hashing
 - **[Zod](https://zod.dev/)** - Runtime data validation
 
@@ -117,10 +117,10 @@ api/
 │   │   └── user.ts
 │   ├── types/            # TypeScript definitions
 │   ├── utils/            # Utility functions
+│   │   ├── betterAuth.ts
 │   │   ├── db.ts
-│   │   ├── jwt.ts
 │   │   ├── logger.ts
-│   │   ├── routeHelpers.ts
+│   │   ├── schemaHelper.ts
 │   │   ├── validation.ts
 │   │   └── valkey.ts
 │   └── app.ts           # Application entry point
@@ -148,7 +148,7 @@ sequenceDiagram
     
     C->>MW: HTTP Request
     MW->>MW: Error Handler
-    MW->>MW: JWT Plugin (if required)
+    MW->>MW: Better-Auth Middleware (if required)
     MW->>R: Validated Request
     R->>V: Validate Schema
     V-->>R: Validation Result
@@ -166,40 +166,29 @@ sequenceDiagram
 
 ## 🔐 Authentication System
 
-The API implements a **JWT (JSON Web Tokens)** based authentication system with refresh tokens:
+The API implements a **Better-Auth** based authentication system with secure session management:
 
 ```mermaid
 graph LR
     subgraph "Authentication Flow"
-        LOGIN["Login Request"]
+        SIGNUP["Sign Up Request"]
+        SIGNIN["Sign In Request"]
         VALIDATE["Validate Credentials"]
-        GENERATE["Generate Tokens"]
-        STORE["Store Refresh Token"]
-        RESPONSE["Return Tokens"]
-    end
-    
-    subgraph "Token Refresh Flow"
-        REFRESH["Refresh Request"]
-        VERIFY["Verify Refresh Token"]
-        REVOKE["Revoke Old Token"]
-        NEW["Generate New Tokens"]
+        SESSION["Create Session"]
+        RESPONSE["Return Session Token"]
     end
     
     subgraph "Protected Routes"
         REQUEST["API Request"]
-        AUTH["Authenticate JWT"]
+        AUTH["Authenticate Session"]
         AUTHORIZE["Authorize Access"]
         EXECUTE["Execute Handler"]
     end
     
-    LOGIN --> VALIDATE
-    VALIDATE --> GENERATE
-    GENERATE --> STORE
-    STORE --> RESPONSE
-    
-    REFRESH --> VERIFY
-    VERIFY --> REVOKE
-    REVOKE --> NEW
+    SIGNUP --> VALIDATE
+    SIGNIN --> VALIDATE
+    VALIDATE --> SESSION
+    SESSION --> RESPONSE
     
     REQUEST --> AUTH
     AUTH --> AUTHORIZE
@@ -207,10 +196,10 @@ graph LR
 ```
 
 ### Security Components:
-- **Access Token**: Short-lived JWT (15 minutes)
-- **Refresh Token**: Long-lived token (7 days) stored in cache
+- **Session Management**: Secure session handling with Better-Auth
+- **Bearer Token Support**: Authorization header authentication
 - **Password Hashing**: bcrypt with configurable salt rounds
-- **Authentication Middleware**: Automatic token verification
+- **Authentication Middleware**: Automatic session verification
 
 ## 🗄️ Database & Models
 
@@ -226,14 +215,23 @@ erDiagram
         timestamp created_at
     }
     
-    REFRESH_TOKENS {
-        string token_id PK
-        uuid user_id FK
+    SESSIONS {
+        string id PK
+        string user_id FK
         timestamp expires_at
         timestamp created_at
     }
     
-    USERS ||--o{ REFRESH_TOKENS : "has many"
+    ACCOUNTS {
+        string id PK
+        string user_id FK
+        string provider
+        string provider_account_id
+        timestamp created_at
+    }
+    
+    USERS ||--o{ SESSIONS : "has many"
+    USERS ||--o{ ACCOUNTS : "has many"
 ```
 
 ### Database Features:
@@ -279,7 +277,7 @@ VALKEY_PORT=6379
 ELASTICSEARCH_HOST=localhost
 ELASTICSEARCH_PORT=9200
 
-# JWT Configuration (Production: Use strong secrets!)
+# Better-Auth Configuration (Production: Use strong secrets!)
 JWT_SECRET=your-super-secret-jwt-key
 ```
 
@@ -297,7 +295,7 @@ npm run migrate
 npm run dev
 ```
 
-The server will be available at `http://localhost:5000`
+The server will be available at `http://localhost`
 
 ### Environment Variables Reference
 
@@ -321,8 +319,10 @@ The server will be available at `http://localhost:5000`
 
 | Method | Endpoint | Description | Auth Required | Body Schema |
 |--------|----------|-------------|---------------|-------------|
-| `POST` | `/api/login` | User login | ❌ | `{ email, password }` |
-| `POST` | `/api/refresh-token` | Refresh JWT token | ❌ | `{ refreshToken }` |
+| `POST` | `/api/auth/sign-up/email` | Sign up with email | ❌ | `{ email, password, name }` |
+| `POST` | `/api/auth/sign-in/email` | Sign in with email | ❌ | `{ email, password }` |
+| `GET` | `/api/auth/session` | Get current session | ✅ | - |
+| `POST` | `/api/auth/sign-out` | Sign out | ✅ | - |
 | `GET` | `/api/profile` | Get current user profile | ✅ | - |
 
 ### 👤 Users
@@ -341,7 +341,7 @@ The server will be available at `http://localhost:5000`
 
 ### 📚 Documentation
 
-- **Scalar API Reference**: `http://localhost:5000/reference`
+- **Scalar API Reference**: `http://localhost/reference`
 
 ## 🧪 Testing
 
@@ -349,10 +349,10 @@ The server will be available at `http://localhost:5000`
 
 The API includes a comprehensive Postman collection (`Starter.postman_collection.json`) with pre-configured requests for:
 
-- **Authentication Flow**: Login, token refresh, profile access
+- **Authentication Flow**: Sign up, sign in, session management, profile access
 - **User Management**: Create user, get user details  
 - **Health Checks**: Ping endpoint, cache testing
-- **Error Scenarios**: Invalid credentials, expired tokens
+- **Error Scenarios**: Invalid credentials, unauthenticated access
 
 ### Import Postman Collection
 
@@ -365,20 +365,20 @@ The API includes a comprehensive Postman collection (`Starter.postman_collection
 
 ```bash
 # Health check
-curl http://localhost:5000/api/healthcheck/ping
+curl http://localhost/api/healthcheck/ping
 
 # Create user
-curl -X POST http://localhost:5000/api/users \
+curl -X POST http://localhost/api/users \
   -H "Content-Type: application/json" \
   -d '{"name":"Test User","email":"test@example.com","password":"testpass"}'
 
-# Login
-curl -X POST http://localhost:5000/api/login \
+# Sign in with Better-Auth
+curl -X POST http://localhost/api/auth/sign-in/email \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"testpass"}'
 
 # Access protected route
-curl -X GET http://localhost:5000/api/profile \
+curl -X GET http://localhost/api/profile \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
@@ -391,7 +391,7 @@ docker build -t api-server .
 
 ### Run container:
 ```bash
-docker run -p 5000:5000 \
+docker run -p 5000 \
   -e DB_HOST=your_db_host \
   -e DB_USER=your_db_user \
   -e DB_PASS=your_db_password \
@@ -426,7 +426,7 @@ npm run lint         # Lint code
 The Fastify server is configured with:
 - **Logger**: Pino for structured logging
 - **Swagger**: Automatic API documentation
-- **JWT Plugin**: JWT token management
+- **Better-Auth Integration**: Session and authentication management
 - **Error Handler**: Centralized error handling
 - **CORS**: Cross-origin request configuration
 

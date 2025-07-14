@@ -1,18 +1,17 @@
 import swagger from '@fastify/swagger'
 import scalar from '@scalar/fastify-api-reference'
 import Fastify from 'fastify'
-import { API_DOCS, ERROR_MESSAGES, SECURITY_DEFINITIONS, SERVER } from './constants'
+import { API_DOCS, SECURITY_DEFINITIONS, SERVER } from './constants'
 import errorHandlerPlugin from './middleware/errorHandler'
 import authRoutes from './routes/authRoutes'
+import betterAuthRoutes from './routes/betterAuth'
 import testRoutes from './routes/testRoutes'
 import userRoutes from './routes/userRoutes'
-import jwtPlugin from './utils/jwt'
+import { logShutdown, logStartup } from './utils/logger'
 
 const app = Fastify({ logger: true })
 
 app.register(errorHandlerPlugin)
-
-app.register(jwtPlugin)
 
 app.register(swagger, {
   swagger: {
@@ -37,26 +36,41 @@ app.register(swagger, {
 })
 
 app.register(scalar, {
-  routePrefix: API_DOCS.REFERENCE_ROUTE,
+  routePrefix: '/reference',
   configuration: {
-    theme: API_DOCS.THEME
+    theme: 'fastify'
   }
 })
 
 app.register(testRoutes)
 app.register(authRoutes)
+app.register(betterAuthRoutes)
 app.register(userRoutes)
 
-const startServer = async () => {
+const start = async () => {
   try {
     await app.listen({ port: SERVER.PORT, host: SERVER.HOST })
-    console.log(ERROR_MESSAGES.SERVER_RUNNING)
+    logStartup(SERVER.PORT, SERVER.HOST)
   } catch (err) {
     app.log.error(err)
+    logShutdown('Error during startup')
     process.exit(1)
   }
 }
 
-startServer()
+// Graceful shutdown handling
+process.on('SIGTERM', async () => {
+  logShutdown('SIGTERM received')
+  await app.close()
+  process.exit(0)
+})
+
+process.on('SIGINT', async () => {
+  logShutdown('SIGINT received')
+  await app.close()
+  process.exit(0)
+})
+
+start()
 
 export default app

@@ -1,69 +1,174 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { ZodError } from 'zod'
-import { ERROR_MESSAGES, HTTP_STATUS, JWT_ERROR_NAMES } from '../constants'
+import { BETTER_AUTH_ERROR_NAMES, ERROR_MESSAGES, HTTP_STATUS } from '../constants'
 import { AppError } from '../errors/appError'
 import type { ErrorResponse } from '../types/common'
+import type { ValidationDetails } from '../types/validation'
 
-// Tipo per errori che potrebbero avere statusCode
-interface ErrorWithStatusCode {
+// Enhanced error interface with more context
+interface ErrorWithStatusCode extends Error {
   statusCode?: number
-  message: string
+  code?: string
+  validation?: unknown[]
+  details?: unknown
+}
+
+// Enhanced error context interface
+interface ErrorContext {
+  requestId?: string
+  userId?: string
+  method: string
+  url: string
+  userAgent?: string
+  ip?: string
+  timestamp: string
+}
+
+// Generate unique request ID for tracing
+const generateRequestId = (): string => {
+  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+}
+
+// Extract error context from request
+const extractErrorContext = (request: FastifyRequest): ErrorContext => {
+  return {
+    requestId: generateRequestId(),
+    userId: (request as any).user?.id,
+    method: request.method,
+    url: request.url,
+    userAgent: request.headers['user-agent'],
+    ip: request.ip,
+    timestamp: new Date().toISOString()
+  }
+}
+
+// Enhanced error logging with structured data
+const logError = (error: Error, context: ErrorContext, request: FastifyRequest): void => {
+  const logData = {
+    error: {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+      ...(error instanceof AppError && { statusCode: error.statusCode }),
+      ...(error instanceof ZodError && { validationErrors: error.issues })
+    },
+    context,
+    request: {
+      headers: request.headers,
+      params: request.params,
+      query: request.query,
+      // Don't log sensitive data like passwords
+      body: request.method !== 'GET' ? '[REDACTED]' : undefined
+    }
+  }
+
+  // Log at appropriate level based on error type
+  if (error instanceof AppError && error.statusCode < 500) {
+    request.log.warn(logData, 'Client error occurred')
+  } else {
+    request.log.error(logData, 'Server error occurred')
+  }
+}
+
+// Format validation errors for better user experience
+const formatValidationErrors = (error: ZodError): string => {
+  const errors = error.issues.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ')
+  return `Validation failed: ${errors}`
 }
 
 export const errorHandler = async (error: Error, request: FastifyRequest, reply: FastifyReply): Promise<void> => {
-  const timestamp = new Date().toISOString()
-  const path = request.url
+  const context = extractErrorContext(request)
 
-  // Log dell'errore
-  request.log.error({
-    error: error.message,
-    stack: error.stack,
-    path,
-    timestamp
-  })
+  // Log error with full context
+  logError(error, context, request)
 
   let statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR
   let message: string = ERROR_MESSAGES.INTERNAL_SERVER_ERROR
+  let details: ValidationDetails | undefined
 
-  // Gestione semplificata degli errori più comuni
+  // Enhanced error type handling
   if (error instanceof AppError) {
-    // Errori personalizzati con statusCode
     statusCode = error.statusCode
     message = error.message
   } else if (error instanceof ZodError) {
     statusCode = HTTP_STATUS.BAD_REQUEST
-    message = ERROR_MESSAGES.INVALID_REQUEST_DATA
+    message = formatValidationErrors(error)
+    details = error.issues.map((issue) => ({
+      field: issue.path.join('.'),
+      message: issue.message,
+      code: issue.code
+    }))
   } else if (
-    error.name === JWT_ERROR_NAMES.JSON_WEB_TOKEN_ERROR ||
-    error.name === JWT_ERROR_NAMES.TOKEN_EXPIRED_ERROR
+    error.name === BETTER_AUTH_ERROR_NAMES.INVALID_SESSION ||
+    error.name === BETTER_AUTH_ERROR_NAMES.EXPIRED_SESSION
   ) {
     statusCode = HTTP_STATUS.UNAUTHORIZED
     message = ERROR_MESSAGES.AUTHENTICATION_FAILED
   } else if ('statusCode' in error && typeof (error as ErrorWithStatusCode).statusCode === 'number') {
-    // Se l'errore ha già uno statusCode, lo usiamo
     statusCode = (error as ErrorWithStatusCode).statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR
     message = error.message
+    details = (error as ErrorWithStatusCode).details as ValidationDetails
   } else if (process.env.ENV !== 'production') {
-    // In sviluppo, mostra il messaggio originale
+    // In development, show original error message
     message = error.message
   }
 
+  // Enhanced error response with context
   const response: ErrorResponse = {
     success: false,
     error: {
       message,
       code: error.name || 'UNKNOWN_ERROR',
       statusCode,
-      timestamp,
-      path
+      timestamp: context.timestamp,
+      path: context.url
     }
   }
+
+  // Add optional properties conditionally
+  if (details) {
+    response.error.details = details
+  }
+
+  if (process.env.ENV !== 'production') {
+    ;(response.error as any).requestId = context.requestId
+  }
+
+  // Set security headers
+  reply.header('X-Content-Type-Options', 'nosniff')
+  reply.header('X-Frame-Options', 'DENY')
+  reply.header('X-XSS-Protection', '1; mode=block')
 
   return reply.status(statusCode).send(response)
 }
 
 export const errorHandlerPlugin = async (fastify: FastifyInstance) => {
   fastify.setErrorHandler(errorHandler)
+
+  // Add request ID to all requests for tracing
+  fastify.addHook('onRequest', async (request) => {
+    ;(request as any).requestId = generateRequestId()
+  })
+
+  // Add response time tracking
+  fastify.addHook('onResponse', async (request, reply) => {
+    const responseTime = Date.now() - (request as any).startTime
+    request.log.info(
+      {
+        requestId: (request as any).requestId,
+        method: request.method,
+        url: request.url,
+        statusCode: reply.statusCode,
+        responseTime: `${responseTime}ms`
+      },
+      'Request completed'
+    )
+  })
+
+  // Track request start time
+  fastify.addHook('onRequest', async (request) => {
+    ;(request as any).startTime = Date.now()
+  })
 }
 
 export default errorHandlerPlugin

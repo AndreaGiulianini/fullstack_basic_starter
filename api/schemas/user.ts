@@ -1,94 +1,117 @@
 import * as z from 'zod'
-import { emailSchema, nameSchema, paginationSchema, passwordSchema, timestampSchema, uuidSchema } from './common'
+import {
+  emailSchema,
+  idParamsSchema,
+  nameSchema,
+  paginatedResponseSchema,
+  paginationSchema,
+  passwordSchema,
+  successResponseSchema,
+  textIdSchema,
+  timestampSchema,
+  emailSchemaForDocs,
+  nameSchemaForDocs,
+  textIdSchemaForDocs,
+  idParamsSchemaForDocs
+} from './common'
 
-// Base user schema (matches database)
+// =============================================================================
+// BASE USER SCHEMAS
+// =============================================================================
+
+// Core user schema (matches database structure)
 export const userSchema = z.object({
-  id: uuidSchema,
+  id: textIdSchema,
   name: nameSchema.nullable(),
   email: emailSchema,
-  password: z.string(), // Don't validate password here as it's hashed
-  createdAt: timestampSchema
+  emailVerified: z.boolean().default(false),
+  image: z.string().url().nullable(),
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema
 })
 
-// Safe user schema (without password)
-export const safeUserSchema = userSchema.omit({ password: true })
+// Safe user schema for API responses (excludes sensitive data)
+export const safeUserSchema = userSchema.omit({
+  emailVerified: true,
+  updatedAt: true
+})
 
-// API documentation schemas (using string dates for JSON Schema compatibility)
+// API-compatible user schema with string dates
 export const safeUserApiSchema = z.object({
-  id: uuidSchema,
+  id: textIdSchema,
   name: nameSchema.nullable(),
   email: emailSchema,
+  image: z.string().url().nullable(),
   createdAt: z.string().datetime()
 })
 
-// Create user schemas
+// API-compatible user schema for docs (without transforms)
+export const safeUserApiSchemaForDocs = z.object({
+  id: textIdSchemaForDocs,
+  name: nameSchemaForDocs.nullable(),
+  email: emailSchemaForDocs,
+  image: z.string().url().nullable(),
+  createdAt: z.string().datetime()
+})
+
+// =============================================================================
+// USER OPERATION SCHEMAS
+// =============================================================================
+
+// Create user request
 export const createUserBodySchema = z.object({
   name: nameSchema,
   email: emailSchema,
   password: passwordSchema
 })
 
-export const createUserResponseSchema = z.object({
-  success: z.literal(true),
-  data: safeUserApiSchema,
-  message: z.string().optional()
+// Create user request schema for docs (without transforms)
+export const createUserBodySchemaForDocs = z.object({
+  name: nameSchemaForDocs,
+  email: emailSchemaForDocs,
+  password: passwordSchema
 })
 
-// Update user schemas
+// Update user request
 export const updateUserBodySchema = z
   .object({
     name: nameSchema.optional(),
-    email: emailSchema.optional()
+    email: emailSchema.optional(),
+    image: z.string().url().nullable().optional()
   })
   .refine((data) => Object.keys(data).length > 0, 'At least one field must be provided for update')
 
-export const updateUserResponseSchema = z.object({
-  success: z.literal(true),
-  data: safeUserApiSchema,
-  message: z.string().optional()
-})
+// Update user request schema for docs (without transforms)
+export const updateUserBodySchemaForDocs = z
+  .object({
+    name: nameSchemaForDocs.optional(),
+    email: emailSchemaForDocs.optional(),
+    image: z.string().url().nullable().optional()
+  })
+  .refine((data) => Object.keys(data).length > 0, 'At least one field must be provided for update')
 
-// Get user schemas
-export const userParamsSchema = z.object({
-  userId: uuidSchema
-})
+// User query parameters
+export const userParamsSchema = idParamsSchema
 
-export const getUserResponseSchema = z.object({
-  success: z.literal(true),
-  data: safeUserApiSchema
-})
+// User params schema for docs (without transforms)
+export const userParamsSchemaForDocs = idParamsSchemaForDocs
 
-// List users schemas
-export const listUsersQuerySchema = paginationSchema.extend({
-  search: z.string().min(1).max(255).trim().optional(),
-  sortBy: z.enum(['name', 'email', 'createdAt']).default('createdAt'),
+// User list query parameters
+export const userListQuerySchema = paginationSchema.extend({
+  search: z.string().optional(),
   role: z.enum(['admin', 'user']).optional(),
   status: z.enum(['active', 'inactive', 'banned']).optional()
 })
 
-export const listUsersResponseSchema = z.object({
-  success: z.literal(true),
-  data: z.array(safeUserApiSchema),
-  pagination: z.object({
-    page: z.number().int().positive(),
-    limit: z.number().int().positive(),
-    total: z.number().int().min(0),
-    totalPages: z.number().int().min(0),
-    hasNext: z.boolean(),
-    hasPrev: z.boolean()
-  })
-})
+// =============================================================================
+// USER PREFERENCES AND PROFILE SCHEMAS
+// =============================================================================
 
-// Delete user schemas
-export const deleteUserResponseSchema = z.object({
-  success: z.literal(true),
-  message: z.string()
-})
-
-// User preferences schema
+// User preferences
 export const userPreferencesSchema = z.object({
   theme: z.enum(['light', 'dark', 'auto']).default('auto'),
   language: z.enum(['en', 'it', 'es', 'fr', 'de']).default('en'),
+  timezone: z.string().default('UTC'),
   notifications: z
     .object({
       email: z.boolean().default(true),
@@ -99,57 +122,61 @@ export const userPreferencesSchema = z.object({
       email: true,
       push: true,
       sms: false
-    }),
-  timezone: z.string().default('UTC')
+    })
 })
 
-// User profile schema (extended user info)
-export const userProfileSchema = safeUserSchema.extend({
+// Extended user profile
+export const userProfileSchema = userSchema.extend({
   preferences: userPreferencesSchema.optional(),
   lastLoginAt: timestampSchema.nullable().optional(),
-  isEmailVerified: z.boolean().default(false),
   role: z.enum(['admin', 'user']).default('user'),
   status: z.enum(['active', 'inactive', 'banned']).default('active')
 })
 
-// User profile API schema (for documentation)
-export const userProfileApiSchema = safeUserApiSchema.extend({
-  preferences: userPreferencesSchema.optional(),
-  lastLoginAt: z.string().datetime().nullable().optional(),
-  isEmailVerified: z.boolean().default(false),
-  role: z.enum(['admin', 'user']).default('user'),
-  status: z.enum(['active', 'inactive', 'banned']).default('active')
-})
+// =============================================================================
+// RESPONSE SCHEMAS
+// =============================================================================
 
-// Bulk operations schemas
-export const bulkDeleteUsersSchema = z.object({
-  userIds: z
-    .array(uuidSchema)
-    .min(1, 'At least one user ID is required')
-    .max(100, 'Cannot delete more than 100 users at once')
-})
+// User creation response
+export const createUserResponseSchema = successResponseSchema(safeUserApiSchema)
 
-export const bulkUpdateUsersSchema = z.object({
-  userIds: z
-    .array(uuidSchema)
-    .min(1, 'At least one user ID is required')
-    .max(100, 'Cannot update more than 100 users at once'),
-  updates: z
-    .object({
-      status: z.enum(['active', 'inactive', 'banned']).optional(),
-      role: z.enum(['admin', 'user']).optional()
-    })
-    .refine((data) => Object.keys(data).length > 0, 'At least one update field must be provided')
-})
+// User creation response schema for docs (without transforms)
+export const createUserResponseSchemaForDocs = successResponseSchema(safeUserApiSchemaForDocs)
 
-// Export types derived from schemas
+// User retrieval response
+export const getUserResponseSchema = successResponseSchema(safeUserApiSchema)
+
+// User retrieval response schema for docs (without transforms)
+export const getUserResponseSchemaForDocs = successResponseSchema(safeUserApiSchemaForDocs)
+
+// User update response
+export const updateUserResponseSchema = successResponseSchema(safeUserApiSchema)
+
+// User update response schema for docs (without transforms)
+export const updateUserResponseSchemaForDocs = successResponseSchema(safeUserApiSchemaForDocs)
+
+// User list response
+export const getUserListResponseSchema = paginatedResponseSchema(safeUserApiSchema)
+
+// User list response schema for docs (without transforms)
+export const getUserListResponseSchemaForDocs = paginatedResponseSchema(safeUserApiSchemaForDocs)
+
+// User profile response (for authenticated user)
+export const userProfileResponseSchema = successResponseSchema(
+  userProfileSchema.omit({ emailVerified: true, updatedAt: true })
+)
+
+// =============================================================================
+// TYPE EXPORTS
+// =============================================================================
+
+// Infer TypeScript types from schemas
 export type User = z.infer<typeof userSchema>
 export type SafeUser = z.infer<typeof safeUserSchema>
+export type SafeUserApi = z.infer<typeof safeUserApiSchema>
 export type CreateUserBody = z.infer<typeof createUserBodySchema>
 export type UpdateUserBody = z.infer<typeof updateUserBodySchema>
 export type UserParams = z.infer<typeof userParamsSchema>
-export type ListUsersQuery = z.infer<typeof listUsersQuerySchema>
+export type UserListQuery = z.infer<typeof userListQuerySchema>
 export type UserPreferences = z.infer<typeof userPreferencesSchema>
 export type UserProfile = z.infer<typeof userProfileSchema>
-export type BulkDeleteUsers = z.infer<typeof bulkDeleteUsersSchema>
-export type BulkUpdateUsers = z.infer<typeof bulkUpdateUsersSchema>

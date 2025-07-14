@@ -10,7 +10,16 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@models/*": ["models/*"]
+      "@/*": ["./*"],
+      "@constants/*": ["constants/*"],
+      "@controllers/*": ["controllers/*"],
+      "@errors/*": ["errors/*"],
+      "@middleware/*": ["middleware/*"],
+      "@models/*": ["models/*"],
+      "@routes/*": ["routes/*"],
+      "@schemas/*": ["schemas/*"],
+      "@types/*": ["types/*"],
+      "@utils/*": ["utils/*"]
     }
   },
   "watchOptions": {

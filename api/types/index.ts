@@ -1,16 +1,8 @@
 // Auth types
 export type {
-  AuthenticatedRequest,
   AuthenticatedUser,
-  AuthSuccessResponse,
-  GenerateTokensFunction,
-  JWTPayload,
-  LoginCredentials,
-  ProfileResponse,
-  RefreshTokenRequest,
-  RevokeRefreshTokenFunction,
-  TokenPair,
-  VerifyRefreshTokenFunction
+  BetterAuthSession,
+  ProfileResponse
 } from './auth'
 
 // Common types
@@ -44,6 +36,7 @@ export type {
 
 // Fastify types
 export type {
+  AuthenticatedFastifyReply,
   AuthenticatedFastifyRequest,
   AuthenticatedPreHandler,
   PreHandler,

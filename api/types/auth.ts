@@ -1,18 +1,15 @@
-// JWT Payload types
-export interface JWTPayload {
-  id: string
-  email: string
+// Better-Auth Session types
+export interface BetterAuthSession {
+  user: {
+    id: string
+    email: string
+    name: string | null
+  }
+  session: {
+    id: string
+    expiresAt: Date
+  }
 }
-
-export interface TokenPair {
-  accessToken: string
-  refreshToken: string
-}
-
-// JWT Function types
-export type GenerateTokensFunction = (user: JWTPayload) => Promise<TokenPair>
-export type VerifyRefreshTokenFunction = (refreshToken: string) => Promise<JWTPayload>
-export type RevokeRefreshTokenFunction = (userId: string) => Promise<void>
 
 // Authentication types
 export interface AuthenticatedUser {
@@ -21,28 +18,8 @@ export interface AuthenticatedUser {
   name?: string | null
 }
 
-export interface LoginCredentials {
-  email: string
-  password: string
-}
-
-export interface RefreshTokenRequest {
-  refreshToken: string
-}
-
-// Response types
-export interface AuthSuccessResponse {
-  success: true
-  accessToken: string
-  refreshToken: string
-}
-
+// Profile response type
 export interface ProfileResponse {
   success: true
   user: AuthenticatedUser
-}
-
-// Request types with user context
-export interface AuthenticatedRequest {
-  user: JWTPayload
 }
