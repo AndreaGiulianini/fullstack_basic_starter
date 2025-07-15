@@ -1,10 +1,10 @@
 import type { InferSelectModel } from 'drizzle-orm'
 import { eq } from 'drizzle-orm'
 import { ERROR_MESSAGES, HTTP_STATUS } from '../constants'
+import { user } from '../database-models/betterAuthModels'
 import { AppError, ConflictError } from '../errors/appError'
-import { user } from '../schemas/betterAuthSchema'
-import { auth } from '../utils/betterAuth'
 import type db from '../utils/db'
+import { auth } from '../utils/db'
 import { sanitizeInput } from '../utils/validation'
 
 // Export the better-auth user table
@@ -24,39 +24,31 @@ export async function createUser(dbInstance: typeof db, name: string, email: str
     throw new ConflictError(ERROR_MESSAGES.USER_ALREADY_EXISTS)
   }
 
-  try {
-    // Use better-auth's sign-up API to create the user
-    const result = await auth.api.signUpEmail({
-      body: {
-        name: validatedName,
-        email: validatedEmail,
-        password: validatedPassword
-      }
-    })
-
-    if (!result.user) {
-      throw new AppError(ERROR_MESSAGES.DATABASE_OPERATION_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR)
+  // Use better-auth's sign-up API to create the user
+  const result = await auth.api.signUpEmail({
+    body: {
+      name: validatedName,
+      email: validatedEmail,
+      password: validatedPassword
     }
+  })
 
-    // Convert the better-auth user to our User type
-    const userRecord: User = {
-      id: result.user.id,
-      name: result.user.name,
-      email: result.user.email,
-      emailVerified: result.user.emailVerified,
-      image: result.user.image || null,
-      createdAt: result.user.createdAt,
-      updatedAt: result.user.updatedAt
-    }
-
-    return userRecord
-  } catch (error) {
-    // If it's already our custom error, re-throw it
-    if (error instanceof AppError) {
-      throw error
-    }
+  if (!result.user) {
     throw new AppError(ERROR_MESSAGES.DATABASE_OPERATION_FAILED, HTTP_STATUS.INTERNAL_SERVER_ERROR)
   }
+
+  // Convert the better-auth user to our User type
+  const userRecord: User = {
+    id: result.user.id,
+    name: result.user.name,
+    email: result.user.email,
+    emailVerified: result.user.emailVerified,
+    image: result.user.image || null,
+    createdAt: result.user.createdAt,
+    updatedAt: result.user.updatedAt
+  }
+
+  return userRecord
 }
 
 export async function getUser(dbInstance: typeof db, id: string): Promise<User | undefined> {

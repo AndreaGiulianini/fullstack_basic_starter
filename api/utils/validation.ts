@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import { ERROR_MESSAGES } from '../constants'
 import { ValidationError } from '../errors/appError'
-import { emailSchema, passwordSchema, uuidSchema } from '../schemas'
+import { emailSchema, passwordSchema, uuidSchema } from '../openapi-schemas'
 import type { ValidationErrorDetail } from '../types/validation'
 
 /**

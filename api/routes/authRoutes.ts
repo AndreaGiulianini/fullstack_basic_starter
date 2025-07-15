@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { profile } from '../controllers/authController'
 import { AuthenticationError } from '../errors/appError'
 import { betterAuthMiddleware } from '../middleware/betterAuth'
-import { profileResponseSchemaForDocs } from '../schemas'
+import { profileResponseSchemaForDocs } from '../openapi-schemas'
 import type { AuthenticatedFastifyRequest } from '../types/fastify'
 import { toFastifySchema } from '../utils/schemaHelper'
 

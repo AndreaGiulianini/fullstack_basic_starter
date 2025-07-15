@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import { auth } from '../utils/betterAuth'
+import { auth } from '../utils/db'
 
 export default async function betterAuthRoutes(fastify: FastifyInstance) {
   // Handle all better-auth routes

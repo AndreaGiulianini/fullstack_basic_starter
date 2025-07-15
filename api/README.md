@@ -110,11 +110,13 @@ api/
 │   │   ├── authRoutes.ts
 │   │   ├── testRoutes.ts
 │   │   └── userRoutes.ts
-│   ├── schemas/          # Zod validation schemas
+│   ├── openapi-schemas/ # OpenAPI/Zod validation schemas
 │   │   ├── auth.ts
 │   │   ├── common.ts
 │   │   ├── transforms.ts
 │   │   └── user.ts
+│   ├── database-models/ # Database table definitions
+│   │   └── betterAuthModels.ts
 │   ├── types/            # TypeScript definitions
 │   ├── utils/            # Utility functions
 │   │   ├── betterAuth.ts
@@ -317,20 +319,22 @@ The server will be available at `http://localhost`
 
 ### 🔐 Authentication
 
+> **Note**: Most authentication endpoints (`/api/auth/*`) are handled directly by **Better-Auth** with its own validation. Custom validation schemas are used for documentation and future extensibility.
+
 | Method | Endpoint | Description | Auth Required | Body Schema |
 |--------|----------|-------------|---------------|-------------|
-| `POST` | `/api/auth/sign-up/email` | Sign up with email | ❌ | `{ email, password, name }` |
-| `POST` | `/api/auth/sign-in/email` | Sign in with email | ❌ | `{ email, password }` |
-| `GET` | `/api/auth/session` | Get current session | ✅ | - |
-| `POST` | `/api/auth/sign-out` | Sign out | ✅ | - |
-| `GET` | `/api/profile` | Get current user profile | ✅ | - |
+| `POST` | `/api/auth/sign-up/email` | Sign up with email (Better-Auth) | ❌ | `{ name, email, password }` |
+| `POST` | `/api/auth/sign-in/email` | Sign in with email (Better-Auth) | ❌ | `{ email, password }` |
+| `GET` | `/api/auth/session` | Get current session (Better-Auth) | ✅ | - |
+| `POST` | `/api/auth/sign-out` | Sign out (Better-Auth) | ✅ | - |
+| `GET` | `/api/profile` | Get current user profile (Custom) | ✅ | - |
 
 ### 👤 Users
 
 | Method | Endpoint | Description | Auth Required | Body Schema |
 |--------|----------|-------------|---------------|-------------|
 | `GET` | `/api/users/:id` | Get user details | ✅ | - |
-| `POST` | `/api/users` | Create new user | ❌ | `{ name, email, password }` |
+| `POST` | `/api/users` | Create new user | ❌ | `createUserBodySchema: { name, email, password }` |
 
 ### 🧪 Testing & Health Checks
 
@@ -342,6 +346,45 @@ The server will be available at `http://localhost`
 ### 📚 Documentation
 
 - **Scalar API Reference**: `http://localhost/reference`
+
+### 📝 Schema Documentation
+
+The API uses consistent **Zod** schemas for request validation and response generation:
+
+#### **Authentication Schemas**
+- `registerBodySchema` - User registration schema (for documentation/future use)*
+- `forgotPasswordBodySchema` - Password reset request schema (for documentation/future use)*
+- `resetPasswordBodySchema` - Password reset with token schema (for documentation/future use)*
+- `changePasswordBodySchema` - Password change schema (for documentation/future use)*
+- `verifyTokenBodySchema` - Token verification schema (for documentation/future use)*
+- `profileResponseSchema` - User profile response format (actively used)
+
+> *Better-Auth handles authentication endpoints directly with its own validation. These schemas are defined for consistency and potential future custom implementations.
+
+#### **User Management Schemas**
+- `createUserBodySchema` - User creation request
+- `updateUserBodySchema` - User update request
+- `userParamsSchema` - User ID parameter validation
+- `getUserResponseSchema` - User retrieval response
+- `userListQuerySchema` - User listing with pagination
+
+#### **Schema Naming Convention**
+- **Request bodies**: `{action}BodySchema` (e.g., `registerBodySchema`)
+- **Response**: `{action}ResponseSchema` (e.g., `profileResponseSchema`)
+- **Documentation**: `{name}SchemaForDocs` (OpenAPI-compatible)
+- **Parameters**: `{entity}ParamsSchema` (e.g., `userParamsSchema`)
+
+All schemas include comprehensive validation rules, error messages, and TypeScript type inference.
+
+#### **Migration Notice**
+> **v1.1+**: Authentication schema names have been updated for consistency:
+> - `registerSchema` → `registerBodySchema`
+> - `forgotPasswordSchema` → `forgotPasswordBodySchema`  
+> - `resetPasswordSchema` → `resetPasswordBodySchema`
+> - `changePasswordSchema` → `changePasswordBodySchema`
+> - `verifyTokenSchema` → `verifyTokenBodySchema`
+>
+> Legacy exports are maintained for backward compatibility but are marked as deprecated.
 
 ## 🧪 Testing
 
@@ -367,15 +410,24 @@ The API includes a comprehensive Postman collection (`Starter.postman_collection
 # Health check
 curl http://localhost/api/healthcheck/ping
 
-# Create user
+# Create user (createUserBodySchema)
 curl -X POST http://localhost/api/users \
   -H "Content-Type: application/json" \
-  -d '{"name":"Test User","email":"test@example.com","password":"testpass"}'
+  -d '{"name":"Test User","email":"test@example.com","password":"TestPass123!"}'
+
+# Register new user with Better-Auth
+curl -X POST http://localhost/api/auth/sign-up/email \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"test@example.com","password":"TestPass123!"}'
 
 # Sign in with Better-Auth
 curl -X POST http://localhost/api/auth/sign-in/email \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"testpass"}'
+  -d '{"email":"test@example.com","password":"TestPass123!"}'
+
+# Get current session
+curl -X GET http://localhost/api/auth/session \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 
 # Access protected route
 curl -X GET http://localhost/api/profile \

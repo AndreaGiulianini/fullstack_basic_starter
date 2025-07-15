@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
+import { user } from '../database-models/betterAuthModels'
 import { NotFoundError } from '../errors/appError'
-import { user } from '../schemas/betterAuthSchema'
 import db from '../utils/db'
 
 export const profile = async (userId: string) => {

@@ -6,7 +6,6 @@ import * as z from 'zod'
 
 // Email validation with proper formatting
 export const emailSchema = z
-  .string()
   .email('Invalid email format')
   .toLowerCase()
   .transform((email) => email.trim())
@@ -50,7 +49,7 @@ export const textIdSchemaForDocs = z.string().min(1, 'ID is required').max(255, 
 // =============================================================================
 
 // URL and slug validation
-export const urlSchema = z.string().url('Invalid URL format')
+export const urlSchema = z.url('Invalid URL format')
 export const slugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Invalid slug format')
 
 // Numeric schemas with validation

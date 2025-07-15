@@ -10,7 +10,7 @@ import {
   type UserParams,
   userParamsSchema,
   userParamsSchemaForDocs
-} from '../schemas'
+} from '../openapi-schemas'
 import { toFastifySchema } from '../utils/schemaHelper'
 import { validateBody, validateParams } from '../utils/validation'
 
