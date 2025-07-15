@@ -1,37 +1,51 @@
 import * as z from 'zod'
 
 // =============================================================================
+// SCHEMA FACTORIES
+// =============================================================================
+
+/**
+ * Factory functions to create schemas with or without transforms
+ * This approach reduces duplication while maintaining OpenAPI compatibility
+ */
+
+// Enhanced email schema factory
+const createEmailSchema = (withTransform = true) => {
+  const base = z.string().email('Invalid email format').toLowerCase()
+  return withTransform ? base.transform((email) => email.trim()) : base
+}
+
+// Enhanced name schema factory
+const createNameSchema = (withTransform = true) => {
+  const base = z.string().min(1, 'Name is required').max(255, 'Name must not exceed 255 characters')
+  return withTransform ? base.transform((name) => name.trim()) : base
+}
+
+// Password schema factory
+const createPasswordSchema = (withTransform = false) => {
+  const base = z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(100, 'Password must not exceed 100 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Password must contain at least one lowercase letter, one uppercase letter, and one digit'
+    )
+  return withTransform ? base.transform((pwd) => pwd.trim()) : base
+}
+
+// =============================================================================
 // BASIC FIELD SCHEMAS
 // =============================================================================
 
-// Email validation with proper formatting
-export const emailSchema = z
-  .email('Invalid email format')
-  .toLowerCase()
-  .transform((email) => email.trim())
+// Using schema factories for consistent validation
+export const emailSchema = createEmailSchema(true)
+export const emailSchemaForDocs = createEmailSchema(false)
 
-// Email schema without transforms for JSON Schema generation
-export const emailSchemaForDocs = z.email('Invalid email format').toLowerCase()
+export const passwordSchema = createPasswordSchema(false)
 
-// Password validation with security requirements
-export const passwordSchema = z
-  .string()
-  .min(8, 'Password must be at least 8 characters')
-  .max(100, 'Password must not exceed 100 characters')
-  .regex(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-    'Password must contain at least one lowercase letter, one uppercase letter, and one digit'
-  )
-
-// Name validation with sanitization
-export const nameSchema = z
-  .string()
-  .min(1, 'Name is required')
-  .max(255, 'Name must not exceed 255 characters')
-  .transform((name) => name.trim())
-
-// Name schema without transforms for JSON Schema generation
-export const nameSchemaForDocs = z.string().min(1, 'Name is required').max(255, 'Name must not exceed 255 characters')
+export const nameSchema = createNameSchema(true)
+export const nameSchemaForDocs = createNameSchema(false)
 
 // ID schemas for different use cases
 export const uuidSchema = z.uuid('Invalid UUID format')
