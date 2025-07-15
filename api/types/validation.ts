@@ -1,4 +1,4 @@
-import type { ZodIssue } from 'zod'
+import type { core } from 'zod'
 
 // Validation error details types
 export interface ValidationErrorDetail {
@@ -8,7 +8,7 @@ export interface ValidationErrorDetail {
 }
 
 export interface ZodValidationDetails {
-  issues: ZodIssue[]
+  issues: core.$ZodIssue[]
 }
 
 export interface SchemaValidationDetails {

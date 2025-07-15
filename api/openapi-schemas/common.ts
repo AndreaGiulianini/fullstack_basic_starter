@@ -11,7 +11,7 @@ export const emailSchema = z
   .transform((email) => email.trim())
 
 // Email schema without transforms for JSON Schema generation
-export const emailSchemaForDocs = z.string().email('Invalid email format').toLowerCase()
+export const emailSchemaForDocs = z.email('Invalid email format').toLowerCase()
 
 // Password validation with security requirements
 export const passwordSchema = z
@@ -34,7 +34,7 @@ export const nameSchema = z
 export const nameSchemaForDocs = z.string().min(1, 'Name is required').max(255, 'Name must not exceed 255 characters')
 
 // ID schemas for different use cases
-export const uuidSchema = z.string().uuid('Invalid UUID format')
+export const uuidSchema = z.uuid('Invalid UUID format')
 export const textIdSchema = z
   .string()
   .min(1, 'ID is required')
@@ -58,7 +58,7 @@ export const nonNegativeIntSchema = z.number().int().min(0, 'Must be non-negativ
 
 // Date and time schemas
 export const timestampSchema = z.date()
-export const dateStringSchema = z.string().datetime('Invalid date format')
+export const dateStringSchema = z.iso.datetime('Invalid date format')
 export const dateRangeSchema = z
   .object({
     startDate: z.coerce.date().optional(),

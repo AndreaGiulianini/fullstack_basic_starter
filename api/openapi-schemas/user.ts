@@ -25,7 +25,7 @@ export const userSchema = z.object({
   name: nameSchema.nullable(),
   email: emailSchema,
   emailVerified: z.boolean().default(false),
-  image: z.string().url().nullable(),
+  image: z.url().nullable(),
   createdAt: timestampSchema,
   updatedAt: timestampSchema
 })
@@ -41,8 +41,8 @@ export const safeUserApiSchema = z.object({
   id: textIdSchema,
   name: nameSchema.nullable(),
   email: emailSchema,
-  image: z.string().url().nullable(),
-  createdAt: z.string().datetime()
+  image: z.url().nullable(),
+  createdAt: z.iso.datetime()
 })
 
 // API-compatible user schema for docs (without transforms)
@@ -50,8 +50,8 @@ export const safeUserApiSchemaForDocs = z.object({
   id: textIdSchemaForDocs,
   name: nameSchemaForDocs.nullable(),
   email: emailSchemaForDocs,
-  image: z.string().url().nullable(),
-  createdAt: z.string().datetime()
+  image: z.url().nullable(),
+  createdAt: z.iso.datetime()
 })
 
 // =============================================================================
@@ -77,7 +77,7 @@ export const updateUserBodySchema = z
   .object({
     name: nameSchema.optional(),
     email: emailSchema.optional(),
-    image: z.string().url().nullable().optional()
+    image: z.url().nullable().optional()
   })
   .refine((data) => Object.keys(data).length > 0, 'At least one field must be provided for update')
 
@@ -86,7 +86,7 @@ export const updateUserBodySchemaForDocs = z
   .object({
     name: nameSchemaForDocs.optional(),
     email: emailSchemaForDocs.optional(),
-    image: z.string().url().nullable().optional()
+    image: z.url().nullable().optional()
   })
   .refine((data) => Object.keys(data).length > 0, 'At least one field must be provided for update')
 

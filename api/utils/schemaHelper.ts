@@ -1,4 +1,4 @@
-import type { ZodSchema } from 'zod'
+import type { ZodType } from 'zod'
 import * as z from 'zod'
 
 // Type definition for JSON Schema objects
@@ -19,7 +19,7 @@ interface JsonSchemaObject {
  * Converts zod schema to Fastify-compatible JSON schema
  * Removes draft 2020-12 references and makes it compatible with draft-07
  */
-export function toFastifySchema<T>(schema: ZodSchema<T>): object {
+export function toFastifySchema<T>(schema: ZodType<T>): object {
   const jsonSchema = z.toJSONSchema(schema)
 
   // Remove the $schema property that references draft 2020-12
