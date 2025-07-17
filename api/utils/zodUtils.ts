@@ -152,10 +152,7 @@ export const createDateRangeSchema = (minDate?: Date, maxDate?: Date, format?: '
 /**
  * Merges multiple schemas with conflict resolution
  */
-export const mergeSchemas = <T, U>(
-  schema1: z.ZodType<T>,
-  schema2: z.ZodType<U>
-): z.ZodType<T & U> => {
+export const mergeSchemas = <T, U>(schema1: z.ZodType<T>, schema2: z.ZodType<U>): z.ZodType<T & U> => {
   return schema1.and(schema2) as z.ZodType<T & U>
 }
 
