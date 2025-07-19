@@ -29,8 +29,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
-    "@types/bcrypt": "^5.0.2",
-    "@types/node": "^24.0.14",
+    "@types/bcrypt": "^6.0.0",
+    "@types/node": "^24.0.15",
     "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.4",
     "tsx": "^4.20.3",
