@@ -1,5 +1,5 @@
 import Valkey from 'iovalkey'
-import { DB_LIMITS, DEFAULT_PORTS } from '../constants'
+import { DB_LIMITS, DEFAULT_PORTS } from './constants'
 
 const valkey = new Valkey({
   port: Number.parseInt(process.env.VALKEY_PORT || DEFAULT_PORTS.VALKEY.toString()),

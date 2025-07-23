@@ -21,13 +21,12 @@ export interface SafeUser {
   createdAt: Date
 }
 
-// API-specific user type with ISO string dates (for JSON serialization)
 export interface SafeUserApi {
   id: string
   email: string
   name: string | null
   image: string | null
-  createdAt: string
+  createdAt: string // ISO string for API responses
 }
 
 export interface CreateUserData {
@@ -41,15 +40,6 @@ export interface UpdateUserData {
   email?: string
   password?: string
 }
-
-// Database operation types
-export type CreateUserFunction = (db: DatabaseInstance, name: string, email: string, password: string) => Promise<User>
-
-export type GetUserFunction = (db: DatabaseInstance, id: string) => Promise<User | null>
-
-export type UpdateUserFunction = (db: DatabaseInstance, id: string, data: UpdateUserData) => Promise<User>
-
-export type DeleteUserFunction = (db: DatabaseInstance, id: string) => Promise<void>
 
 // Query result types
 export interface UserQueryResult {

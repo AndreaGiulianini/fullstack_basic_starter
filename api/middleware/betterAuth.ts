@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import { AuthenticationError } from '../errors/appError'
 import type { AuthenticatedUser } from '../types/auth'
 import type { AuthenticatedFastifyRequest } from '../types/fastify'
+import { AuthenticationError } from '../utils/appError'
 import { auth } from '../utils/db'
 import { logUtils } from '../utils/logger'
 
@@ -53,7 +53,7 @@ export const betterAuthMiddleware = async (request: FastifyRequest, _reply: Fast
       throw new AuthenticationError('Invalid session data')
     }
 
-    // Attach user to request for compatibility with existing code
+    // Attach user to request
     const authenticatedRequest = request as AuthenticatedFastifyRequest
     authenticatedRequest.user = {
       id: session.user.id,

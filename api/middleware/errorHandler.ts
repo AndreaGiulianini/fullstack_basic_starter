@@ -1,10 +1,10 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { ZodError } from 'zod'
-import { BETTER_AUTH_ERROR_NAMES, ERROR_MESSAGES, HTTP_STATUS } from '../constants'
-import { AppError } from '../errors/appError'
 import type { ErrorResponse } from '../types/common'
 import type { AuthenticatedFastifyRequest } from '../types/fastify'
 import type { ValidationDetails } from '../types/validation'
+import { AppError } from '../utils/appError'
+import { BETTER_AUTH_ERROR_NAMES, ERROR_MESSAGES, HTTP_STATUS } from '../utils/constants'
 
 // Enhanced error interface with more context
 interface ErrorWithStatusCode extends Error {

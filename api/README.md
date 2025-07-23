@@ -94,44 +94,44 @@ graph TB
 
 ```
 api/
-├── src/
-│   ├── constants/          # Application constants
-│   ├── controllers/        # Business logic
-│   │   ├── authController.ts
-│   │   └── userController.ts
-│   ├── errors/            # Error handling
-│   │   └── appError.ts
-│   ├── middleware/        # Custom middleware
-│   │   └── errorHandler.ts
-│   ├── migrations/        # Database migrations (Drizzle)
-│   ├── models/           # Database models
-│   │   └── user.ts
-│   ├── routes/           # Route definitions
-│   │   ├── authRoutes.ts
-│   │   ├── testRoutes.ts
-│   │   └── userRoutes.ts
-│   ├── openapi-schemas/ # OpenAPI/Zod validation schemas
-│   │   ├── auth.ts
-│   │   ├── common.ts
-│   │   ├── transforms.ts
-│   │   └── user.ts
-│   ├── database-models/ # Database table definitions
-│   │   └── betterAuthModels.ts
-│   ├── types/            # TypeScript definitions
-│   ├── utils/            # Utility functions
-│   │   ├── betterAuth.ts
-│   │   ├── db.ts
-│   │   ├── logger.ts
-│   │   ├── schemaHelper.ts
-│   │   ├── validation.ts
-│   │   └── valkey.ts
-│   └── app.ts           # Application entry point
-├── package.json
-├── tsconfig.json
-├── drizzle.config.ts    # Drizzle ORM configuration
-├── Dockerfile
-├── Starter.postman_collection.json  # Postman test collection
-└── env.d.ts            # Environment variable definitions
+├── models/              # Repository Pattern Implementation
+│   ├── repositories/    # Data access layer
+│   │   ├── index.ts     # Repository factory
+│   │   ├── userRepository.ts    # User operations
+│   │   └── sessionRepository.ts # Session operations
+│   ├── schema.ts        # Database table definitions
+│   ├── types.ts         # TypeScript types & interfaces
+│   └── index.ts         # Main exports
+├── routes/              # Route definitions
+│   ├── betterAuth.ts    # Better-Auth integration
+│   ├── testRoutes.ts    # Health checks & testing
+│   └── userRoutes.ts    # User management
+├── middleware/          # Custom middleware
+│   ├── betterAuth.ts    # Authentication middleware
+│   └── errorHandler.ts  # Error handling
+├── utils/               # Utility functions & helpers
+│   ├── constants.ts     # Application constants
+│   ├── schemas.ts       # Zod validation schemas
+│   ├── validation.ts    # Input validation & sanitization
+│   ├── db.ts           # Database & Better-Auth config
+│   ├── logger.ts       # Structured logging
+│   ├── schemaHelper.ts # OpenAPI schema conversion
+│   └── valkey.ts       # Cache configuration
+├── types/              # TypeScript type definitions
+│   ├── auth.ts         # Authentication types
+│   ├── common.ts       # Common API types
+│   ├── database.ts     # Database & repository types
+│   ├── fastify.ts      # Fastify-specific types
+│   ├── validation.ts   # Validation types
+│   └── index.ts        # Type exports
+├── .s/migrations/      # Database migrations (Drizzle)
+├── app.ts              # Application entry point
+├── package.json        # Dependencies & scripts
+├── tsconfig.json       # TypeScript configuration
+├── drizzle.config.ts   # Drizzle ORM configuration
+├── Dockerfile          # Container configuration
+├── Starter.postman_collection.json # API testing collection
+└── env.d.ts           # Environment variable types
 ```
 
 ## 🔄 Request Flow
@@ -327,7 +327,6 @@ The server will be available at `http://localhost`
 | `POST` | `/api/auth/sign-in/email` | Sign in with email (Better-Auth) | ❌ | `{ email, password }` |
 | `GET` | `/api/auth/session` | Get current session (Better-Auth) | ✅ | - |
 | `POST` | `/api/auth/sign-out` | Sign out (Better-Auth) | ✅ | - |
-| `GET` | `/api/profile` | Get current user profile (Custom) | ✅ | - |
 
 ### 👤 Users
 
@@ -357,7 +356,7 @@ The API uses consistent **Zod** schemas for request validation and response gene
 - `resetPasswordBodySchema` - Password reset with token schema (for documentation/future use)*
 - `changePasswordBodySchema` - Password change schema (for documentation/future use)*
 - `verifyTokenBodySchema` - Token verification schema (for documentation/future use)*
-- `profileResponseSchema` - User profile response format (actively used)
+
 
 > *Better-Auth handles authentication endpoints directly with its own validation. These schemas are defined for consistency and potential future custom implementations.
 
@@ -370,21 +369,18 @@ The API uses consistent **Zod** schemas for request validation and response gene
 
 #### **Schema Naming Convention**
 - **Request bodies**: `{action}BodySchema` (e.g., `registerBodySchema`)
-- **Response**: `{action}ResponseSchema` (e.g., `profileResponseSchema`)
+- **Response**: `{action}ResponseSchema` (e.g., `getUserResponseSchema`)
 - **Documentation**: `{name}SchemaForDocs` (OpenAPI-compatible)
 - **Parameters**: `{entity}ParamsSchema` (e.g., `userParamsSchema`)
 
 All schemas include comprehensive validation rules, error messages, and TypeScript type inference.
 
-#### **Migration Notice**
-> **v1.1+**: Authentication schema names have been updated for consistency:
-> - `registerSchema` → `registerBodySchema`
-> - `forgotPasswordSchema` → `forgotPasswordBodySchema`  
-> - `resetPasswordSchema` → `resetPasswordBodySchema`
-> - `changePasswordSchema` → `changePasswordBodySchema`
-> - `verifyTokenSchema` → `verifyTokenBodySchema`
->
-> Legacy exports are maintained for backward compatibility but are marked as deprecated.
+#### **Repository Pattern Integration**
+> The API uses the **Repository Pattern** for clean data access:
+> - All database operations go through typed repositories
+> - Business logic is separated from data access
+> - Easy to test with dependency injection
+> - Type-safe with proper TypeScript interfaces
 
 ## 🧪 Testing
 
@@ -392,7 +388,7 @@ All schemas include comprehensive validation rules, error messages, and TypeScri
 
 The API includes a comprehensive Postman collection (`Starter.postman_collection.json`) with pre-configured requests for:
 
-- **Authentication Flow**: Sign up, sign in, session management, profile access
+- **Authentication Flow**: Sign up, sign in, session management
 - **User Management**: Create user, get user details  
 - **Health Checks**: Ping endpoint, cache testing
 - **Error Scenarios**: Invalid credentials, unauthenticated access
@@ -429,8 +425,8 @@ curl -X POST http://localhost/api/auth/sign-in/email \
 curl -X GET http://localhost/api/auth/session \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 
-# Access protected route
-curl -X GET http://localhost/api/profile \
+# Get user by ID (protected route)
+curl -X GET http://localhost/api/users/USER_ID \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 

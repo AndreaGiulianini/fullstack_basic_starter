@@ -1,12 +1,11 @@
 import swagger from '@fastify/swagger'
 import scalar from '@scalar/fastify-api-reference'
 import Fastify from 'fastify'
-import { API_DOCS, SECURITY_DEFINITIONS, SERVER } from './constants'
 import errorHandlerPlugin from './middleware/errorHandler'
-import authRoutes from './routes/authRoutes'
 import betterAuthRoutes from './routes/betterAuth'
 import testRoutes from './routes/testRoutes'
 import userRoutes from './routes/userRoutes'
+import { API_DOCS, SECURITY_DEFINITIONS, SERVER } from './utils/constants'
 import { logShutdown, logStartup } from './utils/logger'
 
 const app = Fastify({ logger: true })
@@ -43,7 +42,6 @@ app.register(scalar, {
 })
 
 app.register(testRoutes)
-app.register(authRoutes)
 app.register(betterAuthRoutes)
 app.register(userRoutes)
 

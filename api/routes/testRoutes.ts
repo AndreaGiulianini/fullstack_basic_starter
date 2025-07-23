@@ -1,10 +1,10 @@
-import logger from '@utils/logger'
-import { toFastifySchema } from '@utils/schemaHelper'
-import { validateBody } from '@utils/validation'
-import valkey from '@utils/valkey'
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import * as z from 'zod'
-import { CACHE_KEYS, ERROR_MESSAGES, TIMEOUTS } from '../constants'
+import { CACHE_KEYS, ERROR_MESSAGES, TIMEOUTS } from '../utils/constants'
+import logger from '../utils/logger'
+import { toFastifySchema } from '../utils/schemaHelper'
+import { validateBody } from '../utils/validation'
+import valkey from '../utils/valkey'
 
 export const identityCountBodySchema = z.object({
   amount: z.number({ error: 'Amount is required' })

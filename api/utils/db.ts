@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { bearer } from 'better-auth/plugins'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import * as betterAuthModels from '../database-models/betterAuthModels'
+import * as betterAuthModels from '../models/schema'
 
 // Extract models for easier reference
 const { account, session, user, verification } = betterAuthModels

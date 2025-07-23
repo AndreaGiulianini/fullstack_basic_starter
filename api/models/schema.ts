@@ -1,5 +1,10 @@
 import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
+// =============================================================================
+// DATABASE SCHEMA DEFINITIONS
+// All Drizzle table definitions in one place
+// =============================================================================
+
 export const user = pgTable('users', {
   id: text('id').primaryKey(),
   name: text('name'),
@@ -9,10 +14,10 @@ export const user = pgTable('users', {
     .notNull(),
   image: text('image'),
   createdAt: timestamp('created_at')
-    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .$defaultFn(() => new Date())
     .notNull(),
   updatedAt: timestamp('updated_at')
-    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .$defaultFn(() => new Date())
     .notNull()
 })
 
@@ -52,6 +57,14 @@ export const verification = pgTable('verification', {
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),
   expiresAt: timestamp('expires_at').notNull(),
-  createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
-  updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date())
+  createdAt: timestamp('created_at').$defaultFn(() => new Date()),
+  updatedAt: timestamp('updated_at').$defaultFn(() => new Date())
 })
+
+// Export all schemas for Drizzle config
+export const schemas = {
+  user,
+  session,
+  account,
+  verification
+}

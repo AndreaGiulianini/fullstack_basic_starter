@@ -21,28 +21,15 @@ export type {
 // Database types
 export type {
   CreateUserData,
-  CreateUserFunction,
   DatabaseInstance,
-  DeleteUserFunction,
-  GetUserFunction,
   SafeUser,
   SafeUserApi,
   UpdateUserData,
-  UpdateUserFunction,
-  User,
-  UserQueryResult,
-  UsersQueryResult
+  User
 } from './database'
 
 // Fastify types
-export type {
-  AuthenticatedFastifyReply,
-  AuthenticatedFastifyRequest,
-  AuthenticatedPreHandler,
-  PreHandler,
-  RouteOptions,
-  RouteSchema
-} from './fastify'
+export type { AuthenticatedFastifyRequest } from './fastify'
 
 // Validation types
 export type {

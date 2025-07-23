@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES, HTTP_STATUS } from '../constants'
+import { ERROR_MESSAGES, HTTP_STATUS } from './constants'
 
 // Classe base per errori personalizzati
 export class AppError extends Error {

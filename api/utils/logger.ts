@@ -1,7 +1,7 @@
 import { ecsFormat } from '@elastic/ecs-pino-format'
 import pino from 'pino'
 import pinoElastic from 'pino-elasticsearch'
-import { ENVIRONMENT, TIMEOUTS } from '../constants'
+import { ENVIRONMENT, TIMEOUTS } from './constants'
 
 // =============================================================================
 // LOGGER CONFIGURATION
