@@ -1,81 +1,81 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { ZodError } from 'zod'
-import type { ErrorResponse } from '../types/common'
-import type { AuthenticatedFastifyRequest } from '../types/fastify'
-import type { ValidationDetails } from '../types/validation'
+import type { ErrorResponse, ExtendedFastifyRequest, ValidationErrorDetail } from '../schemas'
 import { AppError } from '../utils/appError'
 import { BETTER_AUTH_ERROR_NAMES, ERROR_MESSAGES, HTTP_STATUS } from '../utils/constants'
 
-// Enhanced error interface with more context
+// =============================================================================
+// ERROR INTERFACES
+// =============================================================================
+
 interface ErrorWithStatusCode extends Error {
   statusCode?: number
-  code?: string
-  validation?: unknown[]
-  details?: unknown
+  details?: ValidationErrorDetail[]
 }
 
-// Enhanced error context interface
-interface ErrorContext {
-  requestId?: string
-  userId?: string
-  method: string
-  url: string
-  userAgent?: string
-  ip?: string
-  timestamp: string
-}
+// =============================================================================
+// ERROR CONTEXT EXTRACTION
+// =============================================================================
 
-// Generate unique request ID for tracing
-const generateRequestId = (): string => {
-  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-}
-
-// Extract error context from request
-const extractErrorContext = (request: FastifyRequest): ErrorContext => {
+export const extractErrorContext = (request: FastifyRequest) => {
   return {
-    requestId: generateRequestId(),
-    userId: (request as AuthenticatedFastifyRequest).user?.id,
-    method: request.method,
     url: request.url,
-    userAgent: request.headers['user-agent'],
+    method: request.method,
+    userId: (request as ExtendedFastifyRequest).user?.id || 'anonymous',
     ip: request.ip,
+    userAgent: request.headers['user-agent'],
     timestamp: new Date().toISOString()
   }
 }
 
-// Enhanced error logging with structured data
-const logError = (error: Error, context: ErrorContext, request: FastifyRequest): void => {
-  const logData = {
-    error: {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-      ...(error instanceof AppError && { statusCode: error.statusCode }),
-      ...(error instanceof ZodError && { validationErrors: error.issues })
+export const logError = (error: Error, context: ReturnType<typeof extractErrorContext>, request: FastifyRequest) => {
+  const requestInfo = {
+    requestId: request.id,
+    userId: (request as ExtendedFastifyRequest).user?.id || 'anonymous',
+    userAgent: request.headers['user-agent'],
+    ip: request.ip,
+    startTime: Date.now()
+  }
+
+  request.log.error(
+    {
+      error: {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      },
+      request: requestInfo,
+      context
     },
-    context,
-    request: {
-      headers: request.headers,
-      params: request.params,
-      query: request.query,
-      // Don't log sensitive data like passwords
-      body: request.method !== 'GET' ? '[REDACTED]' : undefined
-    }
-  }
-
-  // Log at appropriate level based on error type
-  if (error instanceof AppError && error.statusCode < 500) {
-    request.log.warn(logData, 'Client error occurred')
-  } else {
-    request.log.error(logData, 'Server error occurred')
-  }
+    'Request failed with error'
+  )
 }
 
-// Format validation errors for better user experience
+// =============================================================================
+// VALIDATION ERROR FORMATTING
+// =============================================================================
+
 const formatValidationErrors = (error: ZodError): string => {
-  const errors = error.issues.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ')
-  return `Validation failed: ${errors}`
+  return error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`).join(', ')
 }
+
+// =============================================================================
+// REQUEST ID GENERATION
+// =============================================================================
+
+const generateRequestId = (): string => {
+  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+}
+
+// =============================================================================
+// USER INFO EXTRACTION
+// =============================================================================
+
+// Helper function removed - not used in current implementation
+
+// =============================================================================
+// MAIN ERROR HANDLER
+// =============================================================================
 
 export const errorHandler = async (error: Error, request: FastifyRequest, reply: FastifyReply): Promise<void> => {
   const context = extractErrorContext(request)
@@ -85,7 +85,7 @@ export const errorHandler = async (error: Error, request: FastifyRequest, reply:
 
   let statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR
   let message: string = ERROR_MESSAGES.INTERNAL_SERVER_ERROR
-  let details: ValidationDetails | undefined
+  let details: ValidationErrorDetail[] | undefined
 
   // Enhanced error type handling
   if (error instanceof AppError) {
@@ -108,7 +108,7 @@ export const errorHandler = async (error: Error, request: FastifyRequest, reply:
   } else if ('statusCode' in error && typeof (error as ErrorWithStatusCode).statusCode === 'number') {
     statusCode = (error as ErrorWithStatusCode).statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR
     message = error.message
-    details = (error as ErrorWithStatusCode).details as ValidationDetails
+    details = (error as ErrorWithStatusCode).details as ValidationErrorDetail[]
   } else if (process.env.ENV !== 'production') {
     // In development, show original error message
     message = error.message
@@ -131,32 +131,29 @@ export const errorHandler = async (error: Error, request: FastifyRequest, reply:
     response.error.details = details
   }
 
-  if (process.env.ENV !== 'production') {
-    ;(response.error as ErrorResponse['error'] & { requestId?: string }).requestId = context.requestId
-  }
-
-  // Set security headers
-  reply.header('X-Content-Type-Options', 'nosniff')
-  reply.header('X-Frame-Options', 'DENY')
-  reply.header('X-XSS-Protection', '1; mode=block')
-
-  return reply.status(statusCode).send(response)
+  // Set status code and send response
+  reply.code(statusCode).send(response)
 }
 
-export const errorHandlerPlugin = async (fastify: FastifyInstance) => {
+// =============================================================================
+// ERROR HANDLER PLUGIN
+// =============================================================================
+
+const errorHandlerPlugin = async (fastify: FastifyInstance) => {
+  // Register the main error handler
   fastify.setErrorHandler(errorHandler)
 
   // Add request ID to all requests for tracing
   fastify.addHook('onRequest', async (request) => {
-    ;(request as AuthenticatedFastifyRequest).requestId = generateRequestId()
+    ;(request as ExtendedFastifyRequest).requestId = generateRequestId()
   })
 
   // Add response time tracking
   fastify.addHook('onResponse', async (request, reply) => {
-    const responseTime = Date.now() - ((request as AuthenticatedFastifyRequest).startTime || 0)
+    const responseTime = Date.now() - ((request as ExtendedFastifyRequest).startTime || 0)
     request.log.info(
       {
-        requestId: (request as AuthenticatedFastifyRequest).requestId,
+        requestId: (request as ExtendedFastifyRequest).requestId,
         method: request.method,
         url: request.url,
         statusCode: reply.statusCode,
@@ -168,7 +165,7 @@ export const errorHandlerPlugin = async (fastify: FastifyInstance) => {
 
   // Track request start time
   fastify.addHook('onRequest', async (request) => {
-    ;(request as AuthenticatedFastifyRequest).startTime = Date.now()
+    ;(request as ExtendedFastifyRequest).startTime = Date.now()
   })
 }
 

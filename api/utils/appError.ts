@@ -1,47 +1,49 @@
-import { ERROR_MESSAGES, HTTP_STATUS } from './constants'
+// =============================================================================
+// CUSTOM ERROR CLASSES
+// =============================================================================
 
-// Classe base per errori personalizzati
 export class AppError extends Error {
   public readonly statusCode: number
+  public readonly isOperational: boolean
 
-  constructor(message: string, statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR) {
+  constructor(message: string, statusCode = 500, isOperational = true) {
     super(message)
+    Object.setPrototypeOf(this, new.target.prototype)
+
     this.statusCode = statusCode
-    Error.captureStackTrace(this, this.constructor)
+    this.isOperational = isOperational
+
+    Error.captureStackTrace(this)
   }
 }
 
-// Errori di validazione (400)
 export class ValidationError extends AppError {
-  constructor(message: string = ERROR_MESSAGES.INVALID_REQUEST_DATA) {
-    super(message, HTTP_STATUS.BAD_REQUEST)
+  constructor(message = 'Validation failed') {
+    super(message, 400)
   }
 }
 
-// Errori di autenticazione (401)
 export class AuthenticationError extends AppError {
-  constructor(message: string = ERROR_MESSAGES.AUTHENTICATION_FAILED) {
-    super(message, HTTP_STATUS.UNAUTHORIZED)
+  constructor(message = 'Authentication failed') {
+    super(message, 401)
   }
 }
 
-// Errori di autorizzazione (403)
 export class AuthorizationError extends AppError {
-  constructor(message: string = ERROR_MESSAGES.ACCESS_DENIED) {
-    super(message, HTTP_STATUS.FORBIDDEN)
+  constructor(message = 'Insufficient permissions') {
+    super(message, 403)
   }
 }
 
-// Risorsa non trovata (404)
 export class NotFoundError extends AppError {
-  constructor(message: string = ERROR_MESSAGES.RESOURCE_NOT_FOUND) {
-    super(message, HTTP_STATUS.NOT_FOUND)
+  constructor(message = 'Resource not found') {
+    super(message, 404)
   }
 }
 
-// Conflitto (409) - es. email già esistente
 export class ConflictError extends AppError {
-  constructor(message: string = ERROR_MESSAGES.RESOURCE_ALREADY_EXISTS) {
-    super(message, HTTP_STATUS.CONFLICT)
+  constructor(message = 'Conflict error') {
+    // Conflict (409) - e.g. email already exists
+    super(message, 409)
   }
 }

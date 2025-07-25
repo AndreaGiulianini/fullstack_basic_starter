@@ -1,6 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import type { AuthenticatedUser } from '../types/auth'
-import type { AuthenticatedFastifyRequest } from '../types/fastify'
+import type { AuthenticatedFastifyRequest, AuthenticatedUser } from '../schemas'
 import { AuthenticationError } from '../utils/appError'
 import { auth } from '../utils/db'
 import { logUtils } from '../utils/logger'
@@ -76,7 +75,7 @@ export const betterAuthMiddleware = async (request: FastifyRequest, _reply: Fast
     logUtils.logPerformance({
       operation: 'authentication',
       duration,
-      requestId: (request as AuthenticatedFastifyRequest).requestId
+      requestId: (request as ExtendedFastifyRequest).requestId
     })
   } catch (error) {
     // Log authentication failure

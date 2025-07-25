@@ -1,55 +1,54 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { betterAuthMiddleware } from '../middleware/betterAuth'
-import { userRepository } from '../models'
-import type { SafeUserApi, User } from '../types/database'
-import { NotFoundError } from '../utils/appError'
-import { toFastifySchema } from '../utils/schemaHelper'
 import {
   type CreateUserBody,
   createUserBodySchema,
-  createUserBodySchemaForDocs,
-  createUserResponseSchemaForDocs,
-  getUserResponseSchemaForDocs,
+  createUserResponseSchema,
+  getUserResponseSchema,
+  type SafeUserApi,
+  type User,
   type UserParams,
-  userParamsSchema,
-  userParamsSchemaForDocs
-} from '../utils/schemas'
-import { validateBody, validateParams } from '../utils/validation'
+  userParamsSchema
+} from '../schemas'
+import { createUser, findUserById } from '../services'
+import { NotFoundError } from '../utils/appError'
+import { createRouteSchema } from '../utils/schemaConverter'
+import { validateData } from '../utils/validation'
+
+// =============================================================================
+// USER ROUTES WITH UNIFIED ZOD SYSTEM
+// Zod schemas are the single source of truth for both validation and docs
+// =============================================================================
 
 async function userRoutes(fastify: FastifyInstance) {
   // GET /api/users/:id - Get user by ID
   fastify.get('/api/users/:id', {
-    schema: {
+    schema: createRouteSchema({
       description: 'Get a user by ID',
       tags: ['User'],
-      params: toFastifySchema(userParamsSchemaForDocs),
+      params: userParamsSchema,
       response: {
-        200: toFastifySchema(getUserResponseSchemaForDocs)
+        200: getUserResponseSchema
       },
       security: [{ bearerAuth: [] }]
-    },
+    }),
     preHandler: [betterAuthMiddleware],
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const { id }: UserParams = validateParams(userParamsSchema, request.params)
+      // Validate request parameters - same schema used for docs!
+      const { id }: UserParams = validateData(userParamsSchema, request.params)
 
-      // Validate text ID (better-auth uses text IDs, not UUIDs)
-      const validatedUserId = id.trim()
-      if (!validatedUserId) {
-        throw new NotFoundError('Invalid user ID')
-      }
-
-      const user: User | undefined = await userRepository.findById(validatedUserId)
+      const user: User | undefined = await findUserById(id)
       if (!user) {
         throw new NotFoundError('User not found')
       }
 
-      // Return safe user data without password, with API-ready date format
+      // Create safe user object without sensitive data
       const safeUser: SafeUserApi = {
         id: user.id,
         email: user.email,
         name: user.name,
         image: user.image,
-        createdAt: user.createdAt.toISOString()
+        createdAt: user.createdAt instanceof Date ? user.createdAt.toISOString() : user.createdAt
       }
 
       return reply.send({ success: true, data: safeUser })
@@ -58,30 +57,34 @@ async function userRoutes(fastify: FastifyInstance) {
 
   // POST /api/users - Create new user
   fastify.post('/api/users', {
-    schema: {
-      description: 'Create a User',
+    schema: createRouteSchema({
+      description: 'Create a new user',
       tags: ['User'],
-      body: toFastifySchema(createUserBodySchemaForDocs),
+      body: createUserBodySchema,
       response: {
-        200: toFastifySchema(createUserResponseSchemaForDocs)
+        200: createUserResponseSchema
       }
-    },
+    }),
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const { name, email, password }: CreateUserBody = validateBody(createUserBodySchema, request.body)
+      // Validate request body - same schema used for docs!
+      const { name, email, password }: CreateUserBody = validateData(createUserBodySchema, request.body)
 
-      // Input validation is handled in the repository
-      const user: User = await userRepository.create({ name, email, password })
+      const user: User = await createUser({ name, email, password })
 
-      // Return safe user data without password, with API-ready date format
+      // Create safe user object without sensitive data
       const safeUser: SafeUserApi = {
         id: user.id,
         email: user.email,
         name: user.name,
         image: user.image,
-        createdAt: user.createdAt.toISOString()
+        createdAt: user.createdAt instanceof Date ? user.createdAt.toISOString() : user.createdAt
       }
 
-      return reply.send({ success: true, data: safeUser, message: 'User created successfully' })
+      return reply.send({
+        success: true,
+        data: safeUser,
+        message: 'User created successfully'
+      })
     }
   })
 }

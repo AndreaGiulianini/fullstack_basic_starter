@@ -1,0 +1,294 @@
+import * as z from 'zod'
+
+// =============================================================================
+// ZOD VALIDATION SCHEMAS
+// All validation schemas centralized here
+// Single source of truth for data validation and OpenAPI documentation
+// =============================================================================
+
+// =============================================================================
+// BASIC FIELD SCHEMAS
+// Reusable field-level validation schemas
+// =============================================================================
+
+/**
+ * Email validation with transformation
+ */
+export const emailSchema = z
+  .string()
+  .email('Invalid email format')
+  .toLowerCase()
+  .transform((email) => email.trim())
+  .describe('User email address')
+
+/**
+ * Name validation schema
+ */
+export const nameSchema = z
+  .string()
+  .min(1, 'Name is required')
+  .max(100, 'Name too long')
+  .trim()
+  .describe('User full name')
+
+/**
+ * Password validation schema
+ */
+export const passwordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .max(100, 'Password too long')
+  .describe('User password')
+
+/**
+ * Text ID validation (for URLs and references)
+ */
+export const textIdSchema = z.string().min(1, 'ID is required').describe('Unique identifier')
+
+// =============================================================================
+// USER VALIDATION SCHEMAS
+// =============================================================================
+
+/**
+ * Schema for creating a new user
+ */
+export const createUserBodySchema = z
+  .object({
+    name: nameSchema,
+    email: emailSchema,
+    password: passwordSchema
+  })
+  .describe('User creation data')
+
+/**
+ * Schema for user route parameters (ID)
+ */
+export const userParamsSchema = z
+  .object({
+    id: textIdSchema
+  })
+  .describe('User route parameters')
+
+/**
+ * Schema for safe user data (without password)
+ */
+export const safeUserSchema = z
+  .object({
+    id: textIdSchema,
+    name: nameSchema.nullable(),
+    email: emailSchema,
+    image: z.string().url().nullable().describe('User profile image URL'),
+    createdAt: z.string().datetime().describe('Account creation timestamp')
+  })
+  .describe('Safe user data without sensitive information')
+
+/**
+ * Schema for user update data
+ */
+export const updateUserBodySchema = z
+  .object({
+    name: nameSchema.optional(),
+    email: emailSchema.optional(),
+    image: z.string().url().optional().describe('User profile image URL')
+  })
+  .describe('User update data')
+
+// =============================================================================
+// SESSION VALIDATION SCHEMAS
+// =============================================================================
+
+/**
+ * Schema for session creation
+ */
+export const createSessionBodySchema = z
+  .object({
+    token: z.string().min(1, 'Token is required').describe('Session token'),
+    userId: textIdSchema.describe('User ID'),
+    expiresAt: z.coerce.date().describe('Session expiration date'),
+    ipAddress: z.string().optional().describe('Client IP address'),
+    userAgent: z.string().optional().describe('Client user agent')
+  })
+  .describe('Session creation data')
+
+/**
+ * Schema for session parameters
+ */
+export const sessionParamsSchema = z
+  .object({
+    id: textIdSchema
+  })
+  .describe('Session route parameters')
+
+// =============================================================================
+// RESPONSE SCHEMAS
+// =============================================================================
+
+/**
+ * Factory function for success response schemas
+ */
+export const createSuccessResponseSchema = <T extends z.ZodType>(dataSchema: T) =>
+  z
+    .object({
+      success: z.literal(true),
+      data: dataSchema,
+      message: z.string().optional().describe('Optional success message')
+    })
+    .describe('Successful API response')
+
+/**
+ * User creation response schema
+ */
+export const createUserResponseSchema = createSuccessResponseSchema(safeUserSchema).describe(
+  'User creation success response'
+)
+
+/**
+ * Get user response schema
+ */
+export const getUserResponseSchema = createSuccessResponseSchema(safeUserSchema).describe('Get user success response')
+
+/**
+ * Error response schema
+ */
+export const errorResponseSchema = z
+  .object({
+    success: z.literal(false),
+    error: z.object({
+      message: z.string().describe('Error message'),
+      code: z.string().describe('Error code'),
+      statusCode: z.number().describe('HTTP status code'),
+      timestamp: z.string().datetime().describe('Error timestamp'),
+      path: z.string().describe('Request path'),
+      details: z
+        .array(
+          z.object({
+            field: z.string().describe('Field with error'),
+            message: z.string().describe('Error message for field'),
+            code: z.string().describe('Error code for field')
+          })
+        )
+        .optional()
+        .describe('Detailed validation errors')
+    })
+  })
+  .describe('Error API response')
+
+// =============================================================================
+// TEST/UTILITY SCHEMAS
+// =============================================================================
+
+/**
+ * Healthcheck response schema
+ */
+export const healthcheckResponseSchema = z
+  .object({
+    success: z.literal(true),
+    message: z.string().describe('Health status message')
+  })
+  .describe('Health check response')
+
+/**
+ * Identity count request schema (for testing)
+ */
+export const identityCountBodySchema = z
+  .object({
+    amount: z.number().int().min(0).describe('Count amount')
+  })
+  .describe('Identity count request')
+
+/**
+ * Identity count response schema (for testing)
+ */
+export const identityCountResponseSchema = z
+  .object({
+    success: z.literal(true),
+    amount: z.number().int().describe('Returned count amount')
+  })
+  .describe('Identity count response')
+
+// =============================================================================
+// PAGINATION SCHEMAS
+// =============================================================================
+
+/**
+ * Pagination query parameters schema
+ */
+export const paginationQuerySchema = z
+  .object({
+    page: z.coerce.number().int().min(1).default(1).describe('Page number'),
+    limit: z.coerce.number().int().min(1).max(100).default(10).describe('Items per page'),
+    sortBy: z.string().optional().describe('Sort field'),
+    sortOrder: z.enum(['asc', 'desc']).default('desc').describe('Sort order'),
+    search: z.string().trim().optional().describe('Search term')
+  })
+  .describe('Pagination query parameters')
+
+/**
+ * Paginated response schema factory
+ */
+export const createPaginatedResponseSchema = <T extends z.ZodType>(itemSchema: T) =>
+  z
+    .object({
+      success: z.literal(true),
+      data: z.object({
+        items: z.array(itemSchema).describe('Page items'),
+        pagination: z.object({
+          page: z.number().int().describe('Current page'),
+          limit: z.number().int().describe('Items per page'),
+          total: z.number().int().describe('Total items'),
+          totalPages: z.number().int().describe('Total pages'),
+          hasNext: z.boolean().describe('Has next page'),
+          hasPrev: z.boolean().describe('Has previous page')
+        })
+      })
+    })
+    .describe('Paginated API response')
+
+// =============================================================================
+// VALIDATION UTILITIES
+// =============================================================================
+
+/**
+ * Export all schemas for easy access
+ */
+export const validationSchemas = {
+  // Field schemas
+  emailSchema,
+  nameSchema,
+  passwordSchema,
+  textIdSchema,
+
+  // User schemas
+  createUserBodySchema,
+  userParamsSchema,
+  safeUserSchema,
+  updateUserBodySchema,
+
+  // Session schemas
+  createSessionBodySchema,
+  sessionParamsSchema,
+
+  // Response schemas
+  createUserResponseSchema,
+  getUserResponseSchema,
+  errorResponseSchema,
+
+  // Test schemas
+  healthcheckResponseSchema,
+  identityCountBodySchema,
+  identityCountResponseSchema,
+
+  // Pagination schemas
+  paginationQuerySchema
+} as const
+
+/**
+ * Type definitions for schemas
+ */
+export type CreateUserBody = z.infer<typeof createUserBodySchema>
+export type UserParams = z.infer<typeof userParamsSchema>
+export type SafeUserFromSchema = z.infer<typeof safeUserSchema>
+export type UpdateUserBody = z.infer<typeof updateUserBodySchema>
+export type CreateSessionBody = z.infer<typeof createSessionBodySchema>
+export type SessionParams = z.infer<typeof sessionParamsSchema>
+export type PaginationQuery = z.infer<typeof paginationQuerySchema>

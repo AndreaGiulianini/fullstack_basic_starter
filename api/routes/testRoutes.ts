@@ -1,38 +1,35 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import * as z from 'zod'
+import { healthcheckResponseSchema, identityCountBodySchema, identityCountResponseSchema } from '../schemas'
 import { CACHE_KEYS, ERROR_MESSAGES, TIMEOUTS } from '../utils/constants'
 import logger from '../utils/logger'
-import { toFastifySchema } from '../utils/schemaHelper'
-import { validateBody } from '../utils/validation'
+import { createRouteSchema } from '../utils/schemaConverter'
+import { validateData } from '../utils/validation'
 import valkey from '../utils/valkey'
 
-export const identityCountBodySchema = z.object({
-  amount: z.number({ error: 'Amount is required' })
-})
+// =============================================================================
+// UTILITY FUNCTIONS
+// =============================================================================
 
-export const identityCountResponseSchema = z.object({
-  success: z.boolean(),
-  amount: z.number().optional(),
-  message: z.string().optional()
-})
-
-export const healthcheckResponseSchema = z.object({
-  success: z.boolean(),
-  message: z.string()
-})
-
-// Define the sleep function
+/**
+ * Sleep utility for simulating delays
+ */
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+// =============================================================================
+// TEST ROUTES WITH UNIFIED ZOD SYSTEM
+// Zod schemas are the single source of truth for both validation and docs
+// =============================================================================
+
 async function testRoutes(fastify: FastifyInstance) {
+  // GET /api/healthcheck/ping - Basic health check with cache test
   fastify.get('/api/healthcheck/ping', {
-    schema: {
-      description: 'Test Fastify',
+    schema: createRouteSchema({
+      description: 'Test Fastify server and cache connectivity',
       tags: ['Test'],
       response: {
-        200: toFastifySchema(healthcheckResponseSchema)
+        200: healthcheckResponseSchema
       }
-    },
+    }),
     handler: async (_request: FastifyRequest, reply: FastifyReply) => {
       const data = await valkey.get(CACHE_KEYS.TEST_KEY)
       if (!data) {
@@ -44,18 +41,23 @@ async function testRoutes(fastify: FastifyInstance) {
     }
   })
 
+  // POST /api/identity-count - Test Redux with delay simulation
   fastify.post('/api/identity-count', {
-    schema: {
-      description: 'Test Redux',
+    schema: createRouteSchema({
+      description: 'Test Redux state management with simulated delay',
       tags: ['Test'],
-      body: toFastifySchema(identityCountBodySchema),
+      body: identityCountBodySchema,
       response: {
-        200: toFastifySchema(identityCountResponseSchema)
+        200: identityCountResponseSchema
       }
-    },
+    }),
     handler: async (request: FastifyRequest, reply: FastifyReply) => {
-      const { amount } = validateBody(identityCountBodySchema, request.body)
+      // Validate request body - same schema used for docs!
+      const { amount } = validateData(identityCountBodySchema, request.body)
+
+      // Simulate processing delay
       await sleep(TIMEOUTS.IDENTITY_COUNT_DELAY)
+
       const response = { success: true, amount }
       return reply.send(response)
     }

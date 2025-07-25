@@ -21,6 +21,6 @@
   "watchOptions": {
     "watchFile": "dynamicPriorityPolling"
   },
-  "include": ["**/*.ts", "app.ts"],
+  "include": ["**/*.ts", "app.ts", "routes/betterAuthRoutes.ts"],
   "exclude": ["node_modules"]
 }
