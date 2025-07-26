@@ -94,30 +94,9 @@ export const updateUserBodySchema = z
   .describe('User update data')
 
 // =============================================================================
-// SESSION VALIDATION SCHEMAS
+// NOTE: Session management is handled by Better-Auth JWT
+// No custom session schemas needed - removed for simplicity
 // =============================================================================
-
-/**
- * Schema for session creation
- */
-export const createSessionBodySchema = z
-  .object({
-    token: z.string().min(1, 'Token is required').describe('Session token'),
-    userId: textIdSchema.describe('User ID'),
-    expiresAt: z.coerce.date().describe('Session expiration date'),
-    ipAddress: z.string().optional().describe('Client IP address'),
-    userAgent: z.string().optional().describe('Client user agent')
-  })
-  .describe('Session creation data')
-
-/**
- * Schema for session parameters
- */
-export const sessionParamsSchema = z
-  .object({
-    id: textIdSchema
-  })
-  .describe('Session route parameters')
 
 // =============================================================================
 // RESPONSE SCHEMAS
@@ -207,6 +186,95 @@ export const identityCountResponseSchema = z
   .describe('Identity count response')
 
 // =============================================================================
+// BETTER-AUTH SCHEMAS
+// =============================================================================
+
+/**
+ * Better-Auth sign up with email schema
+ */
+export const betterAuthSignUpSchema = z
+  .object({
+    name: nameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    callbackURL: z.string().url().optional().describe('URL to redirect after verification')
+  })
+  .describe('Better-Auth email signup data')
+
+/**
+ * Better-Auth sign in with email schema
+ */
+export const betterAuthSignInSchema = z
+  .object({
+    email: emailSchema,
+    password: passwordSchema,
+    rememberMe: z.boolean().default(true).describe('Remember user session'),
+    callbackURL: z.string().url().optional().describe('URL to redirect after sign in')
+  })
+  .describe('Better-Auth email signin data')
+
+/**
+ * Better-Auth social sign in schema
+ */
+export const betterAuthSocialSignInSchema = z
+  .object({
+    provider: z.enum(['google', 'github', 'discord', 'apple']).describe('Social provider'),
+    callbackURL: z.string().url().optional().describe('URL to redirect after sign in'),
+    errorCallbackURL: z.string().url().optional().describe('URL to redirect on error'),
+    newUserCallbackURL: z.string().url().optional().describe('URL to redirect for new users')
+  })
+  .describe('Better-Auth social signin data')
+
+/**
+ * Better-Auth forgot password schema
+ */
+export const betterAuthForgotPasswordSchema = z
+  .object({
+    email: emailSchema,
+    redirectTo: z.string().url().optional().describe('URL to redirect after reset')
+  })
+  .describe('Better-Auth forgot password data')
+
+/**
+ * Better-Auth reset password schema
+ */
+export const betterAuthResetPasswordSchema = z
+  .object({
+    token: z.string().min(1, 'Reset token is required').describe('Password reset token'),
+    password: passwordSchema
+  })
+  .describe('Better-Auth reset password data')
+
+/**
+ * Better-Auth session response schema
+ */
+export const betterAuthSessionResponseSchema = z
+  .object({
+    user: safeUserSchema.nullable(),
+    session: z
+      .object({
+        id: textIdSchema,
+        userId: textIdSchema,
+        expiresAt: z.string().datetime().describe('Session expiration'),
+        token: z.string().describe('Session token'),
+        ipAddress: z.string().optional().describe('Client IP'),
+        userAgent: z.string().optional().describe('Client user agent')
+      })
+      .nullable()
+  })
+  .describe('Better-Auth session data')
+
+/**
+ * Better-Auth success response schema (for operations like signout)
+ */
+export const betterAuthSuccessResponseSchema = z
+  .object({
+    success: z.literal(true),
+    message: z.string().optional().describe('Operation success message')
+  })
+  .describe('Better-Auth operation success response')
+
+// =============================================================================
 // PAGINATION SCHEMAS
 // =============================================================================
 
@@ -264,9 +332,7 @@ export const validationSchemas = {
   safeUserSchema,
   updateUserBodySchema,
 
-  // Session schemas
-  createSessionBodySchema,
-  sessionParamsSchema,
+  // Note: Custom session schemas removed - using Better-Auth JWT only
 
   // Response schemas
   createUserResponseSchema,
@@ -279,7 +345,16 @@ export const validationSchemas = {
   identityCountResponseSchema,
 
   // Pagination schemas
-  paginationQuerySchema
+  paginationQuerySchema,
+
+  // Better-Auth schemas
+  betterAuthSignUpSchema,
+  betterAuthSignInSchema,
+  betterAuthSocialSignInSchema,
+  betterAuthForgotPasswordSchema,
+  betterAuthResetPasswordSchema,
+  betterAuthSessionResponseSchema,
+  betterAuthSuccessResponseSchema
 } as const
 
 /**
@@ -289,6 +364,10 @@ export type CreateUserBody = z.infer<typeof createUserBodySchema>
 export type UserParams = z.infer<typeof userParamsSchema>
 export type SafeUserFromSchema = z.infer<typeof safeUserSchema>
 export type UpdateUserBody = z.infer<typeof updateUserBodySchema>
-export type CreateSessionBody = z.infer<typeof createSessionBodySchema>
-export type SessionParams = z.infer<typeof sessionParamsSchema>
+// Note: Custom session types removed - using Better-Auth JWT only
 export type PaginationQuery = z.infer<typeof paginationQuerySchema>
+export type BetterAuthSignUp = z.infer<typeof betterAuthSignUpSchema>
+export type BetterAuthSignIn = z.infer<typeof betterAuthSignInSchema>
+export type BetterAuthSocialSignIn = z.infer<typeof betterAuthSocialSignInSchema>
+export type BetterAuthForgotPassword = z.infer<typeof betterAuthForgotPasswordSchema>
+export type BetterAuthResetPassword = z.infer<typeof betterAuthResetPasswordSchema>

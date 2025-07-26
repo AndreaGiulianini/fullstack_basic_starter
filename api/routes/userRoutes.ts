@@ -1,5 +1,9 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { betterAuthMiddleware } from '../middleware/betterAuth'
+import { createUser, findUserById } from '../services'
+import { NotFoundError } from '../utils/appError'
+import { ERROR_MESSAGES } from '../utils/constants'
+import { createRouteSchema } from '../utils/schemaConverter'
 import {
   type CreateUserBody,
   createUserBodySchema,
@@ -9,10 +13,7 @@ import {
   type User,
   type UserParams,
   userParamsSchema
-} from '../schemas'
-import { createUser, findUserById } from '../services'
-import { NotFoundError } from '../utils/appError'
-import { createRouteSchema } from '../utils/schemaConverter'
+} from '../utils/schemas'
 import { validateData } from '../utils/validation'
 
 // =============================================================================
@@ -39,7 +40,7 @@ async function userRoutes(fastify: FastifyInstance) {
 
       const user: User | undefined = await findUserById(id)
       if (!user) {
-        throw new NotFoundError('User not found')
+        throw new NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND)
       }
 
       // Create safe user object without sensitive data

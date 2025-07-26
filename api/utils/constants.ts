@@ -121,13 +121,20 @@ export const ERROR_MESSAGES = {
   UNAUTHORIZED: 'Unauthorized',
   USER_NOT_FOUND: 'User not found',
   USER_ALREADY_EXISTS: 'User already exists',
+  USER_UPDATE_FAILED: 'Failed to update user',
+  EMAIL_ALREADY_IN_USE: 'Email already in use',
   INVALID_CREDENTIALS: 'Invalid credentials',
   DATABASE_OPERATION_FAILED: 'Database operation failed',
   REQUEST_BODY_VALIDATION_FAILED: 'Request body validation failed',
   REQUEST_PARAMS_VALIDATION_FAILED: 'Request params validation failed',
   REQUEST_QUERY_VALIDATION_FAILED: 'Request query validation failed',
   INVALID_EMAIL_FORMAT: 'Invalid email format',
-  SUCCESS_RESPONSE_MESSAGE: 'pong'
+  SUCCESS_RESPONSE_MESSAGE: 'pong',
+  AUTHENTICATION_REQUIRED: 'Authentication required',
+  INVALID_SESSION_DATA: 'Invalid session data',
+  AUTHENTICATION_FAILED_GENERIC: 'Authentication failed',
+  INSUFFICIENT_PERMISSIONS: 'Insufficient permissions',
+  INVALID_USER_ID: 'Invalid user ID'
 } as const
 
 export const BETTER_AUTH_ERROR_NAMES = {
@@ -153,6 +160,17 @@ export const TIMEOUTS = {
   DATABASE: 10000,
   IDENTITY_COUNT_DELAY: 1000,
   ELASTICSEARCH_FLUSH_BYTES: 100
+} as const
+
+// =============================================================================
+// DATABASE QUERY LIMITS
+// =============================================================================
+
+export const DB_QUERY_LIMITS = {
+  SINGLE_RECORD: 1,
+  DEFAULT_PAGE_SIZE: 10,
+  DEFAULT_OFFSET: 0,
+  MAX_PAGE_SIZE: 100
 } as const
 
 // =============================================================================

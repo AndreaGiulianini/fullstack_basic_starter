@@ -4,17 +4,6 @@
 // Simple, direct, and performant services without repository abstraction
 // =============================================================================
 
-// Session service functions
-export {
-  createSession,
-  deleteSession,
-  deleteSessionsByUserId,
-  findAllSessions,
-  findSessionById,
-  findSessionsByUserId,
-  sessionExists,
-  updateSession
-} from './sessionService'
 // User service functions
 export {
   createUser,

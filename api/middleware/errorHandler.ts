@@ -1,8 +1,8 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { ZodError } from 'zod'
-import type { ErrorResponse, ExtendedFastifyRequest, ValidationErrorDetail } from '../schemas'
 import { AppError } from '../utils/appError'
 import { BETTER_AUTH_ERROR_NAMES, ERROR_MESSAGES, HTTP_STATUS } from '../utils/constants'
+import type { ErrorResponse, ExtendedFastifyRequest, ValidationErrorDetail } from '../utils/schemas'
 
 // =============================================================================
 // ERROR INTERFACES

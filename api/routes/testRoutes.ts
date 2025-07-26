@@ -1,8 +1,8 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { healthcheckResponseSchema, identityCountBodySchema, identityCountResponseSchema } from '../schemas'
 import { CACHE_KEYS, ERROR_MESSAGES, TIMEOUTS } from '../utils/constants'
 import logger from '../utils/logger'
 import { createRouteSchema } from '../utils/schemaConverter'
+import { healthcheckResponseSchema, identityCountBodySchema, identityCountResponseSchema } from '../utils/schemas'
 import { validateData } from '../utils/validation'
 import valkey from '../utils/valkey'
 

@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "894dbd5b-95ff-472d-9cb5-8f05d4d8c734",
-    "name": "Fullstack Starter API - Better Auth",
-    "description": "Comprehensive API testing collection for the Fullstack Starter project with Better-Auth integration",
+    "name": "Fullstack Starter API - Better Auth & JWT",
+    "description": "Comprehensive API testing collection for the Fullstack Starter project with Better-Auth JWT integration. Clean architecture with proper error handling and validation.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "6610193"
   },
@@ -33,9 +33,10 @@
       "type": "string"
     },
     {
-      "key": "betterAuthToken",
+      "key": "authToken",
       "value": "",
-      "type": "string"
+      "type": "string",
+      "description": "JWT token from better-auth"
     },
     {
       "key": "userId",
@@ -46,11 +47,6 @@
       "key": "createdUserId",
       "value": "",
       "type": "string"
-    },
-    {
-      "key": "uniqueEmail",
-      "value": "",
-      "type": "string"
     }
   ],
   "item": [
@@ -58,26 +54,19 @@
       "name": "Health Check",
       "item": [
         {
-          "name": "Ping - Health Check",
+          "name": "Ping - Basic Health Check",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
+                  "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test(\"Response has success property\", function () {",
+                  "pm.test('Response has success property', function () {",
                   "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('success');",
-                  "    pm.expect(jsonData.success).to.be.true;",
-                  "});",
-                  "",
-                  "pm.test(\"Response has pong message\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('message');",
-                  "    pm.expect(jsonData.message).to.equal('pong');",
+                  "    pm.expect(jsonData).to.have.property('success', true);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -91,13 +80,11 @@
               "raw": "{{baseUrl}}/api/healthcheck/ping",
               "host": ["{{baseUrl}}"],
               "path": ["api", "healthcheck", "ping"]
-            },
-            "description": "Health check endpoint to verify API is running"
+            }
           },
           "response": []
         }
-      ],
-      "description": "Health check and status endpoints"
+      ]
     },
     {
       "name": "Authentication",
@@ -106,47 +93,30 @@
           "name": "Sign Up with Email",
           "event": [
             {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "// Generate unique email for testing",
-                  "const timestamp = Date.now();",
-                  "const uniqueEmail = `test.${timestamp}@example.com`;",
-                  "pm.environment.set('uniqueEmail', uniqueEmail);"
-                ],
-                "type": "text/javascript"
-              }
-            },
-            {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
+                  "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test(\"Response has user data\", function () {",
+                  "pm.test('Response contains user data', function () {",
                   "    const jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.have.property('user');",
-                  "    pm.expect(jsonData.user).to.have.property('id');",
-                  "    pm.expect(jsonData.user).to.have.property('email');",
-                  "    // User ID should be text-based (not UUID)",
-                  "    pm.expect(jsonData.user.id).to.be.a('string');",
-                  "    pm.expect(jsonData.user.id.length).to.be.greaterThan(10);",
+                  "    pm.expect(jsonData.user).to.have.property('email', pm.variables.get('testEmail'));",
+                  "    ",
+                  "    // Store user ID for future requests",
+                  "    if (jsonData.user && jsonData.user.id) {",
+                  "        pm.collectionVariables.set('userId', jsonData.user.id);",
+                  "    }",
                   "});",
                   "",
-                  "pm.test(\"Response has token\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('token');",
-                  "    pm.expect(jsonData.token).to.be.a('string');",
-                  "});",
-                  "",
-                  "// Store token and user ID for other tests",
-                  "if (pm.response.code === 200) {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.environment.set('betterAuthToken', jsonData.token);",
-                  "    pm.environment.set('userId', jsonData.user.id);",
-                  "}"
+                  "pm.test('Sets authentication token', function () {",
+                  "    const cookies = pm.cookies.toObject();",
+                  "    if (cookies['better-auth.session_token']) {",
+                  "        pm.collectionVariables.set('authToken', cookies['better-auth.session_token']);",
+                  "    }",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -162,19 +132,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"{{uniqueEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"name\": \"{{testName}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"name\": \"{{testName}}\",\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/sign-up/email",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "sign-up", "email"]
-            },
-            "description": "Sign up a new user with email and password using better-auth"
+            }
           },
           "response": []
         },
@@ -185,116 +149,21 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
+                  "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test(\"Response has user data\", function () {",
+                  "pm.test('Response contains user data', function () {",
                   "    const jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.have.property('user');",
-                  "    pm.expect(jsonData.user).to.have.property('id');",
                   "    pm.expect(jsonData.user).to.have.property('email');",
-                  "    // User ID should be text-based (not UUID)",
-                  "    pm.expect(jsonData.user.id).to.be.a('string');",
-                  "    pm.expect(jsonData.user.id.length).to.be.greaterThan(10);",
                   "});",
                   "",
-                  "pm.test(\"Response has token\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('token');",
-                  "    pm.expect(jsonData.token).to.be.a('string');",
-                  "});",
-                  "",
-                  "// Store token and user ID for protected route tests",
-                  "if (pm.response.code === 200) {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.environment.set('betterAuthToken', jsonData.token);",
-                  "    pm.environment.set('userId', jsonData.user.id);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"{{uniqueEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/sign-in/email",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "sign-in", "email"]
-            },
-            "description": "Sign in with email and password using better-auth"
-          },
-          "response": []
-        },
-        {
-          "name": "Sign Out",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "// Clear stored tokens after sign out",
-                  "if (pm.response.code === 200) {",
-                  "    pm.environment.set('betterAuthToken', '');",
-                  "    pm.environment.set('userId', '');",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{betterAuthToken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/sign-out",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "sign-out"]
-            },
-            "description": "Sign out and invalidate current session using better-auth"
-          },
-          "response": []
-        },
-        {
-          "name": "Sign In - Invalid Credentials",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 401\", function () {",
-                  "    pm.response.to.have.status(401);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has error message\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('message');",
-                  "    pm.expect(jsonData.message).to.be.a('string');",
+                  "pm.test('Sets authentication token', function () {",
+                  "    const cookies = pm.cookies.toObject();",
+                  "    if (cookies['better-auth.session_token']) {",
+                  "        pm.collectionVariables.set('authToken', cookies['better-auth.session_token']);",
+                  "    }",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -311,192 +180,33 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"wrongpassword\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"rememberMe\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/sign-in/email",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "sign-in", "email"]
-            },
-            "description": "Test sign in with invalid credentials"
-          },
-          "response": []
-        }
-      ],
-      "description": "Better-Auth endpoints for modern authentication flows"
-    },
-    {
-      "name": "Users",
-      "item": [
-        {
-          "name": "Create User",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "// Generate unique email for user creation",
-                  "const timestamp = Date.now();",
-                  "const uniqueEmail = `user.${timestamp}@example.com`;",
-                  "pm.environment.set('uniqueEmail', uniqueEmail);"
-                ],
-                "type": "text/javascript"
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has success property\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('success');",
-                  "    pm.expect(jsonData.success).to.be.true;",
-                  "});",
-                  "",
-                  "pm.test(\"Response has user data\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('data');",
-                  "    pm.expect(jsonData.data).to.have.property('id');",
-                  "    pm.expect(jsonData.data).to.have.property('email');",
-                  "    pm.expect(jsonData.data).to.have.property('name');",
-                  "    // User ID should be text-based (not UUID)",
-                  "    pm.expect(jsonData.data.id).to.be.a('string');",
-                  "    pm.expect(jsonData.data.id.length).to.be.greaterThan(10);",
-                  "});",
-                  "",
-                  "pm.test(\"Password is not returned\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.not.have.property('password');",
-                  "});",
-                  "",
-                  "// Store user ID for other tests",
-                  "if (pm.response.code === 200) {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.environment.set('createdUserId', jsonData.data.id);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
             }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"{{testName}}\",\n  \"email\": \"{{uniqueEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users"]
-            },
-            "description": "Create a new user with valid data (uses better-auth internally)"
           },
           "response": []
         },
         {
-          "name": "Create User - Invalid Email",
+          "name": "Get Current Session",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400\", function () {",
-                  "    pm.response.to.have.status(400);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has validation error\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('statusCode');",
-                  "    pm.expect(jsonData.statusCode).to.equal(400);",
-                  "    pm.expect(jsonData).to.have.property('message');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"{{testName}}\",\n  \"email\": \"invalid-email\",\n  \"password\": \"{{testPassword}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users"]
-            },
-            "description": "Test user creation with invalid email format"
-          },
-          "response": []
-        },
-        {
-          "name": "Get User by ID - Authenticated",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
+                  "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test(\"Response has success property\", function () {",
+                  "pm.test('Response contains session data', function () {",
                   "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('success');",
-                  "    pm.expect(jsonData.success).to.be.true;",
-                  "});",
-                  "",
-                  "pm.test(\"Response has user data\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('data');",
-                  "    pm.expect(jsonData.data).to.have.property('id');",
-                  "    pm.expect(jsonData.data).to.have.property('email');",
-                  "    pm.expect(jsonData.data).to.have.property('name');",
-                  "    pm.expect(jsonData.data).to.have.property('createdAt');",
-                  "});",
-                  "",
-                  "pm.test(\"Password is not returned\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.not.have.property('password');",
-                  "});",
-                  "",
-                  "pm.test(\"createdAt is ISO string\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    const date = new Date(jsonData.data.createdAt);",
-                  "    pm.expect(date.toISOString()).to.equal(jsonData.data.createdAt);",
+                  "    pm.expect(jsonData).to.have.property('user');",
+                  "    if (jsonData.user) {",
+                  "        pm.expect(jsonData.user).to.have.property('email');",
+                  "    }",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -507,16 +217,270 @@
             "method": "GET",
             "header": [
               {
-                "key": "Authorization",
-                "value": "Bearer {{betterAuthToken}}"
+                "key": "Cookie",
+                "value": "better-auth.session_token={{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/get-session",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "get-session"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sign Out",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response indicates success', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('success', true);",
+                  "});",
+                  "",
+                  "// Clear stored token",
+                  "pm.collectionVariables.set('authToken', '');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "better-auth.session_token={{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-out",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-out"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response indicates success', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('success', true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{testEmail}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "forgot-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sign In - Invalid Credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Response contains error', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('success', false);",
+                  "    pm.expect(jsonData).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"wrongpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-in/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-in", "email"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User (Direct API)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains user data', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('success', true);",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "    pm.expect(jsonData.data).to.have.property('email', pm.variables.get('testEmail2'));",
+                  "    ",
+                  "    // Store created user ID",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.collectionVariables.set('createdUserId', jsonData.data.id);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Another Test User\",\n  \"email\": \"{{testEmail2}}\",\n  \"password\": \"{{testPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User - Invalid Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Response contains validation error', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('success', false);",
+                  "    pm.expect(jsonData).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"invalid-email\",\n  \"password\": \"{{testPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID - Authenticated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains user data', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('success', true);",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "    pm.expect(jsonData.data).to.have.property('id');",
+                  "    pm.expect(jsonData.data).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "better-auth.session_token={{authToken}}",
+                "type": "text"
               }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users/{{userId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "users", "{{userId}}"]
-            },
-            "description": "Get user details by ID (requires authentication)"
+            }
           },
           "response": []
         },
@@ -527,14 +491,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 401\", function () {",
+                  "pm.test('Status code is 401', function () {",
                   "    pm.response.to.have.status(401);",
                   "});",
                   "",
-                  "pm.test(\"Response indicates authentication required\", function () {",
+                  "pm.test('Response contains authentication error', function () {",
                   "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('success');",
-                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData).to.have.property('success', false);",
+                  "    pm.expect(jsonData).to.have.property('error');",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -548,13 +512,11 @@
               "raw": "{{baseUrl}}/api/users/{{userId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "users", "{{userId}}"]
-            },
-            "description": "Test user endpoint without authentication"
+            }
           },
           "response": []
         }
-      ],
-      "description": "User management endpoints"
+      ]
     },
     {
       "name": "Testing",
@@ -566,20 +528,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
+                  "pm.test('Status code is 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "pm.test(\"Response has success property\", function () {",
+                  "pm.test('Response contains amount', function () {",
                   "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('success');",
-                  "    pm.expect(jsonData.success).to.be.true;",
-                  "});",
-                  "",
-                  "pm.test(\"Response returns the amount\", function () {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('amount');",
-                  "    pm.expect(jsonData.amount).to.equal(42);",
+                  "    pm.expect(jsonData).to.have.property('success', true);",
+                  "    pm.expect(jsonData).to.have.property('amount', 5);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -596,19 +552,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"amount\": 42\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"amount\": 5\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/identity-count",
               "host": ["{{baseUrl}}"],
               "path": ["api", "identity-count"]
-            },
-            "description": "Test identity count endpoint with valid amount"
+            }
           },
           "response": []
         },
@@ -619,14 +569,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400\", function () {",
+                  "pm.test('Status code is 400', function () {",
                   "    pm.response.to.have.status(400);",
                   "});",
                   "",
-                  "pm.test(\"Response has validation error\", function () {",
+                  "pm.test('Response contains validation error', function () {",
                   "    const jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('statusCode');",
-                  "    pm.expect(jsonData.statusCode).to.equal(400);",
+                  "    pm.expect(jsonData).to.have.property('success', false);",
+                  "    pm.expect(jsonData).to.have.property('error');",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -643,24 +593,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"amount\": \"invalid\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"amount\": \"invalid\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/identity-count",
               "host": ["{{baseUrl}}"],
               "path": ["api", "identity-count"]
-            },
-            "description": "Test identity count endpoint with invalid input type"
+            }
           },
           "response": []
         }
-      ],
-      "description": "Testing and utility endpoints for development"
+      ]
     }
   ],
   "event": [

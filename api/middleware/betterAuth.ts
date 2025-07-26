@@ -1,8 +1,9 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import type { AuthenticatedFastifyRequest, AuthenticatedUser } from '../schemas'
 import { AuthenticationError } from '../utils/appError'
+import { ERROR_MESSAGES } from '../utils/constants'
 import { auth } from '../utils/db'
 import { logUtils } from '../utils/logger'
+import type { AuthenticatedFastifyRequest, AuthenticatedUser, ExtendedFastifyRequest } from '../utils/schemas'
 
 // =============================================================================
 // AUTHENTICATION MIDDLEWARE
@@ -36,7 +37,7 @@ export const betterAuthMiddleware = async (request: FastifyRequest, _reply: Fast
         reason: 'No valid session found'
       })
 
-      throw new AuthenticationError('Authentication required')
+      throw new AuthenticationError(ERROR_MESSAGES.AUTHENTICATION_REQUIRED)
     }
 
     // Validate session data
@@ -49,7 +50,7 @@ export const betterAuthMiddleware = async (request: FastifyRequest, _reply: Fast
         reason: 'Invalid session data'
       })
 
-      throw new AuthenticationError('Invalid session data')
+      throw new AuthenticationError(ERROR_MESSAGES.INVALID_SESSION_DATA)
     }
 
     // Attach user to request
@@ -100,7 +101,7 @@ export const betterAuthMiddleware = async (request: FastifyRequest, _reply: Fast
       throw error
     }
 
-    throw new AuthenticationError('Authentication failed')
+    throw new AuthenticationError(ERROR_MESSAGES.AUTHENTICATION_FAILED_GENERIC)
   }
 }
 
@@ -153,7 +154,7 @@ export const requireRole = (requiredRole: 'admin' | 'user') => {
         severity: 'high'
       })
 
-      throw new AuthenticationError('Insufficient permissions')
+      throw new AuthenticationError(ERROR_MESSAGES.INSUFFICIENT_PERMISSIONS)
     }
   }
 }

@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { bearer } from 'better-auth/plugins'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { account, session, user, verification } from '../schemas/database'
+import { account, session, user, verification } from './schemas/database'
 
 // Database connection
 const url = `postgres://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`
