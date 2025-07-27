@@ -3,7 +3,6 @@ import { betterAuthMiddleware } from '../middleware/betterAuth'
 import { createUser, findUserById } from '../services'
 import { NotFoundError } from '../utils/appError'
 import { ERROR_MESSAGES } from '../utils/constants'
-import { createRouteSchema } from '../utils/schemaConverter'
 import {
   type CreateUserBody,
   createUserBodySchema,
@@ -14,6 +13,7 @@ import {
   type UserParams,
   userParamsSchema
 } from '../utils/schemas'
+import { createRouteSchema } from '../utils/schemas/schemaConverter'
 import { validateData } from '../utils/validation'
 
 // =============================================================================

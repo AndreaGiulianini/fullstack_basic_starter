@@ -14,12 +14,7 @@ import * as z from 'zod'
 /**
  * Email validation with transformation
  */
-export const emailSchema = z
-  .string()
-  .email('Invalid email format')
-  .toLowerCase()
-  .transform((email) => email.trim())
-  .describe('User email address')
+export const emailSchema = z.string().trim().email('Invalid email format').describe('User email address')
 
 /**
  * Name validation schema
@@ -77,7 +72,7 @@ export const safeUserSchema = z
     id: textIdSchema,
     name: nameSchema.nullable(),
     email: emailSchema,
-    image: z.string().url().nullable().describe('User profile image URL'),
+    image: z.url().nullable().describe('User profile image URL'),
     createdAt: z.string().datetime().describe('Account creation timestamp')
   })
   .describe('Safe user data without sensitive information')
@@ -89,7 +84,7 @@ export const updateUserBodySchema = z
   .object({
     name: nameSchema.optional(),
     email: emailSchema.optional(),
-    image: z.string().url().optional().describe('User profile image URL')
+    image: z.url().optional().describe('User profile image URL')
   })
   .describe('User update data')
 
@@ -197,7 +192,7 @@ export const betterAuthSignUpSchema = z
     name: nameSchema,
     email: emailSchema,
     password: passwordSchema,
-    callbackURL: z.string().url().optional().describe('URL to redirect after verification')
+    callbackURL: z.url().optional().describe('URL to redirect after verification')
   })
   .describe('Better-Auth email signup data')
 
@@ -209,7 +204,7 @@ export const betterAuthSignInSchema = z
     email: emailSchema,
     password: passwordSchema,
     rememberMe: z.boolean().default(true).describe('Remember user session'),
-    callbackURL: z.string().url().optional().describe('URL to redirect after sign in')
+    callbackURL: z.url().optional().describe('URL to redirect after sign in')
   })
   .describe('Better-Auth email signin data')
 
@@ -219,9 +214,9 @@ export const betterAuthSignInSchema = z
 export const betterAuthSocialSignInSchema = z
   .object({
     provider: z.enum(['google', 'github', 'discord', 'apple']).describe('Social provider'),
-    callbackURL: z.string().url().optional().describe('URL to redirect after sign in'),
-    errorCallbackURL: z.string().url().optional().describe('URL to redirect on error'),
-    newUserCallbackURL: z.string().url().optional().describe('URL to redirect for new users')
+    callbackURL: z.url().optional().describe('URL to redirect after sign in'),
+    errorCallbackURL: z.url().optional().describe('URL to redirect on error'),
+    newUserCallbackURL: z.url().optional().describe('URL to redirect for new users')
   })
   .describe('Better-Auth social signin data')
 
@@ -231,7 +226,7 @@ export const betterAuthSocialSignInSchema = z
 export const betterAuthForgotPasswordSchema = z
   .object({
     email: emailSchema,
-    redirectTo: z.string().url().optional().describe('URL to redirect after reset')
+    redirectTo: z.url().optional().describe('URL to redirect after reset')
   })
   .describe('Better-Auth forgot password data')
 
@@ -283,11 +278,11 @@ export const betterAuthSuccessResponseSchema = z
  */
 export const paginationQuerySchema = z
   .object({
-    page: z.coerce.number().int().min(1).default(1).describe('Page number'),
-    limit: z.coerce.number().int().min(1).max(100).default(10).describe('Items per page'),
+    page: z.number().int().min(1).default(1).describe('Page number'),
+    limit: z.number().int().min(1).max(100).default(10).describe('Items per page'),
     sortBy: z.string().optional().describe('Sort field'),
     sortOrder: z.enum(['asc', 'desc']).default('desc').describe('Sort order'),
-    search: z.string().trim().optional().describe('Search term')
+    search: z.string().optional().describe('Search term')
   })
   .describe('Pagination query parameters')
 

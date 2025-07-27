@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import * as z from 'zod'
 import { auth } from '../utils/db'
-import { createRouteSchema } from '../utils/schemaConverter'
 import {
   betterAuthForgotPasswordSchema,
   betterAuthResetPasswordSchema,
@@ -12,6 +11,7 @@ import {
   betterAuthSuccessResponseSchema,
   errorResponseSchema
 } from '../utils/schemas'
+import { createRouteSchema } from '../utils/schemas/schemaConverter'
 
 // =============================================================================
 // BETTER-AUTH ROUTES WITH UNIFIED ZOD SYSTEM
