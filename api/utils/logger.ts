@@ -1,24 +1,40 @@
 import { ecsFormat } from '@elastic/ecs-pino-format'
 import pino from 'pino'
 import pinoElastic from 'pino-elasticsearch'
+import pinoPretty from 'pino-pretty'
 import { ENVIRONMENT, TIMEOUTS } from './constants'
 
-// =============================================================================
-// LOGGER CONFIGURATION
-// =============================================================================
-
 // Determine log level based on environment
-const getLogLevel = (): pino.Level => {
-  const env = process.env.ENV || ENVIRONMENT.DEVELOPMENT
-  switch (env) {
-    case ENVIRONMENT.PRODUCTION:
-      return 'info'
-    case ENVIRONMENT.DEVELOPMENT:
-      return 'debug'
-    default:
-      return 'trace'
+const env = process.env.ENV || ENVIRONMENT.DEVELOPMENT
+
+// Logger configuration
+const loggerConfig = {
+  levels: {
+    [ENVIRONMENT.PRODUCTION]: 'info',
+    [ENVIRONMENT.DEVELOPMENT]: 'debug',
+    default: 'trace'
+  } as const,
+  prettyPrint: {
+    development: {
+      colorize: true,
+      translateTime: 'SYS:standard',
+      ignore: 'pid,hostname',
+      singleLine: false,
+      hideObject: false,
+      messageFormat: '{msg}',
+      customPrettifiers: {
+        time: (inputData: string | object) => {
+          const timestamp = typeof inputData === 'string' ? inputData : String(inputData)
+          return `🕐 ${timestamp}`
+        },
+        level: (inputData: string | object) => {
+          const logLevel = typeof inputData === 'string' ? inputData : String(inputData)
+          return `${logLevel.toUpperCase()}`
+        }
+      }
+    }
   }
-}
+} as const
 
 // Configure Elasticsearch stream if available
 const createElasticsearchStream = () => {
@@ -41,18 +57,15 @@ const createElasticsearchStream = () => {
   })
 }
 
-// =============================================================================
-// LOGGER SETUP
-// =============================================================================
+const level = (loggerConfig.levels[env as keyof typeof loggerConfig.levels] ||
+  loggerConfig.levels.default) as pino.Level
 
-const level = getLogLevel()
 const elasticsearchStream = createElasticsearchStream()
 
-// Create streams array
 const streams: pino.StreamEntry[] = [
   {
     level: level,
-    stream: process.stdout
+    stream: env === ENVIRONMENT.DEVELOPMENT ? pinoPretty(loggerConfig.prettyPrint.development) : process.stdout
   }
 ]
 
@@ -73,7 +86,7 @@ const logger = pino(
     base: {
       service: 'api',
       version: process.env.npm_package_version || '1.0.0',
-      environment: process.env.ENV || ENVIRONMENT.DEVELOPMENT
+      environment: env
     },
     // Format timestamps
     timestamp: pino.stdTimeFunctions.isoTime,
@@ -97,161 +110,24 @@ const logger = pino(
 // =============================================================================
 
 if (elasticsearchStream) {
+  // Create a fallback logger for Elasticsearch errors (avoiding circular logging)
+  const fallbackLogger = pino({ level: 'error' }, process.stderr)
+
   // Handle Elasticsearch connection errors
   elasticsearchStream.on('error', (error) => {
-    console.error('Elasticsearch client error:', error)
+    fallbackLogger.error({ error, component: 'elasticsearch' }, 'Elasticsearch client error')
   })
 
   // Handle Elasticsearch insertion errors
   elasticsearchStream.on('insertError', (error) => {
-    console.error('Elasticsearch server error:', error)
+    fallbackLogger.error({ error, component: 'elasticsearch' }, 'Elasticsearch server error')
   })
 
   // Handle successful connections
   elasticsearchStream.on('connect', () => {
-    console.log('Connected to Elasticsearch for logging')
+    fallbackLogger.info({ component: 'elasticsearch' }, 'Connected to Elasticsearch for logging')
   })
 }
-
-// =============================================================================
-// LOGGING UTILITIES
-// =============================================================================
-
-// Structured logging helpers
-const logUtils = {
-  // Log API requests
-  logRequest: (requestData: {
-    method: string
-    url: string
-    userAgent?: string
-    ip?: string
-    userId?: string
-    requestId?: string
-  }) => {
-    logger.info(
-      {
-        eventType: 'api_request',
-        ...requestData
-      },
-      `${requestData.method} ${requestData.url}`
-    )
-  },
-
-  // Log API responses
-  logResponse: (responseData: {
-    method: string
-    url: string
-    statusCode: number
-    responseTime: number
-    userId?: string
-    requestId?: string
-  }) => {
-    logger.info(
-      {
-        eventType: 'api_response',
-        ...responseData
-      },
-      `${responseData.method} ${responseData.url} - ${responseData.statusCode} (${responseData.responseTime}ms)`
-    )
-  },
-
-  // Log authentication events
-  logAuth: (authData: {
-    event: 'login' | 'logout' | 'register' | 'password_reset' | 'email_verify'
-    userId?: string
-    email?: string
-    ip?: string
-    userAgent?: string
-    success: boolean
-    reason?: string
-  }) => {
-    const logLevel = authData.success ? 'info' : 'warn'
-    logger[logLevel](
-      {
-        eventType: `auth_${authData.event}`,
-        ...authData
-      },
-      `Authentication ${authData.event}: ${authData.success ? 'SUCCESS' : 'FAILED'}`
-    )
-  },
-
-  // Log database operations
-  logDatabase: (dbData: {
-    operation: 'create' | 'read' | 'update' | 'delete'
-    table: string
-    userId?: string
-    recordId?: string
-    duration?: number
-    success: boolean
-    error?: string
-  }) => {
-    const logLevel = dbData.success ? 'debug' : 'error'
-    logger[logLevel](
-      {
-        eventType: 'database_operation',
-        ...dbData
-      },
-      `Database ${dbData.operation} on ${dbData.table}: ${dbData.success ? 'SUCCESS' : 'FAILED'}`
-    )
-  },
-
-  // Log security events
-  logSecurity: (securityData: {
-    event: 'rate_limit' | 'suspicious_activity' | 'access_denied' | 'data_breach'
-    userId?: string
-    ip?: string
-    userAgent?: string
-    details?: string
-    severity: 'low' | 'medium' | 'high' | 'critical'
-  }) => {
-    logger.warn(
-      {
-        eventType: 'security_event',
-        ...securityData
-      },
-      `Security event: ${securityData.event}`
-    )
-  },
-
-  // Log performance metrics
-  logPerformance: (perfData: {
-    operation: string
-    duration: number
-    memoryUsage?: number
-    cpuUsage?: number
-    requestId?: string
-  }) => {
-    logger.debug(
-      {
-        eventType: 'performance_metric',
-        ...perfData
-      },
-      `Performance: ${perfData.operation} took ${perfData.duration}ms`
-    )
-  },
-
-  // Log business events
-  logBusiness: (businessData: {
-    event: string
-    userId?: string
-    entityType?: string
-    entityId?: string
-    action?: string
-    metadata?: Record<string, unknown>
-  }) => {
-    logger.info(
-      {
-        eventType: 'business_event',
-        ...businessData
-      },
-      `Business event: ${businessData.event}`
-    )
-  }
-}
-
-// =============================================================================
-// HEALTH CHECK LOGGING
-// =============================================================================
 
 // Log application startup
 const logStartup = (port: number, host: string) => {
@@ -283,4 +159,4 @@ const logShutdown = (reason?: string) => {
 // =============================================================================
 
 export default logger
-export { logUtils, logStartup, logShutdown }
+export { logStartup, logShutdown }
