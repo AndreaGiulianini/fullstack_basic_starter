@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -13,7 +13,10 @@
       "!**/public/img/brand/g_files/**",
       "!**/tailwindcss-animate.css",
       "!**/dist/**",
-      "!**/build/**"
+      "!**/build/**",
+      "!**/*.css",
+      "!**/*.min.js",
+      "!**/*.min.css"
     ]
   },
   "assist": {
@@ -70,7 +73,8 @@
         "noVoidElementsWithChildren": "error",
         "noVoidTypeReturn": "error",
         "useExhaustiveDependencies": "error",
-        "useHookAtTopLevel": "error"
+        "useHookAtTopLevel": "error",
+        "noUnusedLabels": "error"
       },
       "nursery": {
         "useSortedClasses": "warn"
@@ -114,6 +118,9 @@
         "noVar": "warn",
         "noWith": "warn",
         "useIsArray": "warn"
+      },
+      "performance": {
+        "noDelete": "warn"
       }
     }
   },

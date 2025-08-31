@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify'
 import { AuthenticationError } from '../utils/appError'
 import { ERROR_MESSAGES } from '../utils/constants'
 import { auth } from '../utils/db'
-import { logUtils } from '../utils/logger'
+import logUtils from '../utils/logger'
 import type { AuthenticatedFastifyRequest, AuthenticatedUser, ExtendedFastifyRequest } from '../utils/schemas'
 
 // =============================================================================
