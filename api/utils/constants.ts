@@ -103,7 +103,7 @@ export const CACHE_KEYS = {
   USER_PROFILE: (userId: string) => `user:profile:${userId}`,
   LOGIN_ATTEMPTS: (email: string) => `auth:attempts:${email}`,
   RATE_LIMIT: (ip: string, endpoint: string) => `rate:${ip}:${endpoint}`,
-  HEALTH_CHECK: 'app:health'
+  HEALTH_CHECK: 'frontend:health'
 } as const
 
 // =============================================================================

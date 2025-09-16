@@ -15,21 +15,21 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock'
       - './letsencrypt:/letsencrypt'
     depends_on:
-      - app
+      - frontend
       - api
 
-  app:
+  frontend:
     build:
       context: ./frontend
       target: 'image-${ENV}'
       args:
         NEXT_PUBLIC_ENVIRONMENT: '${ENV}'
-    image: app
-    container_name: app
+    image: frontend
+    container_name: frontend
     labels:
       - traefik.enable=true
-      - traefik.http.routers.app.rule=PathPrefix(`/`)
-      - traefik.http.services.app.loadbalancer.server.port=3000
+      - traefik.http.routers.frontend.rule=PathPrefix(`/`)
+      - traefik.http.services.frontend.loadbalancer.server.port=3000
     environment:
       TZ: Europe/Rome
       NEXT_PUBLIC_ENVIRONMENT: '${ENV}'

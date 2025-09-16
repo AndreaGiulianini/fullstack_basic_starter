@@ -4,7 +4,7 @@ This is a small toy project that I prepared to give some exercises to new collea
 
 This project integrates the following technologies:
 
-- **Frontend**: [Nuxt 3](https://nuxt.com/), [Vue 3](https://vuejs.org/), [TailwindCSS](https://tailwindcss.com/), [Radix Vue](https://www.radix-vue.com/), [TypeScript](https://www.typescriptlang.org/), [Pinia](https://pinia.vuejs.org/), [i18n](https://i18n.nuxtjs.org/).
+- **Frontend**: [Nuxt 3](https://nuxt.com/), [Vue 3](https://vuejs.org/), [TailwindCSS](https://tailwindcss.com/), [TypeScript](https://www.typescriptlang.org/), [Pinia](https://pinia.vuejs.org/), [i18n](https://i18n.nuxtjs.org/).
 - **Backend**: [Fastify](https://www.fastify.io/), [Drizzle ORM](https://orm.drizzle.team/), [Better-Auth](https://www.better-auth.com/), [Zod](https://zod.dev/), [Pino](https://getpino.io/#/), [OpenAPI](https://swagger.io/), [Scalar](https://scalar.com/).
 - **Infrastructure**: [Docker](https://www.docker.com/), [Traefik](https://doc.traefik.io/traefik/), [Valkey](https://valkey.dev/).
 - **Database**: [PostgreSQL](https://www.postgresql.org/).

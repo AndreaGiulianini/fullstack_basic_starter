@@ -5,7 +5,7 @@ volumes:
 
 services:
 
-  app:
+  frontend:
     develop:
       watch:
         - action: sync

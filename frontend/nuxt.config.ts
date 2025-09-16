@@ -8,12 +8,8 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/i18n',
     '@pinia/nuxt',
-    '@vueuse/nuxt',
     '@nuxtjs/color-mode',
-    '@nuxtjs/google-fonts',
-    '@nuxtjs/robots',
-    '@nuxtjs/sitemap',
-    '@nuxtjs/seo'
+    '@nuxtjs/google-fonts'
   ],
 
   // TypeScript configuration
