@@ -9,15 +9,15 @@ services:
     develop:
       watch:
         - action: sync
-          path: ./app
-          target: /home/node/app
+          path: ./frontend
+          target: /home/node/frontend
           ignore:
-            - ./app/node_modules/
+            - ./frontend/node_modules/
         - action: rebuild
-          path: ./app/package.json
+          path: ./frontend/package.json
     volumes:
-      - /home/node/app/node_modules
-      - /home/node/app/.next
+      - /home/node/frontend/node_modules
+      - /home/node/frontend/.nuxt
     restart: unless-stopped
     depends_on:
       - postgres_db

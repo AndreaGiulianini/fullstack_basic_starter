@@ -8,11 +8,12 @@
   "files": {
     "includes": [
       "**",
-      "!.next/**",
-      "!node_modules/**",
-      "!tailwindcss-animate.css",
-      "!dist/**",
-      "!build/**",
+      "!**/.nuxt",
+      "!**/node_modules",
+      "!**/tailwindcss-animate.css",
+      "!**/dist",
+      "!**/.output",
+      "!**/build",
       "!**/*.css",
       "!**/*.min.js",
       "!**/*.min.css"
@@ -67,12 +68,12 @@
         "noUndeclaredVariables": "error",
         "noUnusedImports": "error",
         "noUnreachable": "error",
-        "noUnusedVariables": "error",
+        "noUnusedVariables": "warn",
         "noUnusedPrivateClassMembers": "error",
         "noVoidElementsWithChildren": "error",
         "noVoidTypeReturn": "error",
         "useExhaustiveDependencies": "error",
-        "useHookAtTopLevel": "error",
+        "useHookAtTopLevel": "off",
         "noUnusedLabels": "error"
       },
       "nursery": {
@@ -139,6 +140,19 @@
       "quoteStyle": "single",
       "jsxQuoteStyle": "single",
       "trailingCommas": "none"
-    }
+    },
+    "globals": [
+      "defineNuxtConfig",
+      "defineEventHandler",
+      "$fetch",
+      "useNuxtApp",
+      "ref",
+      "watch",
+      "defineNuxtPlugin",
+      "useCounterStore",
+      "$t",
+      "defineI18nConfig",
+      "useI18n"
+    ]
   }
 }

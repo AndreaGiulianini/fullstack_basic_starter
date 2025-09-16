@@ -1,0 +1,28 @@
+{
+  "HomePage": {
+    "title": "Welcome to",
+    "subtitle": "A modern full-stack application built with Nuxt 3",
+    "poweredBy": "Powered by"
+  },
+  "Counter": {
+    "title": "Counter",
+    "increment": "Increment",
+    "decrement": "Decrement",
+    "incrementAsync": "Increment Async",
+    "reset": "Reset",
+    "count": "Count",
+    "status": "Status"
+  },
+  "Language": {
+    "select": "Select Language",
+    "english": "English",
+    "italian": "Italian",
+    "spanish": "Spanish",
+    "french": "French"
+  },
+  "Common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  }
+}

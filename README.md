@@ -4,7 +4,7 @@ This is a small toy project that I prepared to give some exercises to new collea
 
 This project integrates the following technologies:
 
-- **Frontend**: [Next.js (App Router)](https://nextjs.org/docs/app), [TailwindCSS](https://tailwindcss.com/docs/v4-beta), [Shadcn](https://ui.shadcn.com/docs/components/accordion), [TypeScript](https://www.typescriptlang.org/), [Redux Toolkit](https://redux-toolkit.js.org/), [i18n](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing).
+- **Frontend**: [Nuxt 3](https://nuxt.com/), [Vue 3](https://vuejs.org/), [TailwindCSS](https://tailwindcss.com/), [Radix Vue](https://www.radix-vue.com/), [TypeScript](https://www.typescriptlang.org/), [Pinia](https://pinia.vuejs.org/), [i18n](https://i18n.nuxtjs.org/).
 - **Backend**: [Fastify](https://www.fastify.io/), [Drizzle ORM](https://orm.drizzle.team/), [Better-Auth](https://www.better-auth.com/), [Zod](https://zod.dev/), [Pino](https://getpino.io/#/), [OpenAPI](https://swagger.io/), [Scalar](https://scalar.com/).
 - **Infrastructure**: [Docker](https://www.docker.com/), [Traefik](https://doc.traefik.io/traefik/), [Valkey](https://valkey.dev/).
 - **Database**: [PostgreSQL](https://www.postgresql.org/).
@@ -43,7 +43,7 @@ This setup provides a ready-to-use playground for exploring web development conc
 
 After starting the project, the following URLs will be available:
 
-- **Frontend (Next.js)**: [http://localhost](http://localhost:80)
+- **Frontend (Nuxt)**: [http://localhost](http://localhost:80)
 - **Backend API (Fastify)**: [http://localhost/api](http://localhost/api)
 - **Scalar**: [http://localhost/reference](http://localhost/reference)
 - **Traefik Dashboard**: [http://localhost:8080](http://localhost:8080)

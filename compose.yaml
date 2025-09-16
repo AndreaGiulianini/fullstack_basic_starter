@@ -20,7 +20,7 @@ services:
 
   app:
     build:
-      context: ./app
+      context: ./frontend
       target: 'image-${ENV}'
       args:
         NEXT_PUBLIC_ENVIRONMENT: '${ENV}'

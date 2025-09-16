@@ -1,0 +1,28 @@
+{
+  "HomePage": {
+    "title": "Bienvenido a",
+    "subtitle": "Una aplicación full-stack moderna construida con Nuxt 3",
+    "poweredBy": "Powered by"
+  },
+  "Counter": {
+    "title": "Contador",
+    "increment": "Incrementar",
+    "decrement": "Decrementar",
+    "incrementAsync": "Incrementar Async",
+    "reset": "Resetear",
+    "count": "Conteo",
+    "status": "Estado"
+  },
+  "Language": {
+    "select": "Seleccionar Idioma",
+    "english": "Inglés",
+    "italian": "Italiano",
+    "spanish": "Español",
+    "french": "Francés"
+  },
+  "Common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito"
+  }
+}
