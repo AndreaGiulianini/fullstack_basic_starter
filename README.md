@@ -9,7 +9,7 @@ This project integrates the following technologies:
 - **Infrastructure**: [Docker](https://www.docker.com/), [Traefik](https://doc.traefik.io/traefik/), [Valkey](https://valkey.dev/).
 - **Database**: [PostgreSQL](https://www.postgresql.org/).
 - **Monitoring**: [ELK](https://www.elastic.co/what-is/elk-stack).
-- **Linting code**: [BiomeJS](https://biomejs.dev/).
+- **Linting code**: [Oxlint](https://oxc-project.github.io/docs/linter/).
 
 This setup provides a ready-to-use playground for exploring web development concepts and workflows, from frontend UI design to backend services and database interactions.
 

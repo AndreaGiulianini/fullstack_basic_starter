@@ -35,7 +35,7 @@ export default async function betterAuthRoutes(fastify: FastifyInstance) {
       // Convert Fastify request to standard Request object
       const url = new URL(request.url, `http://${request.headers.host}`)
       const webRequest = new Request(url, {
-        method: request.method,
+        method: 'POST', 
         headers: request.headers as HeadersInit,
         body: JSON.stringify(request.body)
       })
@@ -68,7 +68,7 @@ export default async function betterAuthRoutes(fastify: FastifyInstance) {
     handler: async (request, reply) => {
       const url = new URL(request.url, `http://${request.headers.host}`)
       const webRequest = new Request(url, {
-        method: request.method,
+        method: 'POST', 
         headers: request.headers as HeadersInit,
         body: JSON.stringify(request.body)
       })
@@ -103,7 +103,7 @@ export default async function betterAuthRoutes(fastify: FastifyInstance) {
     handler: async (request, reply) => {
       const url = new URL(request.url, `http://${request.headers.host}`)
       const webRequest = new Request(url, {
-        method: request.method,
+        method: 'POST', 
         headers: request.headers as HeadersInit,
         body: JSON.stringify(request.body)
       })
@@ -132,9 +132,9 @@ export default async function betterAuthRoutes(fastify: FastifyInstance) {
     handler: async (request, reply) => {
       const url = new URL(request.url, `http://${request.headers.host}`)
       const webRequest = new Request(url, {
-        method: request.method,
+        method: 'POST', 
         headers: request.headers as HeadersInit,
-        body: request.method !== 'GET' && request.method !== 'HEAD' ? JSON.stringify(request.body) : undefined
+        body: JSON.stringify(request.body)
       })
 
       const response = await auth.handler(webRequest)
@@ -161,7 +161,7 @@ export default async function betterAuthRoutes(fastify: FastifyInstance) {
     handler: async (request, reply) => {
       const url = new URL(request.url, `http://${request.headers.host}`)
       const webRequest = new Request(url, {
-        method: request.method,
+        method: 'GET', // Explicitly set GET method
         headers: request.headers as HeadersInit
       })
 
@@ -191,7 +191,7 @@ export default async function betterAuthRoutes(fastify: FastifyInstance) {
     handler: async (request, reply) => {
       const url = new URL(request.url, `http://${request.headers.host}`)
       const webRequest = new Request(url, {
-        method: request.method,
+        method: 'POST', 
         headers: request.headers as HeadersInit,
         body: JSON.stringify(request.body)
       })
@@ -222,7 +222,7 @@ export default async function betterAuthRoutes(fastify: FastifyInstance) {
     handler: async (request, reply) => {
       const url = new URL(request.url, `http://${request.headers.host}`)
       const webRequest = new Request(url, {
-        method: request.method,
+        method: 'POST', 
         headers: request.headers as HeadersInit,
         body: JSON.stringify(request.body)
       })
@@ -247,11 +247,19 @@ export default async function betterAuthRoutes(fastify: FastifyInstance) {
     }),
     handler: async (request, reply) => {
       const url = new URL(request.url, `http://${request.headers.host}`)
-      const webRequest = new Request(url, {
+      
+      // Create request options based on HTTP method
+      const requestOptions: RequestInit = {
         method: request.method,
-        headers: request.headers as HeadersInit,
-        body: request.method !== 'GET' && request.method !== 'HEAD' ? JSON.stringify(request.body) : undefined
-      })
+        headers: request.headers as HeadersInit
+      }
+      
+      // Only add body for POST requests
+      if (request.method === 'POST') {
+        requestOptions.body = JSON.stringify(request.body)
+      }
+      
+      const webRequest = new Request(url, requestOptions)
 
       const response = await auth.handler(webRequest)
       const responseBody = await response.text()

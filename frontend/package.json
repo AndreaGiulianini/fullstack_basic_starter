@@ -8,22 +8,24 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "check": "npx @biomejs/biome check --write .",
-    "format": "npx @biomejs/biome format --write .",
-    "lint": "npx @biomejs/biome lint ."
+    "check": "npx oxlint",
+    "format": "npx oxlint --fix",
+    "lint": "npx oxlint"
   },
   "dependencies": {
     "@nuxtjs/color-mode": "^3.5.2",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/i18n": "^10.1.0",
     "@nuxtjs/tailwindcss": "^6.14.0",
-    "@pinia/nuxt": "^0.11.2",
     "class-variance-authority": "^0.7.1",
-    "nuxt": "^4.1.1",
     "vue": "^3.5.21"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.4",
+    "@nuxt/devtools": "2.3.2",
+    "@pinia/nuxt": "^0.11.2",
+    "@vueuse/nuxt": "^13.0.0",
+    "nuxt": "^4.1.1",
+    "oxlint": "^1.16.0",
     "typescript": "^5.9.2"
   }
 }
