@@ -50,9 +50,9 @@ const createElasticsearchStream = () => {
     flushBytes: TIMEOUTS.ELASTICSEARCH_FLUSH_BYTES,
     auth: process.env.ELASTICSEARCH_AUTH
       ? {
-          username: process.env.ELASTICSEARCH_USERNAME || 'elastic',
-          password: process.env.ELASTICSEARCH_PASSWORD || ''
-        }
+        username: process.env.ELASTICSEARCH_USERNAME || 'elastic',
+        password: process.env.ELASTICSEARCH_PASSWORD || ''
+      }
       : undefined
   })
 }
@@ -64,7 +64,7 @@ const elasticsearchStream = createElasticsearchStream()
 
 const streams: pino.StreamEntry[] = [
   {
-    level: level,
+    level,
     stream: env === ENVIRONMENT.DEVELOPMENT ? pinoPretty(loggerConfig.prettyPrint.development) : process.stdout
   }
 ]
@@ -72,7 +72,7 @@ const streams: pino.StreamEntry[] = [
 // Add Elasticsearch stream if configured
 if (elasticsearchStream) {
   streams.push({
-    level: level,
+    level,
     stream: elasticsearchStream
   })
 }

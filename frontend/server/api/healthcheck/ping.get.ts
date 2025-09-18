@@ -5,10 +5,9 @@ export default defineEventHandler(async (_event) => {
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error fetching API healthcheck:', error)
     return {
       status: 'error',
-      message: 'Failed to connect to API',
+      message: `Failed to connect to API: ${error}`,
       timestamp: new Date().toISOString()
     }
   }

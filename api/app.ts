@@ -52,7 +52,7 @@ const start = async () => {
   } catch (err) {
     app.log.error(err)
     logShutdown('Error during startup')
-    process.exit(1)
+    throw new Error('Failed to start server')
   }
 }
 
@@ -60,13 +60,13 @@ const start = async () => {
 process.on('SIGTERM', async () => {
   logShutdown('SIGTERM received')
   await app.close()
-  process.exit(0)
+  // Let the process exit naturally
 })
 
 process.on('SIGINT', async () => {
   logShutdown('SIGINT received')
   await app.close()
-  process.exit(0)
+  // Let the process exit naturally
 })
 
 start()

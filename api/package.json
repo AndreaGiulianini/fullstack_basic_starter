@@ -8,9 +8,9 @@
     "dev": "tsx watch app.ts",
     "generate": "npx drizzle-kit generate",
     "migrate": "npx drizzle-kit migrate",
-    "check": "npx oxlint",
-    "format": "npx oxlint --fix",
-    "lint": "npx oxlint"
+    "check": "npx oxlint && npx eslint",
+    "format": "npx oxlint --fix && npx eslint --fix",
+    "lint": "npx oxlint && npx eslint"
   },
   "dependencies": {
     "@elastic/ecs-pino-format": "^1.5.0",
@@ -31,7 +31,11 @@
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^24.4.0",
     "@types/pg": "^8.15.5",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
     "drizzle-kit": "^0.31.4",
+    "eslint": "^9.35.0",
+    "eslint-plugin-oxlint": "^1.16.0",
     "oxlint": "^1.16.0",
     "pino-pretty": "^13.1.1",
     "tsx": "^4.20.5",
