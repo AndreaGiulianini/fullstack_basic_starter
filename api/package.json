@@ -35,8 +35,8 @@
     "@typescript-eslint/parser": "^8.44.1",
     "drizzle-kit": "^0.31.4",
     "eslint": "^9.36.0",
-    "eslint-plugin-oxlint": "^1.16.0",
-    "oxlint": "^1.16.0",
+    "eslint-plugin-oxlint": "^1.17.0",
+    "oxlint": "^1.17.0",
     "pino-pretty": "^13.1.1",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"

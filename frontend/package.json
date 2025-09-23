@@ -26,9 +26,9 @@
     "@typescript-eslint/parser": "^8.44.1",
     "@vueuse/nuxt": "^13.0.0",
     "eslint": "^9.36.0",
-    "eslint-plugin-oxlint": "^1.16.0",
+    "eslint-plugin-oxlint": "^1.17.0",
     "nuxt": "^4.1.1",
-    "oxlint": "^1.16.0",
+    "oxlint": "^1.17.0",
     "typescript": "^5.9.2"
   }
 }
