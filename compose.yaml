@@ -23,7 +23,7 @@ services:
       context: ./frontend
       target: 'image-${ENV}'
       args:
-        NEXT_PUBLIC_ENVIRONMENT: '${ENV}'
+        NUXT_PUBLIC_ENVIRONMENT: '${ENV}'
     image: frontend
     container_name: frontend
     labels:
@@ -32,7 +32,7 @@ services:
       - traefik.http.services.frontend.loadbalancer.server.port=3000
     environment:
       TZ: Europe/Rome
-      NEXT_PUBLIC_ENVIRONMENT: '${ENV}'
+      NUXT_PUBLIC_ENVIRONMENT: '${ENV}'
     restart: always
 
   api:

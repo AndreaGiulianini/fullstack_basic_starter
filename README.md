@@ -63,12 +63,39 @@ nano .env
 ```
 
 ### **3. Start the Application**
+
+The `start.sh` script provides a convenient way to start the application with various options:
+
 ```bash
-# Start all services with Docker
+# Start in development mode (default)
 ./start.sh
 
-# Or manually with Docker Compose
-docker compose up --build
+# Start in production mode
+./start.sh -e production
+
+# Start in development with watch mode (auto-reload on changes)
+./start.sh -w
+
+# Clean build (removes existing containers and images)
+./start.sh -c
+
+# Combine options
+./start.sh -e production -c
+
+# Show all available options
+./start.sh -h
+```
+
+**Available Options:**
+- `-e, --env` - Set environment (development|production) [default: development]
+- `-w, --watch` - Enable watch mode for automatic reload during development
+- `-c, --clean` - Clean build (removes existing containers and images before starting)
+- `-h, --help` - Display help message with all options
+
+**Manual Docker Compose:**
+```bash
+# Without the start.sh script
+docker compose -f compose.yaml -f compose_override/development.yaml up --build
 ```
 
 ### **4. Initialize Database**
@@ -190,18 +217,101 @@ npm run type-check
 ```
 
 ### **Docker Commands**
-```bash
-# Build images
-docker compose build
 
-# Start services
-docker compose up
+**Basic Operations:**
+```bash
+# Build images for development environment
+docker compose -f compose.yaml -f compose_override/development.yaml build
+
+# Start services (detached mode)
+docker compose -f compose.yaml -f compose_override/development.yaml up -d
+
+# Start services with build and watch logs
+docker compose -f compose.yaml -f compose_override/development.yaml up --build
 
 # Stop services
-docker compose down
+docker compose -f compose.yaml -f compose_override/development.yaml down
 
-# View logs
-docker compose logs -f
+# Stop services and remove volumes
+docker compose -f compose.yaml -f compose_override/development.yaml down -v
+```
+
+**Service Management:**
+```bash
+# Start specific service
+docker compose -f compose.yaml -f compose_override/development.yaml up frontend
+
+# Restart a specific service
+docker compose -f compose.yaml -f compose_override/development.yaml restart api
+
+# Rebuild and restart a specific service
+docker compose -f compose.yaml -f compose_override/development.yaml up --build -d frontend
+
+# Scale a service (if applicable)
+docker compose -f compose.yaml -f compose_override/development.yaml up -d --scale api=3
+```
+
+**Logs and Monitoring:**
+```bash
+# View all logs (follow mode)
+docker compose -f compose.yaml -f compose_override/development.yaml logs -f
+
+# View logs for specific service
+docker compose -f compose.yaml -f compose_override/development.yaml logs -f frontend
+
+# View last 100 lines of logs
+docker compose -f compose.yaml -f compose_override/development.yaml logs --tail=100
+
+# View logs with timestamps
+docker compose -f compose.yaml -f compose_override/development.yaml logs -f -t
+```
+
+**Debugging and Maintenance:**
+```bash
+# Execute command in running container
+docker compose -f compose.yaml -f compose_override/development.yaml exec api sh
+
+# List all running containers
+docker compose -f compose.yaml -f compose_override/development.yaml ps
+
+# Check service status
+docker compose -f compose.yaml -f compose_override/development.yaml ps -a
+
+# View container resource usage
+docker stats
+
+# Inspect a specific service
+docker compose -f compose.yaml -f compose_override/development.yaml exec frontend npm run build
+```
+
+**Cleanup:**
+```bash
+# Remove stopped containers
+docker compose -f compose.yaml -f compose_override/development.yaml rm
+
+# Remove all containers, networks, and volumes
+docker compose -f compose.yaml -f compose_override/development.yaml down -v --remove-orphans
+
+# Clean up Docker system (use with caution)
+docker system prune -f
+
+# Remove all unused images
+docker image prune -a
+
+# Remove specific image
+docker rmi <image_id>
+```
+
+**Production Environment:**
+```bash
+# Start in production mode
+docker compose -f compose.yaml -f compose_override/production.yaml up --build -d
+
+# View production logs
+docker compose -f compose.yaml -f compose_override/production.yaml logs -f
+
+# Stop production services
+docker compose -f compose.yaml -f compose_override/production.yaml down
 ```
 
 ## **🤝 Contributing**
