@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "check": "npx @biomejs/biome check --write .",
@@ -13,24 +13,24 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
-    "@reduxjs/toolkit": "^2.9.0",
+    "@reduxjs/toolkit": "^2.9.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.545.0",
-    "next": "^15.5.4",
-    "next-intl": "^4.3.11",
+    "lucide-react": "^0.548.0",
+    "next": "^16.0.0",
+    "next-intl": "^4.4.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-redux": "^9.2.0",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.5",
-    "@tailwindcss/postcss": "^4.1.14",
-    "@types/node": "^24.7.0",
+    "@biomejs/biome": "2.3.0",
+    "@tailwindcss/postcss": "^4.1.16",
+    "@types/node": "^24.9.1",
     "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.1",
-    "tailwindcss": "^4.1.14",
+    "@types/react-dom": "^19.2.2",
+    "tailwindcss": "^4.1.16",
     "typescript": "^5.9.3"
   }
 }

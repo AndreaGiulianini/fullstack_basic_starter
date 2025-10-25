@@ -4,7 +4,6 @@ volumes:
   esdata: null
 
 services:
-
   app:
     develop:
       watch:
@@ -39,46 +38,46 @@ services:
       - postgres_db
 
   postgres_db:
-    image: 'postgres:17'
+    image: "postgres:18"
     container_name: postgres_db
     environment:
-      POSTGRES_USER: '${DB_USER}'
-      POSTGRES_PASSWORD: '${DB_PASS}'
-      POSTGRES_DB: '${DB_NAME}'
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASS}"
+      POSTGRES_DB: "${DB_NAME}"
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
-      - 'pgdata:/var/lib/postgresql/data'
+      - "pgdata:/var/lib/postgresql"
 
   valkey:
-    image: 'valkey/valkey:8'
+    image: "valkey/valkey:9"
     container_name: valkey
     command: valkey-server --port 6379 --cluster-enabled no --requirepass ${VALKEY_PASS}
     restart: unless-stopped
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
-      - 'valkeydata:/data'
+      - "valkeydata:/data"
 
   elasticsearch:
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:9.0.0'
+    image: "docker.elastic.co/elasticsearch/elasticsearch:9.2.0"
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
-      - '9200:9200'
+      - "9200:9200"
     volumes:
-      - 'esdata:/usr/share/elasticsearch/data'
+      - "esdata:/usr/share/elasticsearch/data"
 
   kibana:
-    image: 'docker.elastic.co/kibana/kibana:9.0.0'
+    image: "docker.elastic.co/kibana/kibana:9.2.0"
     container_name: kibana
     environment:
-      - 'ELASTICSEARCH_HOSTS=http://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}'
+      - "ELASTICSEARCH_HOSTS=http://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}"
       - xpack.security.enabled=false
     ports:
-      - '5601:5601'
+      - "5601:5601"
     depends_on:
       - elasticsearch

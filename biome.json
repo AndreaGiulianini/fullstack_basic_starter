@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.0/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -8,11 +8,11 @@
   "files": {
     "includes": [
       "**",
-      "!.next/**",
-      "!node_modules/**",
+      "!!.next/**",
+      "!!node_modules/**",
       "!tailwindcss-animate.css",
-      "!dist/**",
-      "!build/**",
+      "!!dist/**",
+      "!!build/**",
       "!**/*.css",
       "!**/*.min.js",
       "!**/*.min.css"

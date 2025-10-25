@@ -4,15 +4,37 @@ import Counter from '../components/counter/Counter'
 import styles from '../styles/Home.module.css'
 
 async function fetchServerData() {
-  const res = await fetch('http://traefik/api/healthcheck/ping') // Use traefik for server call, localhost if you find on client side
-  const data = await res.json()
-  return data
+  try {
+    const res = await fetch('http://traefik/api/healthcheck/ping', {
+      cache: 'no-store'
+    }) // Use traefik for server call, localhost if you find on client side
+
+    if (!res.ok) {
+      console.error(`Failed to fetch server data: ${res.status} ${res.statusText}`)
+      return null
+    }
+
+    const contentType = res.headers.get('content-type')
+    if (!contentType?.includes('application/json')) {
+      const text = await res.text()
+      console.error(`Expected JSON but got: ${text}`)
+      return null
+    }
+
+    const data = await res.json()
+    return data
+  } catch (error) {
+    console.error('Failed to fetch server data:', error)
+    return null
+  }
 }
 
 export default async function HomePage() {
   const t = await getTranslations('HomePage')
   const data = await fetchServerData()
-  console.log('server', data)
+  if (data) {
+    console.log('server', data)
+  }
 
   return (
     <div className={styles.container}>

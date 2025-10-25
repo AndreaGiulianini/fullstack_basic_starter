@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount } from '../../redux/slices/index'
+import { useDispatch, useSelector } from '../../redux/store'
 import { Button } from '../Button'
 import styles from './counter.module.css'
 

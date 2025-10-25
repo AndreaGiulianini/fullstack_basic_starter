@@ -2,7 +2,7 @@ FROM node:24-slim
 
 WORKDIR /home/node
 COPY package.json ./
-RUN npm install --no-optional && npm cache clean --force
+RUN npm install && npm cache clean --force
 ENV PATH=/home/node/node_modules/.bin:$PATH
 WORKDIR /home/node/api
 COPY ./ ./

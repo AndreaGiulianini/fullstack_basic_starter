@@ -5,7 +5,7 @@ A comprehensive, production-ready full-stack starter template designed for moder
 ## **🚀 Technology Stack**
 
 ### **Frontend**
-- **[Next.js 15](https://nextjs.org/)** - The React framework for production with App Router
+- **[Next.js 16](https://nextjs.org/)** - The React framework for production with App Router
 - **[React 19](https://react.dev/)** - A JavaScript library for building user interfaces
 - **[TailwindCSS 4](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
