@@ -2,7 +2,14 @@ import { eq } from 'drizzle-orm'
 import { AppError, ConflictError, NotFoundError } from '../utils/appError'
 import { DB_QUERY_LIMITS, ERROR_MESSAGES, HTTP_STATUS } from '../utils/constants'
 import db, { auth } from '../utils/db'
-import { createUserBodySchema, emailSchema, user, type CreateUserData, type UpdateUserData, type User } from '../utils/schemas'
+import {
+  type CreateUserData,
+  createUserBodySchema,
+  emailSchema,
+  type UpdateUserData,
+  type User,
+  user
+} from '../utils/schemas'
 import { validateData } from '../utils/validation'
 
 // =============================================================================

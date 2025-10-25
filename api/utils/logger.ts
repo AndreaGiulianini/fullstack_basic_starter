@@ -50,9 +50,9 @@ const createElasticsearchStream = () => {
     flushBytes: TIMEOUTS.ELASTICSEARCH_FLUSH_BYTES,
     auth: process.env.ELASTICSEARCH_AUTH
       ? {
-        username: process.env.ELASTICSEARCH_USERNAME || 'elastic',
-        password: process.env.ELASTICSEARCH_PASSWORD || ''
-      }
+          username: process.env.ELASTICSEARCH_USERNAME || 'elastic',
+          password: process.env.ELASTICSEARCH_PASSWORD || ''
+        }
       : undefined
   })
 }

@@ -1,19 +1,19 @@
 services:
   traefik:
-    image: 'traefik:3.3.5'
+    image: "traefik:3.5.3"
     container_name: traefik
     command:
-      - '--api.insecure=true'
-      - '--providers.docker=true'
-      - '--entrypoints.web.address=:80'
-      - '--entrypoints.websecure.address=:443'
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
     ports:
-      - '80:80'
-      - '443:443'
-      - '8080:8080'
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
     volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - './letsencrypt:/letsencrypt'
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./letsencrypt:/letsencrypt"
     depends_on:
       - frontend
       - api
@@ -46,16 +46,16 @@ services:
       - traefik.http.routers.reference.rule=PathPrefix(`/reference`)
       - traefik.http.services.api.loadbalancer.server.port=5000
     environment:
-      ENV: '${ENV}'
-      DB_HOST: '${DB_HOST}'
-      DB_USER: '${DB_USER}'
-      DB_PASS: '${DB_PASS}'
-      DB_NAME: '${DB_NAME}'
-      DB_PORT: '${DB_PORT}'
-      VALKEY_HOST: '${VALKEY_HOST}'
-      VALKEY_PASS: '${VALKEY_PASS}'
-      VALKEY_PORT: '${VALKEY_PORT}'
-      ELASTICSEARCH_HOST: '${ELASTICSEARCH_HOST}'
-      ELASTICSEARCH_PORT: '${ELASTICSEARCH_PORT}'
-      JWT_SECRET: '${JWT_SECRET}'
+      ENV: "${ENV}"
+      DB_HOST: "${DB_HOST}"
+      DB_USER: "${DB_USER}"
+      DB_PASS: "${DB_PASS}"
+      DB_NAME: "${DB_NAME}"
+      DB_PORT: "${DB_PORT}"
+      VALKEY_HOST: "${VALKEY_HOST}"
+      VALKEY_PASS: "${VALKEY_PASS}"
+      VALKEY_PORT: "${VALKEY_PORT}"
+      ELASTICSEARCH_HOST: "${ELASTICSEARCH_HOST}"
+      ELASTICSEARCH_PORT: "${ELASTICSEARCH_PORT}"
+      JWT_SECRET: "${JWT_SECRET}"
     restart: always

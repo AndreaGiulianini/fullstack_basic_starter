@@ -36,7 +36,10 @@ async function testRoutes(fastify: FastifyInstance) {
         await valkey.set(CACHE_KEYS.TEST_KEY, CACHE_KEYS.TEST_VALUE)
         logger.info('ping')
       }
-      const response = { success: true, message: ERROR_MESSAGES.SUCCESS_RESPONSE_MESSAGE }
+      const response = {
+        success: true,
+        message: ERROR_MESSAGES.SUCCESS_RESPONSE_MESSAGE
+      }
       return reply.send(response)
     }
   })
