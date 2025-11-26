@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: "traefik:3.5.3"
+    image: "traefik:3.6.2"
     container_name: traefik
     command:
       - "--api.insecure=true"
@@ -21,9 +21,9 @@ services:
   frontend:
     build:
       context: ./frontend
-      target: 'image-${ENV}'
+      target: "image-${ENV}"
       args:
-        NUXT_PUBLIC_ENVIRONMENT: '${ENV}'
+        NUXT_PUBLIC_ENVIRONMENT: "${ENV}"
     image: frontend
     container_name: frontend
     labels:
@@ -32,7 +32,7 @@ services:
       - traefik.http.services.frontend.loadbalancer.server.port=3000
     environment:
       TZ: Europe/Rome
-      NUXT_PUBLIC_ENVIRONMENT: '${ENV}'
+      NUXT_PUBLIC_ENVIRONMENT: "${ENV}"
     restart: always
 
   api:
