@@ -21,41 +21,43 @@ services:
   app:
     build:
       context: ./app
-      target: "image-${ENV}"
-      args:
-        NEXT_PUBLIC_ENVIRONMENT: "${ENV}"
+      target: "${ENV:-development}"
     image: app
     container_name: app
+    volumes:
+      - ./app:/app
+      - /app/node_modules
     labels:
       - traefik.enable=true
       - traefik.http.routers.app.rule=PathPrefix(`/`)
-      - traefik.http.services.app.loadbalancer.server.port=3000
+      - traefik.http.routers.app.priority=1
+      - traefik.http.services.app.loadbalancer.server.port=${APP_PORT:-4200}
     environment:
       TZ: Europe/Rome
-      NEXT_PUBLIC_ENVIRONMENT: "${ENV}"
     restart: always
 
   api:
     build:
       context: ./api
+      target: "${ENV:-development}"
     image: api
     container_name: api
+    volumes:
+      - ./api:/src
     labels:
       - traefik.enable=true
       - traefik.http.routers.api.rule=PathPrefix(`/api`)
-      - traefik.http.routers.reference.rule=PathPrefix(`/reference`)
+      - traefik.http.routers.api.priority=10
+      - traefik.http.routers.swagger.rule=PathPrefix(`/swagger`)
+      - traefik.http.routers.swagger.priority=10
       - traefik.http.services.api.loadbalancer.server.port=5000
     environment:
-      ENV: "${ENV}"
-      DB_HOST: "${DB_HOST}"
-      DB_USER: "${DB_USER}"
-      DB_PASS: "${DB_PASS}"
-      DB_NAME: "${DB_NAME}"
-      DB_PORT: "${DB_PORT}"
-      VALKEY_HOST: "${VALKEY_HOST}"
-      VALKEY_PASS: "${VALKEY_PASS}"
-      VALKEY_PORT: "${VALKEY_PORT}"
-      ELASTICSEARCH_HOST: "${ELASTICSEARCH_HOST}"
-      ELASTICSEARCH_PORT: "${ELASTICSEARCH_PORT}"
-      JWT_SECRET: "${JWT_SECRET}"
+      ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT:-Development}"
+      ConnectionStrings__DefaultConnection: "Host=${DB_HOST};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}"
+      Jwt__Secret: "${JWT_SECRET}"
+      Jwt__Issuer: "fullstack-api"
+      Jwt__Audience: "fullstack-app"
+      Redis__ConnectionString: "${VALKEY_HOST}:${VALKEY_PORT},password=${VALKEY_PASS}"
+      Elasticsearch__Uri: "http://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}"
+      Cors__AllowedOrigins: "http://localhost:4200,http://localhost:80"
     restart: always

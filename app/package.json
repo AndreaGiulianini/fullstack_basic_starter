@@ -1,36 +1,34 @@
 {
-  "name": "app",
+  "name": "fullstack-app",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "check": "npx @biomejs/biome check --write .",
-    "format": "npx @biomejs/biome format --write .",
-    "lint": "npx @biomejs/biome lint ."
+    "ng": "ng",
+    "start": "ng serve --host 0.0.0.0 --port 4200",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:ci": "ng test --no-watch"
   },
+  "private": true,
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.3",
-    "@reduxjs/toolkit": "^2.11.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.555.0",
-    "next": "^16.0.4",
-    "next-intl": "^4.5.5",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-redux": "^9.2.0",
-    "tailwind-merge": "^3.4.0"
+    "@angular/animations": "21.0.1",
+    "@angular/common": "21.0.1",
+    "@angular/compiler": "21.0.1",
+    "@angular/core": "21.0.1",
+    "@angular/forms": "21.0.1",
+    "@angular/platform-browser": "21.0.1",
+    "@angular/platform-browser-dynamic": "21.0.1",
+    "@angular/router": "21.0.1",
+    "rxjs": "7.8.1",
+    "tslib": "2.8.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.7",
-    "@tailwindcss/postcss": "^4.1.17",
-    "@types/node": "^24.10.1",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3"
+    "@angular-devkit/build-angular": "21.0.1",
+    "@angular/cli": "21.0.1",
+    "@angular/compiler-cli": "21.0.1",
+    "@types/node": "22.10.1",
+    "typescript": "5.9.3",
+    "vitest": "2.1.6"
   }
 }

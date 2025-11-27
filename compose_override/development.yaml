@@ -8,34 +8,35 @@ services:
     develop:
       watch:
         - action: sync
-          path: ./app
-          target: /home/node/app
+          path: ./app/src
+          target: /app/src
           ignore:
             - ./app/node_modules/
         - action: rebuild
           path: ./app/package.json
     volumes:
-      - /home/node/app/node_modules
-      - /home/node/app/.next
+      - /app/node_modules
     restart: unless-stopped
-    depends_on:
-      - postgres_db
+    environment:
+      APP_PORT: 4200
 
   api:
     develop:
       watch:
         - action: sync
           path: ./api
-          target: /home/node/api
+          target: /src
           ignore:
-            - ./api/node_modules/
+            - ./api/bin/
+            - ./api/obj/
         - action: rebuild
-          path: ./api/package.json
-    volumes:
-      - /home/node/api/node_modules
+          path: ./api/Api/Api.csproj
     restart: always
     depends_on:
-      - postgres_db
+      postgres_db:
+        condition: service_healthy
+      valkey:
+        condition: service_started
 
   postgres_db:
     image: "postgres:18"
@@ -48,6 +49,11 @@ services:
       - "5432:5432"
     volumes:
       - "pgdata:/var/lib/postgresql"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   valkey:
     image: "valkey/valkey:9"

@@ -1,4 +1,97 @@
-private
+# =============================================================================
+# Environment & Secrets
+# =============================================================================
 .env
+.env.*
+!.env.example
+private/
+
+# =============================================================================
+# Docker
+# =============================================================================
 docker-compose.override.yml
-lastpass
+letsencrypt/
+
+# =============================================================================
+# .NET / C#
+# =============================================================================
+# Build results
+api/**/bin/
+api/**/obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+
+# Visual Studio
+.vs/
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+**/packages/
+project.lock.json
+project.fragment.lock.json
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# =============================================================================
+# Angular / Node.js
+# =============================================================================
+# Dependencies
+app/node_modules/
+node_modules/
+
+# Angular build output
+app/dist/
+app/.angular/
+.angular/
+
+# Angular cache
+app/.sass-cache/
+app/.cache/
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+app/coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =============================================================================
+# IDEs & Editors
+# =============================================================================
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.iml
+
+# Vim
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# OS Files
+# =============================================================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
