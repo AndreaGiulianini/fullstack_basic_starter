@@ -2,52 +2,46 @@
 
 A comprehensive, production-ready full-stack starter template designed for modern web development. This project serves as an excellent learning resource and starting point for developers working with cutting-edge technologies.
 
-## **🚀 Technology Stack**
+## **Technology Stack**
 
 ### **Frontend**
-- **[Next.js 16](https://nextjs.org/)** - The React framework for production with App Router
-- **[React 19](https://react.dev/)** - A JavaScript library for building user interfaces
-- **[TailwindCSS 4](https://tailwindcss.com/)** - Utility-first CSS framework
-- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
-- **[Redux Toolkit](https://redux-toolkit.js.org/)** - Modern Redux state management
-- **[Shadcn/UI](https://ui.shadcn.com/)** - Beautifully designed components built with Radix UI
-- **[Radix UI](https://www.radix-ui.com/)** - Accessible UI component primitives
-- **[next-intl](https://next-intl-docs.vercel.app/)** - Internationalization for Next.js
-- **[Lucide React](https://lucide.dev/)** - Beautiful & consistent icon toolkit
+- **[Angular 21](https://angular.dev/)** - The modern web development platform
+- **[TypeScript 5.9](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Angular Signals](https://angular.dev/guide/signals)** - Fine-grained reactivity for state management
+- **[Standalone Components](https://angular.dev/guide/components)** - Simplified component architecture without NgModules
+- **[Zoneless Change Detection](https://angular.dev/guide/experimental/zoneless)** - Improved performance (default in v21)
+- **[Vitest](https://vitest.dev/)** - Fast unit testing framework
 
 ### **Backend**
-- **[Fastify](https://www.fastify.io/)** - Fast and low overhead web framework
-- **[Drizzle ORM](https://orm.drizzle.team/)** - TypeScript ORM with excellent performance
-- **[Better-Auth](https://www.better-auth.com/)** - Modern authentication library
-- **[Zod](https://zod.dev/)** - TypeScript-first schema validation
-- **[Pino](https://getpino.io/#/)** - Super fast JSON logger
-- **[OpenAPI](https://swagger.io/)** - API documentation standard
-- **[Scalar](https://scalar.com/)** - Beautiful API documentation
+- **[ASP.NET Core 10](https://dotnet.microsoft.com/apps/aspnet)** - High-performance, cross-platform web framework
+- **[Entity Framework Core 10](https://docs.microsoft.com/ef/core/)** - Modern object-database mapper
+- **[ASP.NET Core Identity](https://docs.microsoft.com/aspnet/core/security/authentication/identity)** - Membership system with JWT authentication
+- **[Serilog](https://serilog.net/)** - Structured logging with Elasticsearch sink
+- **[Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)** - Swagger/OpenAPI documentation
+- **[Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)** - Separation of concerns with layered design
 
 ### **Infrastructure & DevOps**
-- **[Docker](https://www.docker.com/)** - Containerization platform
-- **[Traefik](https://doc.traefik.io/traefik/)** - Modern reverse proxy and load balancer
-- **[Valkey](https://valkey.dev/)** - High-performance in-memory data store
-- **[PostgreSQL](https://www.postgresql.org/)** - Robust relational database
-- **[ELK Stack](https://www.elastic.co/what-is/elk-stack)** - Elasticsearch, Logstash, Kibana for monitoring
+- **[Docker](https://www.docker.com/)** - Containerization platform with multi-stage builds
+- **[Traefik 3.6](https://doc.traefik.io/traefik/)** - Modern reverse proxy and load balancer
+- **[PostgreSQL 18](https://www.postgresql.org/)** - Robust relational database
+- **[Valkey 9](https://valkey.dev/)** - High-performance in-memory data store (Redis-compatible)
+- **[Elasticsearch 9.2](https://www.elastic.co/elasticsearch/)** - Search and analytics engine
+- **[Kibana 9.2](https://www.elastic.co/kibana/)** - Data visualization and monitoring
 
 ### **Code Quality & Development**
-- **[Biome](https://biomejs.dev/)** - Ultra-fast formatter and linter written in Rust
-- **[TypeScript](https://www.typescriptlang.org/)** - Static type checking
-- **[Turbopack](https://turbo.build/pack)** - Next.js Turbo build system
-- **Multi-stage Docker builds** - Optimized container images
-- **Hot reloading** - Fast development experience
-
-This setup provides a complete, production-ready foundation for modern web applications with excellent developer experience and performance.
+- **[Hot Reload](https://docs.microsoft.com/dotnet/core/tools/dotnet-watch)** - Fast development with `dotnet watch` and Angular dev server
+- **Multi-stage Docker builds** - Optimized container images for dev and production
+- **Health checks** - Service dependency management with Docker Compose
 
 ---
 
-## **🚀 Quick Start**
+## **Quick Start**
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 18+ (for local development)
 - Git
+
+> **Note:** No local SDK installation required! Everything runs inside Docker containers.
 
 ### **1. Clone and Setup**
 ```bash
@@ -96,242 +90,259 @@ The `start.sh` script provides a convenient way to start the application with va
 
 **Manual Docker Compose:**
 ```bash
-# Without the start.sh script
+# Development environment
 docker compose -f compose.yaml -f compose_override/development.yaml up --build
+
+# Production environment
+docker compose -f compose.yaml -f compose_override/production.yaml up --build -d
 ```
 
-### **4. Initialize Database**
+### **4. Database Migrations**
+
+The `populate.sh` script manages Entity Framework Core migrations:
+
 ```bash
-# Populate database with initial data
+# Apply pending migrations
 ./populate.sh
+
+# Create a new migration
+./populate.sh -c AddNewFeature
+
+# Apply migrations in production
+./populate.sh -e production
+
+# Show help
+./populate.sh -h
 ```
 
-### **5. Development Commands**
+**Manual EF Core commands (inside container):**
 ```bash
-# Frontend development
-cd app
-npm run dev
+# Create migration
+docker compose -f compose.yaml -f compose_override/development.yaml exec -T api \
+  dotnet ef migrations add MigrationName --project Api.Infrastructure --startup-project Api
 
-# Backend development
-cd api
-npm run dev
-
-# Linting and formatting (using Biome)
-cd app  # or cd api
-npm run check    # Check and auto-fix
-npm run format   # Format code
-npm run lint     # Lint only
+# Apply migrations
+docker compose -f compose.yaml -f compose_override/development.yaml exec -T api \
+  dotnet ef database update --project Api.Infrastructure --startup-project Api
 ```
 
 ---
 
-## **🌐 Available Services**
+## **Available Services**
 
 Once the application is running, you can access the following services:
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| **Frontend** | [http://localhost](http://localhost) | Next.js application with React 19 |
-| **API** | [http://localhost/api](http://localhost/api) | Fastify REST API with OpenAPI docs |
-| **API Docs** | [http://localhost/reference](http://localhost/reference) | Interactive Scalar API documentation |
-| **Traefik Dashboard** | [http://localhost:8080](http://localhost:8080) | Reverse proxy management interface |
+| **Frontend** | [http://localhost](http://localhost) | Angular 21 application |
+| **API** | [http://localhost/api](http://localhost/api) | ASP.NET Core REST API |
+| **Swagger UI** | [http://localhost/swagger](http://localhost/swagger) | Interactive API documentation |
+| **Health Check** | [http://localhost/api/healthcheck/ping](http://localhost/api/healthcheck/ping) | API health status |
+| **Traefik Dashboard** | [http://localhost:8080](http://localhost:8080) | Reverse proxy management |
 | **Elasticsearch** | [http://localhost:9200](http://localhost:9200) | Search and analytics engine |
 | **Kibana** | [http://localhost:5601](http://localhost:5601) | Data visualization and monitoring |
+| **PostgreSQL** | localhost:5432 | Database server |
+| **Valkey** | localhost:6379 | Cache server |
 
-## **📁 Project Structure**
+---
+
+## **Project Structure**
 
 ```
 fullstack_basic_starter/
-├── app/                     # Next.js frontend application
+├── app/                          # Angular frontend application
 │   ├── src/
-│   │   ├── app/             # App Router pages and layouts
-│   │   ├── components/      # React components
-│   │   ├── redux/           # Redux Toolkit state management
-│   │   ├── styles/          # Global styles
-│   │   ├── i18n/            # Internationalization setup
-│   │   └── utils/           # Utility functions and helpers
-│   ├── public/              # Static assets
-│   ├── messages/            # Translation files
-│   └── Dockerfile           # Frontend container configuration
-├── api/                     # Fastify backend API
-│   ├── routes/              # API route handlers
-│   ├── services/            # Business logic services
-│   ├── middleware/          # Fastify middleware
-│   ├── utils/               # Utility functions
-│   └── Dockerfile           # Backend container configuration
-├── backoffice/              # Admin dashboard (future implementation)
-├── compose_override/        # Docker Compose environment overrides
-│   ├── development.yaml     # Development configuration
-│   └── production.yaml      # Production configuration
-├── compose.yaml             # Base Docker Compose configuration
-├── biome.json              # Biome formatter/linter configuration
-├── start.sh                # Application startup script
-└── README.md               # This file
+│   │   ├── app/
+│   │   │   ├── core/             # Core services, guards, interceptors
+│   │   │   │   ├── guards/       # Route guards (auth, guest)
+│   │   │   │   ├── interceptors/ # HTTP interceptors (auth token)
+│   │   │   │   └── services/     # Singleton services (auth, user)
+│   │   │   ├── features/         # Feature modules
+│   │   │   │   ├── auth/         # Login, register, forgot-password
+│   │   │   │   ├── home/         # Home/dashboard
+│   │   │   │   └── user/         # User profile
+│   │   │   ├── app.component.ts  # Root component
+│   │   │   ├── app.config.ts     # Application configuration
+│   │   │   └── app.routes.ts     # Route definitions
+│   │   ├── environments/         # Environment configurations
+│   │   ├── styles/               # Global SCSS styles
+│   │   ├── index.html            # HTML entry point
+│   │   └── main.ts               # Application bootstrap
+│   ├── angular.json              # Angular CLI configuration
+│   ├── tsconfig.json             # TypeScript configuration
+│   └── Dockerfile                # Frontend container (Node 24)
+├── api/                          # ASP.NET Core backend API
+│   ├── Api/                      # Web API project (presentation layer)
+│   │   ├── Controllers/          # API controllers
+│   │   ├── Middleware/           # Custom middleware
+│   │   ├── Program.cs            # Application entry point
+│   │   └── appsettings.json      # Configuration
+│   ├── Api.Core/                 # Domain layer
+│   │   ├── Entities/             # Domain entities
+│   │   ├── DTOs/                 # Data transfer objects
+│   │   └── Interfaces/           # Service contracts
+│   ├── Api.Infrastructure/       # Infrastructure layer
+│   │   ├── Data/                 # DbContext and configurations
+│   │   ├── Migrations/           # EF Core migrations
+│   │   └── Services/             # Service implementations
+│   ├── Api.sln                   # Solution file
+│   ├── global.json               # .NET SDK version
+│   └── Dockerfile                # Backend container (.NET 10)
+├── compose_override/             # Docker Compose environment overrides
+│   ├── development.yaml          # Development services (DB, cache, etc.)
+│   └── production.yaml           # Production configuration
+├── compose.yaml                  # Base Docker Compose configuration
+├── start.sh                      # Application startup script
+├── populate.sh                   # Database migration script
+└── README.md                     # This file
 ```
 
 ---
 
-## **✨ Key Features**
+## **Key Features**
 
 ### **Frontend Features**
-- 🎨 **Modern UI** - TailwindCSS 4 with Shadcn/UI components built on Radix UI
-- 🌍 **Internationalization** - Multi-language support with next-intl
-- 📱 **Responsive Design** - Mobile-first approach
-- 🔄 **State Management** - Redux Toolkit for predictable state updates
-- 🎯 **Type Safety** - Full TypeScript support
-- ⚡ **Performance** - Optimized with Next.js App Router, React Server Components, and Turbopack
+- **Zoneless** - Angular 21's default zoneless change detection for better performance
+- **Signals** - Fine-grained reactivity with Angular Signals for state management
+- **Standalone** - No NgModules, simplified component architecture
+- **Type Safety** - Full TypeScript support with strict mode
+- **Lazy Loading** - Route-based code splitting for optimal bundle size
+- **Reactive Forms** - Form handling with built-in validation
+- **HTTP Interceptors** - Automatic JWT token injection
 
 ### **Backend Features**
-- 🚀 **High Performance** - Fastify with excellent benchmarks
-- 🔐 **Authentication** - Better-Auth with modern security
-- 📊 **API Documentation** - Auto-generated OpenAPI/Scalar docs
-- 🗄️ **Database ORM** - Drizzle ORM with type safety
-- 📝 **Logging** - Structured logging with Pino
-- ✅ **Validation** - Zod schema validation
+- **Clean Architecture** - Separation of concerns with Api, Core, and Infrastructure layers
+- **JWT Authentication** - Secure token-based authentication with ASP.NET Core Identity
+- **Entity Framework Core** - Code-first database with migrations
+- **Caching** - Redis/Valkey integration for session and data caching
+- **Structured Logging** - Serilog with Elasticsearch sink for centralized logging
+- **API Documentation** - Auto-generated Swagger/OpenAPI documentation
+- **Health Checks** - Endpoint for monitoring service health
 
-### **DevOps & Quality**
-- 🐳 **Containerized** - Multi-stage Docker builds
-- 🔍 **Code Quality** - Biome for ultra-fast linting and formatting
-- 📈 **Monitoring** - ELK stack for observability
-- 🔄 **Hot Reload** - Fast development with Turbopack
-- 🛡️ **Security** - Production-ready configurations
-
-## **🎯 Learning Opportunities**
-
-This project is perfect for learning modern web development concepts:
-
-1. **Database Transactions** - Implement with [Drizzle ORM transactions](https://orm.drizzle.team/docs/transactions)
-2. **Admin Dashboard** - Complete the backoffice implementation with user management
-3. **Real-time Features** - Add WebSocket support with Socket.io
-4. **Testing** - Implement unit and integration tests with Vitest/Jest
-5. **CI/CD** - Set up GitHub Actions workflows
-6. **Advanced Auth** - OAuth providers, 2FA, session management with Better-Auth
-7. **Server Components** - Leverage Next.js Server Components for optimal performance
-
-## **🚀 Future Enhancements**
-
-- [ ] **Testing Suite** - Jest/Vitest integration
-- [ ] **CI/CD Pipeline** - GitHub Actions workflows
-- [ ] **Real-time Features** - WebSocket support
-- [ ] **Advanced Monitoring** - APM and metrics
-- [ ] **Microservices** - Service decomposition
-- [ ] **Cloud Deployment** - Kubernetes manifests
+### **DevOps & Infrastructure**
+- **Containerized** - Multi-stage Docker builds for development and production
+- **Reverse Proxy** - Traefik with priority-based routing
+- **Hot Reload** - Fast development with volume mounts and watch mode
+- **Health Checks** - Service dependencies with Docker Compose healthchecks
+- **Centralized Logging** - ELK stack for log aggregation and visualization
 
 ---
 
-## **🛠️ Development**
+## **Authentication**
 
-### **Code Quality**
+### **Endpoints**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/sign-up/email` | Register new user |
+| POST | `/api/auth/sign-in/email` | Login with email/password |
+| POST | `/api/auth/sign-out` | Logout (requires auth) |
+| GET | `/api/auth/get-session` | Get current session (requires auth) |
+| POST | `/api/auth/forgot-password` | Request password reset |
+| POST | `/api/auth/reset-password` | Reset password with token |
+| POST | `/api/auth/change-password` | Change password (requires auth) |
+
+### **Password Requirements**
+- Minimum 8 characters
+- At least 1 uppercase letter
+- At least 1 lowercase letter
+- At least 1 digit
+
+### **Example: Register**
 ```bash
-# Check, lint, and format with Biome
-cd app  # or cd api
-npm run check    # Run checks and auto-fix issues
-npm run format   # Format code only
-npm run lint     # Lint code only
-
-# Type check
-npx tsc --noEmit
+curl -X POST http://localhost/api/auth/sign-up/email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "Password123",
+    "name": "John Doe"
+  }'
 ```
+
+### **Example: Login**
+```bash
+curl -X POST http://localhost/api/auth/sign-in/email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "Password123"
+  }'
+```
+
+---
+
+## **Development**
 
 ### **Docker Commands**
 
 **Basic Operations:**
 ```bash
-# Build images for development environment
-docker compose -f compose.yaml -f compose_override/development.yaml build
-
-# Start services (detached mode)
+# Start development environment
 docker compose -f compose.yaml -f compose_override/development.yaml up -d
 
-# Start services with build and watch logs
-docker compose -f compose.yaml -f compose_override/development.yaml up --build
+# View logs
+docker compose -f compose.yaml -f compose_override/development.yaml logs -f
+
+# View logs for specific service
+docker compose -f compose.yaml -f compose_override/development.yaml logs -f api
 
 # Stop services
 docker compose -f compose.yaml -f compose_override/development.yaml down
 
-# Stop services and remove volumes
+# Stop and remove volumes
 docker compose -f compose.yaml -f compose_override/development.yaml down -v
 ```
 
-**Service Management:**
+**Rebuild Services:**
 ```bash
-# Start specific service
-docker compose -f compose.yaml -f compose_override/development.yaml up app
+# Rebuild all services
+docker compose -f compose.yaml -f compose_override/development.yaml up -d --build
 
-# Restart a specific service
-docker compose -f compose.yaml -f compose_override/development.yaml restart api
-
-# Rebuild and restart a specific service
-docker compose -f compose.yaml -f compose_override/development.yaml up --build -d app
-
-# Scale a service (if applicable)
-docker compose -f compose.yaml -f compose_override/development.yaml up -d --scale api=3
+# Rebuild specific service
+docker compose -f compose.yaml -f compose_override/development.yaml up -d --build api
 ```
 
-**Logs and Monitoring:**
+**Execute Commands in Containers:**
 ```bash
-# View all logs (follow mode)
-docker compose -f compose.yaml -f compose_override/development.yaml logs -f
+# Access API container shell
+docker compose -f compose.yaml -f compose_override/development.yaml exec api bash
 
-# View logs for specific service
-docker compose -f compose.yaml -f compose_override/development.yaml logs -f app
+# Run .NET commands
+docker compose -f compose.yaml -f compose_override/development.yaml exec -T api dotnet build
 
-# View last 100 lines of logs
-docker compose -f compose.yaml -f compose_override/development.yaml logs --tail=100
-
-# View logs with timestamps
-docker compose -f compose.yaml -f compose_override/development.yaml logs -f -t
+# Access Angular container shell
+docker compose -f compose.yaml -f compose_override/development.yaml exec app sh
 ```
 
-**Debugging and Maintenance:**
-```bash
-# Execute command in running container
-docker compose -f compose.yaml -f compose_override/development.yaml exec api sh
+---
 
-# List all running containers
-docker compose -f compose.yaml -f compose_override/development.yaml ps
+## **Learning Opportunities**
 
-# Check service status
-docker compose -f compose.yaml -f compose_override/development.yaml ps -a
+This project is perfect for learning modern web development concepts:
 
-# View container resource usage
-docker stats
+1. **Angular Signals** - Master reactive state management with Angular's new Signals API
+2. **Clean Architecture** - Understand separation of concerns in .NET applications
+3. **JWT Authentication** - Implement secure token-based authentication
+4. **Entity Framework Core** - Learn code-first database development with migrations
+5. **Docker Compose** - Multi-container application orchestration
+6. **Reverse Proxy** - Configure Traefik for routing and load balancing
+7. **Centralized Logging** - Set up ELK stack for log aggregation
 
-# Run commands in a specific service
-docker compose -f compose.yaml -f compose_override/development.yaml exec app npm run build
-```
+---
 
-**Cleanup:**
-```bash
-# Remove stopped containers
-docker compose -f compose.yaml -f compose_override/development.yaml rm
+## **Future Enhancements**
 
-# Remove all containers, networks, and volumes
-docker compose -f compose.yaml -f compose_override/development.yaml down -v --remove-orphans
+- [ ] **Unit Tests** - Vitest for Angular, xUnit for .NET
+- [ ] **E2E Tests** - Playwright or Cypress integration
+- [ ] **CI/CD Pipeline** - GitHub Actions workflows
+- [ ] **OAuth Providers** - Google, GitHub, Microsoft authentication
+- [ ] **Real-time Features** - SignalR for WebSocket support
+- [ ] **Admin Dashboard** - User management backoffice
+- [ ] **Kubernetes** - Production deployment manifests
 
-# Clean up Docker system (use with caution)
-docker system prune -f
+---
 
-# Remove all unused images
-docker image prune -a
-
-# Remove specific image
-docker rmi <image_id>
-```
-
-**Production Environment:**
-```bash
-# Start in production mode
-docker compose -f compose.yaml -f compose_override/production.yaml up --build -d
-
-# View production logs
-docker compose -f compose.yaml -f compose_override/production.yaml logs -f
-
-# Stop production services
-docker compose -f compose.yaml -f compose_override/production.yaml down
-```
-
-## **🤝 Contributing**
+## **Contributing**
 
 We welcome contributions! Here's how you can help:
 
@@ -342,23 +353,27 @@ We welcome contributions! Here's how you can help:
 5. **Open** a Pull Request
 
 ### **Development Guidelines**
-- Follow the existing code style
+- Follow existing code patterns and architecture
 - Add tests for new features
 - Update documentation as needed
-- Ensure all checks pass
+- Ensure Docker builds pass
 
-## **📄 License**
+---
+
+## **License**
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-## **🙏 Acknowledgments**
+---
 
-- [Next.js Team](https://nextjs.org/) for the amazing framework
-- [React Team](https://react.dev/) for the powerful UI library
-- [Fastify Team](https://www.fastify.io/) for the high-performance server
-- [Biome Team](https://biomejs.dev/) for the ultra-fast formatter and linter
+## **Acknowledgments**
+
+- [Angular Team](https://angular.dev/) for the powerful framework
+- [.NET Team](https://dotnet.microsoft.com/) for ASP.NET Core
+- [Docker Team](https://www.docker.com/) for containerization
+- [Traefik Team](https://traefik.io/) for the excellent reverse proxy
 - All contributors and the open-source community
 
 ---
 
-**⭐ Star this repository if you find it helpful!**
+**Star this repository if you find it helpful!**
