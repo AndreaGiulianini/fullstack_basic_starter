@@ -1,22 +1,32 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '@core/services/auth.service';
+import { HttpErrorResponse, HttpInterceptorFn } from "@angular/common/http";
+import { inject } from "@angular/core";
+import { catchError, throwError } from "rxjs";
+import { AuthService } from "@core/services/auth.service";
 
 /**
- * HTTP interceptor that adds the Bearer token to outgoing requests
+ * HTTP interceptor that:
+ * - Adds the Bearer token to outgoing requests
+ * - Handles 401 responses by clearing auth state and redirecting to login
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.token();
 
-  if (token) {
-    const clonedRequest = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return next(clonedRequest);
-  }
+  const clonedRequest = token
+    ? req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    : req;
 
-  return next(req);
+  return next(clonedRequest).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401 && token) {
+        // Only handle 401 if we had a token (avoid redirect loops on login)
+        authService.handleUnauthorized();
+      }
+      return throwError(() => error);
+    }),
+  );
 };

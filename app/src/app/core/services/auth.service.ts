@@ -186,4 +186,12 @@ export class AuthService {
   clearError(): void {
     this.errorSignal.set(null);
   }
+
+  /**
+   * Handle unauthorized (401) responses by clearing auth state
+   * Called by auth interceptor when API returns 401
+   */
+  handleUnauthorized(): void {
+    this.clearAuthState();
+  }
 }

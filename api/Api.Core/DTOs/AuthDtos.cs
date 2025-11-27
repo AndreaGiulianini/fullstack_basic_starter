@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Api.Core.DTOs;
 
 /// <summary>
@@ -5,8 +7,13 @@ namespace Api.Core.DTOs;
 /// </summary>
 public record LoginRequestDto
 {
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email format")]
     public required string Email { get; init; }
+
+    [Required(ErrorMessage = "Password is required")]
     public required string Password { get; init; }
+
     public bool RememberMe { get; init; } = false;
 }
 
@@ -15,8 +22,15 @@ public record LoginRequestDto
 /// </summary>
 public record RegisterRequestDto
 {
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email format")]
     public required string Email { get; init; }
+
+    [Required(ErrorMessage = "Password is required")]
+    [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
     public required string Password { get; init; }
+
+    [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
     public string? Name { get; init; }
 }
 
@@ -43,6 +57,8 @@ public record SessionDto
 /// </summary>
 public record ForgotPasswordRequestDto
 {
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email format")]
     public required string Email { get; init; }
 }
 
@@ -51,7 +67,11 @@ public record ForgotPasswordRequestDto
 /// </summary>
 public record ResetPasswordRequestDto
 {
+    [Required(ErrorMessage = "Token is required")]
     public required string Token { get; init; }
+
+    [Required(ErrorMessage = "New password is required")]
+    [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
     public required string NewPassword { get; init; }
 }
 
@@ -60,6 +80,10 @@ public record ResetPasswordRequestDto
 /// </summary>
 public record ChangePasswordRequestDto
 {
+    [Required(ErrorMessage = "Current password is required")]
     public required string CurrentPassword { get; init; }
+
+    [Required(ErrorMessage = "New password is required")]
+    [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
     public required string NewPassword { get; init; }
 }
