@@ -1,0 +1,87 @@
+<div class="user-container">
+    <header class="header">
+        <div class="logo">Fullstack App</div>
+        <nav>
+            <a routerLink="/home" class="nav-link">Home</a>
+            <button (click)="logout()" class="btn-logout">Logout</button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="profile-card">
+            <h1>Edit Profile</h1>
+
+            @if (successMessage()) {
+                <div class="success-message">
+                    {{ successMessage() }}
+                </div>
+            }
+
+            @if (errorMessage()) {
+                <div class="error-message">
+                    {{ errorMessage() }}
+                </div>
+            }
+
+            <form (ngSubmit)="onSubmit()" #profileForm="ngForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        [(ngModel)]="name"
+                        #nameInput="ngModel"
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        [(ngModel)]="email"
+                        required
+                        email
+                        #emailInput="ngModel"
+                        [class.invalid]="
+                            emailInput.invalid && emailInput.touched
+                        "
+                    />
+                    @if (emailInput.invalid && emailInput.touched) {
+                        <span class="field-error"
+                            >Please enter a valid email</span
+                        >
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Profile Image URL</label>
+                    <input
+                        type="url"
+                        id="image"
+                        name="image"
+                        [(ngModel)]="image"
+                        placeholder="https://example.com/image.jpg"
+                    />
+                </div>
+
+                <div class="form-actions">
+                    <a routerLink="/home" class="btn-secondary">Cancel</a>
+                    <button
+                        type="submit"
+                        [disabled]="profileForm.invalid || saving()"
+                        class="btn-primary"
+                    >
+                        @if (saving()) {
+                            <span>Saving...</span>
+                        } @else {
+                            <span>Save Changes</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>

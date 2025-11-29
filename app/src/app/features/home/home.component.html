@@ -1,0 +1,33 @@
+<div class="home-container">
+  <header class="header">
+    <div class="logo">Fullstack App</div>
+    <nav>
+      <a routerLink="/user" class="nav-link">Profile</a>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <div class="welcome-card">
+      <h1>Welcome{{ user()?.name ? ', ' + user()?.name : '' }}!</h1>
+      <p class="email">{{ user()?.email }}</p>
+
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Account Status</span>
+          <span class="stat-value" [class.verified]="user()?.emailVerified">
+            {{ user()?.emailVerified ? 'Verified' : 'Unverified' }}
+          </span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Member Since</span>
+          <span class="stat-value">{{ formatDate(user()?.createdAt) }}</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a routerLink="/user" class="btn-primary">Edit Profile</a>
+      </div>
+    </div>
+  </main>
+</div>
