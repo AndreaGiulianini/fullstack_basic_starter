@@ -155,8 +155,77 @@ const logShutdown = (reason?: string) => {
 }
 
 // =============================================================================
+// CUSTOM LOGGING METHODS
+// =============================================================================
+
+type AuthLogData = {
+  event: string
+  ip: string
+  userAgent?: string
+  success: boolean
+  reason?: string
+  userId?: string
+  email?: string
+}
+
+type PerformanceLogData = {
+  operation: string
+  duration: number
+  metadata?: Record<string, unknown>
+  requestId?: string
+  [key: string]: unknown
+}
+
+type SecurityLogData = {
+  event: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  ip?: string
+  details?: string | Record<string, unknown>
+  [key: string]: unknown
+}
+
+const logAuth = (data: AuthLogData) => {
+  logger.info(
+    {
+      eventType: 'authentication',
+      ...data
+    },
+    `Auth event: ${data.event} - ${data.success ? 'success' : 'failed'}`
+  )
+}
+
+const logPerformance = (data: PerformanceLogData) => {
+  logger.info(
+    {
+      eventType: 'performance',
+      ...data
+    },
+    `Performance: ${data.operation} took ${data.duration}ms`
+  )
+}
+
+const logSecurity = (data: SecurityLogData) => {
+  const logLevel = data.severity === 'critical' || data.severity === 'high' ? 'warn' : 'info'
+  logger[logLevel](
+    {
+      eventType: 'security',
+      ...data
+    },
+    `Security event: ${data.event} (${data.severity})`
+  )
+}
+
+// Create a logger wrapper with custom methods
+const logUtils = {
+  ...logger,
+  logAuth,
+  logPerformance,
+  logSecurity
+}
+
+// =============================================================================
 // EXPORTS
 // =============================================================================
 
-export default logger
+export default logUtils
 export { logStartup, logShutdown }
