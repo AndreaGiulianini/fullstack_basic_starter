@@ -1,4 +1,4 @@
-FROM node:24-slim
+FROM node:25-slim
 
 WORKDIR /home/node
 COPY package.json ./

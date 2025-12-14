@@ -1,4 +1,4 @@
-FROM node:24-slim AS base
+FROM node:25-slim AS base
 WORKDIR /home/node
 COPY package*.json ./
 ENV PATH=/home/node/node_modules/.bin:$PATH
