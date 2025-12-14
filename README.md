@@ -30,8 +30,7 @@ A comprehensive, production-ready full-stack starter template designed for moder
 - **[ELK Stack](https://www.elastic.co/what-is/elk-stack)** - Elasticsearch, Logstash, Kibana for monitoring
 
 ### **Code Quality & Development**
-- **[Oxlint](https://oxc-project.github.io/docs/linter/)** - Ultra-fast linter written in Rust
-- **[ESLint](https://eslint.org/)** - Pluggable JavaScript/TypeScript linter
+- **[Biome](https://biomejs.dev/)** - Ultra-fast formatter and linter written in Rust
 - **[TypeScript](https://www.typescriptlang.org/)** - Static type checking
 - **Multi-stage Docker builds** - Optimized container images
 - **Hot reloading** - Fast development experience
@@ -339,7 +338,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - [Nuxt Team](https://nuxt.com/) for the amazing framework
 - [Vue Team](https://vuejs.org/) for the reactive framework
 - [Fastify Team](https://www.fastify.io/) for the high-performance server
-- [Oxc Project](https://oxc-project.github.io/) for the ultra-fast linter
 - All contributors and the open-source community
 
 ---

@@ -20,12 +20,12 @@
     "class-variance-authority": "^0.7.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.7",
+    "@biomejs/biome": "^2.3.8",
     "@nuxt/devtools": "^3.1.1",
     "@pinia/nuxt": "^0.11.3",
-    "@types/node": "^24.10.1",
-    "@vueuse/nuxt": "^14.0.0",
-    "nuxt": "^4.2.1",
+    "@types/node": "^25.0.2",
+    "@vueuse/nuxt": "^14.1.0",
+    "nuxt": "^4.2.2",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.1.4"
   }

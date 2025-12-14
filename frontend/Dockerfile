@@ -1,5 +1,5 @@
 # Base stage with common dependencies
-FROM node:24-slim AS base
+FROM node:25-slim AS base
 WORKDIR /home/node/frontend
 
 # Install system dependencies
