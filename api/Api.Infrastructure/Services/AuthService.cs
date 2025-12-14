@@ -21,6 +21,7 @@ public class AuthService : IAuthService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IConfiguration _configuration;
+    private readonly IEmailService _emailService;
 
     private const int SessionExpiryDays = 7;
     private const int ShortSessionExpiryHours = 24;
@@ -29,12 +30,14 @@ public class AuthService : IAuthService
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IEmailService emailService)
     {
         _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
         _configuration = configuration;
+        _emailService = emailService;
     }
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto, CancellationToken cancellationToken = default)
@@ -168,8 +171,8 @@ public class AuthService : IAuthService
         _context.Verifications.Add(verification);
         await _context.SaveChangesAsync(cancellationToken);
 
-        // TODO: Send email with reset link
-        // In production, integrate with an email service
+        // Send password reset email
+        await _emailService.SendPasswordResetEmailAsync(dto.Email, token, cancellationToken);
 
         return true;
     }

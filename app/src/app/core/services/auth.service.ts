@@ -57,24 +57,22 @@ export class AuthService {
   readonly error = this.errorSignal.asReadonly();
 
   // Computed signals
-  readonly isAuthenticated = computed(
-    () => !!this.userSignal() && !!this.sessionSignal(),
-  );
-  readonly token = computed(() => this.sessionSignal()?.token ?? null);
+  readonly isAuthenticated = computed(() => !!this.userSignal());
 
   private readonly apiUrl = `${environment.apiUrl}/auth`;
-  private readonly TOKEN_KEY = "auth_token";
 
   constructor() {
-    this.initializeFromStorage();
+    this.initializeFromSession();
   }
 
-  private initializeFromStorage(): void {
-    const token = localStorage.getItem(this.TOKEN_KEY);
-    if (token) {
-      this.sessionSignal.set({ token, expiresAt: "" });
-      this.getSession().subscribe();
-    }
+  private initializeFromSession(): void {
+    // Check if user has a valid session by calling the backend
+    // The JWT token is in HttpOnly cookie, so we don't need to check localStorage
+    this.getSession().subscribe({
+      error: () => {
+        // No valid session, do nothing
+      },
+    });
   }
 
   register(request: RegisterRequest): Observable<AuthResponse> {
@@ -138,10 +136,10 @@ export class AuthService {
       tap((response) => {
         if (response?.success && response.data) {
           this.userSignal.set(response.data.user);
-          this.sessionSignal.update((s) => ({
-            ...s!,
+          this.sessionSignal.set({
+            token: "", // Token is in HttpOnly cookie
             expiresAt: response.data.session.expiresAt,
-          }));
+          });
         }
       }),
       catchError(() => {
@@ -173,13 +171,13 @@ export class AuthService {
   private setAuthState(user: User, session: Session): void {
     this.userSignal.set(user);
     this.sessionSignal.set(session);
-    localStorage.setItem(this.TOKEN_KEY, session.token);
+    // Token is stored in HttpOnly cookie by backend, no need to store in localStorage
   }
 
   private clearAuthState(): void {
     this.userSignal.set(null);
     this.sessionSignal.set(null);
-    localStorage.removeItem(this.TOKEN_KEY);
+    // Cookie will be cleared by backend on logout
     this.router.navigate(["/login"]);
   }
 

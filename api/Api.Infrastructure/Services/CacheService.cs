@@ -31,7 +31,15 @@ public class CacheService : ICacheService
     public async Task SetAsync<T>(string key, T value, TimeSpan? expiry = null, CancellationToken cancellationToken = default) where T : class
     {
         var serialized = JsonSerializer.Serialize(value);
-        await _db.StringSetAsync(key, serialized, expiry);
+
+        if (expiry.HasValue)
+        {
+            await _db.StringSetAsync(key, serialized, expiry.Value);
+        }
+        else
+        {
+            await _db.StringSetAsync(key, serialized);
+        }
     }
 
     public async Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default)

@@ -5,25 +5,23 @@ import { AuthService } from "@core/services/auth.service";
 
 /**
  * HTTP interceptor that:
- * - Adds the Bearer token to outgoing requests
+ * - Ensures credentials (cookies) are sent with requests
  * - Handles 401 responses by clearing auth state and redirecting to login
+ *
+ * Note: JWT token is now in HttpOnly cookie, so we don't need to manually add Authorization header
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService.token();
 
-  const clonedRequest = token
-    ? req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-    : req;
+  // Ensure credentials (cookies) are sent with the request
+  const clonedRequest = req.clone({
+    withCredentials: true,
+  });
 
   return next(clonedRequest).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && token) {
-        // Only handle 401 if we had a token (avoid redirect loops on login)
+      if (error.status === 401) {
+        // Handle unauthorized errors by clearing auth state
         authService.handleUnauthorized();
       }
       return throwError(() => error);

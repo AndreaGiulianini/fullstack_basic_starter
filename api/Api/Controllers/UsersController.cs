@@ -1,5 +1,6 @@
 using Api.Core.DTOs;
 using Api.Core.Interfaces;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,8 @@ namespace Api.Controllers;
 /// User management endpoints
 /// </summary>
 [ApiController]
-[Route("api/users")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/users")]
 [Produces("application/json")]
 public class UsersController : ControllerBase
 {

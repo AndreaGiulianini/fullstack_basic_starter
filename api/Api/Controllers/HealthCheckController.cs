@@ -1,5 +1,6 @@
 using Api.Core.DTOs;
 using Api.Core.Interfaces;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -8,7 +9,8 @@ namespace Api.Controllers;
 /// Health check endpoints
 /// </summary>
 [ApiController]
-[Route("api/healthcheck")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/healthcheck")]
 [Produces("application/json")]
 public class HealthCheckController : ControllerBase
 {

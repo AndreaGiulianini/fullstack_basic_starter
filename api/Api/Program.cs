@@ -101,11 +101,25 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     ConnectionMultiplexer.Connect(redisConnectionString));
 
 // =============================================================================
+// HEALTH CHECKS
+// =============================================================================
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString("DefaultConnection")!,
+        name: "postgresql",
+        tags: new[] { "db", "sql", "postgresql" })
+    .AddRedis(
+        builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379",
+        name: "redis",
+        tags: new[] { "cache", "redis" });
+
+// =============================================================================
 // SERVICES REGISTRATION
 // =============================================================================
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // =============================================================================
 // SWAGGER/OPENAPI CONFIGURATION
@@ -134,6 +148,16 @@ builder.Services.AddSwaggerGen(options =>
         [new OpenApiSecuritySchemeReference("Bearer")] = new List<string>()
     });
 });
+
+// =============================================================================
+// API VERSIONING
+// =============================================================================
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+}).AddMvc();
 
 // =============================================================================
 // CONTROLLERS
@@ -176,6 +200,10 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map health check endpoint
+app.MapHealthChecks("/health");
+
 app.MapControllers();
 
 // =============================================================================

@@ -1,5 +1,6 @@
 using Api.Core.DTOs;
 using Api.Core.Interfaces;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -10,7 +11,8 @@ namespace Api.Controllers;
 /// Authentication endpoints
 /// </summary>
 [ApiController]
-[Route("api/auth")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/auth")]
 [Produces("application/json")]
 public class AuthController : ControllerBase
 {
@@ -33,12 +35,24 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.RegisterAsync(request, cancellationToken);
 
+        // Set HttpOnly cookie for JWT token
+        SetAuthCookie(result.Session.Token, result.Session.ExpiresAt);
+
         _logger.LogInformation("User registered: {Email}", request.Email);
 
+        // Return user data without token (token is in cookie)
         return StatusCode(StatusCodes.Status201Created, new ApiResponse<AuthResponseDto>
         {
             Success = true,
-            Data = result,
+            Data = new AuthResponseDto
+            {
+                User = result.User,
+                Session = new SessionDto
+                {
+                    Token = string.Empty, // Don't expose token to frontend
+                    ExpiresAt = result.Session.ExpiresAt
+                }
+            },
             Message = "User registered successfully"
         });
     }
@@ -56,12 +70,24 @@ public class AuthController : ControllerBase
 
         var result = await _authService.LoginAsync(request, ipAddress, userAgent, cancellationToken);
 
+        // Set HttpOnly cookie for JWT token
+        SetAuthCookie(result.Session.Token, result.Session.ExpiresAt);
+
         _logger.LogInformation("User logged in: {Email}", request.Email);
 
+        // Return user data without token (token is in cookie)
         return Ok(new ApiResponse<AuthResponseDto>
         {
             Success = true,
-            Data = result
+            Data = new AuthResponseDto
+            {
+                User = result.User,
+                Session = new SessionDto
+                {
+                    Token = string.Empty, // Don't expose token to frontend
+                    ExpiresAt = result.Session.ExpiresAt
+                }
+            }
         });
     }
 
@@ -74,7 +100,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetSession(CancellationToken cancellationToken)
     {
-        var token = GetTokenFromHeader();
+        var token = GetTokenFromCookie() ?? GetTokenFromHeader();
 
         if (string.IsNullOrEmpty(token))
             return Unauthorized(new ApiErrorResponse
@@ -100,10 +126,19 @@ public class AuthController : ControllerBase
                 }
             });
 
+        // Don't expose token in response
         return Ok(new ApiResponse<AuthResponseDto>
         {
             Success = true,
-            Data = result
+            Data = new AuthResponseDto
+            {
+                User = result.User,
+                Session = new SessionDto
+                {
+                    Token = string.Empty,
+                    ExpiresAt = result.Session.ExpiresAt
+                }
+            }
         });
     }
 
@@ -115,13 +150,16 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
-        var token = GetTokenFromHeader();
+        var token = GetTokenFromCookie() ?? GetTokenFromHeader();
 
         if (!string.IsNullOrEmpty(token))
         {
             await _authService.LogoutAsync(token, cancellationToken);
             _logger.LogInformation("User logged out");
         }
+
+        // Clear auth cookie
+        ClearAuthCookie();
 
         return Ok(new ApiResponse<object>
         {
@@ -193,5 +231,35 @@ public class AuthController : ControllerBase
             return null;
 
         return authHeader["Bearer ".Length..];
+    }
+
+    private string? GetTokenFromCookie()
+    {
+        return Request.Cookies["auth_token"];
+    }
+
+    private void SetAuthCookie(string token, DateTime expiresAt)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true, // Only send over HTTPS
+            SameSite = SameSiteMode.Strict,
+            Expires = expiresAt,
+            Path = "/"
+        };
+
+        Response.Cookies.Append("auth_token", token, cookieOptions);
+    }
+
+    private void ClearAuthCookie()
+    {
+        Response.Cookies.Delete("auth_token", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Path = "/"
+        });
     }
 }
