@@ -19,8 +19,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.10.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.10.17" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.2" />
   </ItemGroup>
 
   <ItemGroup>
