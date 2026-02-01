@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.13/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -78,7 +78,11 @@
         "noUnusedLabels": "error"
       },
       "nursery": {
-        "useSortedClasses": "warn"
+        "useSortedClasses": "warn",
+        "noDuplicateAttributes": "error",
+        "noReturnAssign": "error",
+        "noVueOptionsApi": "warn",
+        "useVueValidVCloak": "warn"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",
