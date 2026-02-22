@@ -57,7 +57,7 @@ RUN npx nuxt prepare && npm run build
 # =============================================================================
 # Production stage
 # =============================================================================
-FROM node:24-slim AS image-production
+FROM node:25-slim AS image-production
 WORKDIR /home/node/frontend
 
 # Create non-root user

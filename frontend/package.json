@@ -15,18 +15,18 @@
   "dependencies": {
     "@nuxtjs/color-mode": "^4.0.0",
     "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/i18n": "^10.2.1",
+    "@nuxtjs/i18n": "^10.2.3",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "class-variance-authority": "^0.7.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.13",
-    "@nuxt/devtools": "^3.1.1",
+    "@biomejs/biome": "^2.4.4",
+    "@nuxt/devtools": "^3.2.1",
     "@pinia/nuxt": "^0.11.3",
-    "@types/node": "^25.2.0",
-    "@vueuse/nuxt": "^14.2.0",
-    "nuxt": "^4.3.0",
+    "@types/node": "^25.3.0",
+    "@vueuse/nuxt": "^14.2.1",
+    "nuxt": "^4.3.1",
     "typescript": "^5.9.3",
-    "vue-tsc": "^3.2.4"
+    "vue-tsc": "^3.2.5"
   }
 }
