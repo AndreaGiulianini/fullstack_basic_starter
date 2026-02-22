@@ -2,6 +2,7 @@ import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { AuthService } from "@core/services/auth.service";
+import { Messages } from "@core/constants/messages.constants";
 
 @Component({
   selector: "app-home",
@@ -20,7 +21,7 @@ export class HomeComponent {
   }
 
   formatDate(dateString: string | undefined): string {
-    if (!dateString) return "N/A";
+    if (!dateString) return Messages.defaults.notAvailable;
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",

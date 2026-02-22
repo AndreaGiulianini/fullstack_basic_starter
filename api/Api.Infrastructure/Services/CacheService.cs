@@ -20,7 +20,7 @@ public class CacheService : ICacheService
 
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) where T : class
     {
-        var value = await _db.StringGetAsync(key);
+        var value = await _db.StringGetAsync(key).WaitAsync(cancellationToken);
 
         if (value.IsNullOrEmpty)
             return null;
@@ -31,32 +31,24 @@ public class CacheService : ICacheService
     public async Task SetAsync<T>(string key, T value, TimeSpan? expiry = null, CancellationToken cancellationToken = default) where T : class
     {
         var serialized = JsonSerializer.Serialize(value);
-
-        if (expiry.HasValue)
-        {
-            await _db.StringSetAsync(key, serialized, expiry.Value);
-        }
-        else
-        {
-            await _db.StringSetAsync(key, serialized);
-        }
+        await _db.StringSetAsync(key, serialized, expiry, When.Always).WaitAsync(cancellationToken);
     }
 
     public async Task<bool> RemoveAsync(string key, CancellationToken cancellationToken = default)
     {
-        return await _db.KeyDeleteAsync(key);
+        return await _db.KeyDeleteAsync(key).WaitAsync(cancellationToken);
     }
 
     public async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
     {
-        return await _db.KeyExistsAsync(key);
+        return await _db.KeyExistsAsync(key).WaitAsync(cancellationToken);
     }
 
     public async Task<bool> PingAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            var pong = await _db.PingAsync();
+            var pong = await _db.PingAsync().WaitAsync(cancellationToken);
             return pong.TotalMilliseconds >= 0;
         }
         catch

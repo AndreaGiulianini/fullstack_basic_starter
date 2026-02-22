@@ -6,7 +6,7 @@ namespace Api.Core.Entities;
 /// Application user entity extending ASP.NET Core Identity
 /// Maps to 'users' table in PostgreSQL
 /// </summary>
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser, ITimestamped
 {
     public string? Name { get; set; }
 

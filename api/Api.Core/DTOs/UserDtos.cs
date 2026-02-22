@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Api.Core.Validation;
 
 namespace Api.Core.DTOs;
 
@@ -20,20 +21,18 @@ public record UserDto
 /// </summary>
 public record CreateUserDto
 {
-    [Required(ErrorMessage = "Email is required")]
-    [EmailAddress(ErrorMessage = "Invalid email format")]
-    [StringLength(255, ErrorMessage = "Email cannot exceed 255 characters")]
+    [Required(ErrorMessage = ValidationConstants.Email.Required)]
+    [EmailAddress(ErrorMessage = ValidationConstants.Email.Invalid)]
+    [StringLength(ValidationConstants.Email.MaxLength, ErrorMessage = ValidationConstants.Email.MaxExceeded)]
     public required string Email { get; init; }
 
-    [Required(ErrorMessage = "Password is required")]
-    [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 100 characters")]
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
-        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one number")]
+    [Required(ErrorMessage = ValidationConstants.Password.Required)]
+    [StringLength(ValidationConstants.Password.MaxLength, MinimumLength = ValidationConstants.Password.MinLength, ErrorMessage = ValidationConstants.Password.Range)]
+    [RegularExpression(ValidationConstants.PasswordRegex, ErrorMessage = ValidationConstants.PasswordRegexError)]
     public required string Password { get; init; }
 
-    [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
-    [RegularExpression(@"^[a-zA-Z\s\-'\.]+$",
-        ErrorMessage = "Name can only contain letters, spaces, hyphens, apostrophes, and periods")]
+    [StringLength(ValidationConstants.Name.MaxLength, ErrorMessage = ValidationConstants.Name.MaxExceeded)]
+    [RegularExpression(ValidationConstants.NameRegex, ErrorMessage = ValidationConstants.NameRegexError)]
     public string? Name { get; init; }
 }
 
@@ -42,16 +41,15 @@ public record CreateUserDto
 /// </summary>
 public record UpdateUserDto
 {
-    [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
-    [RegularExpression(@"^[a-zA-Z\s\-'\.]+$",
-        ErrorMessage = "Name can only contain letters, spaces, hyphens, apostrophes, and periods")]
+    [StringLength(ValidationConstants.Name.MaxLength, ErrorMessage = ValidationConstants.Name.MaxExceeded)]
+    [RegularExpression(ValidationConstants.NameRegex, ErrorMessage = ValidationConstants.NameRegexError)]
     public string? Name { get; init; }
 
-    [EmailAddress(ErrorMessage = "Invalid email format")]
-    [StringLength(255, ErrorMessage = "Email cannot exceed 255 characters")]
+    [EmailAddress(ErrorMessage = ValidationConstants.Email.Invalid)]
+    [StringLength(ValidationConstants.Email.MaxLength, ErrorMessage = ValidationConstants.Email.MaxExceeded)]
     public string? Email { get; init; }
 
-    [Url(ErrorMessage = "Invalid image URL format")]
-    [StringLength(500, ErrorMessage = "Image URL cannot exceed 500 characters")]
+    [Url(ErrorMessage = ValidationConstants.Image.InvalidUrl)]
+    [StringLength(ValidationConstants.Image.MaxLength, ErrorMessage = ValidationConstants.Image.MaxExceeded)]
     public string? Image { get; init; }
 }

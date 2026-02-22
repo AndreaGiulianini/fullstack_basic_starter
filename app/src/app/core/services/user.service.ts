@@ -3,30 +3,12 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "@env/environment";
 import { User } from "./auth.service";
+import { ApiResponse, PaginatedResponse } from "@core/models/api.models";
 
 export interface UpdateUserRequest {
   name?: string;
   email?: string;
   image?: string;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-}
-
-export interface PaginatedResponse<T> {
-  success: boolean;
-  data: T[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    totalItems: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrevious: boolean;
-  };
 }
 
 @Injectable({ providedIn: "root" })

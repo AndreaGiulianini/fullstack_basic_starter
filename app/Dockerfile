@@ -40,7 +40,7 @@ RUN npm run build:prod
 # -----------------------------------------------------------------------------
 # Production stage - Serve with Node.js static server
 # -----------------------------------------------------------------------------
-FROM node:24-slim AS production
+FROM node:25-slim AS production
 
 WORKDIR /app
 

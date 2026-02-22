@@ -1,24 +1,30 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { AuthService, User } from "@core/services/auth.service";
+import { AuthService } from "@core/services/auth.service";
 import { UserService } from "@core/services/user.service";
+import { Messages } from "@core/constants/messages.constants";
+import { getFormFieldError } from "@core/constants/validation.constants";
+import { extractErrorMessage } from "@core/models/api.models";
 
 @Component({
   selector: "app-user",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: "./user.component.html",
   styleUrl: "./user.component.scss",
 })
 export class UserComponent implements OnInit {
+  private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private userService = inject(UserService);
 
-  name = "";
-  email = "";
-  image = "";
+  profileForm = this.fb.group({
+    name: [""],
+    email: ["", [Validators.required, Validators.email]],
+    image: [""],
+  });
 
   saving = signal(false);
   successMessage = signal<string | null>(null);
@@ -27,13 +33,17 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.user();
     if (user) {
-      this.name = user.name ?? "";
-      this.email = user.email;
-      this.image = user.image ?? "";
+      this.profileForm.patchValue({
+        name: user.name ?? "",
+        email: user.email,
+        image: user.image ?? "",
+      });
     }
   }
 
   onSubmit(): void {
+    if (!this.profileForm.valid) return;
+
     const user = this.authService.user();
     if (!user) return;
 
@@ -41,26 +51,30 @@ export class UserComponent implements OnInit {
     this.successMessage.set(null);
     this.errorMessage.set(null);
 
+    const { name, email, image } = this.profileForm.getRawValue();
     this.userService
       .update(user.id, {
-        name: this.name || undefined,
-        email: this.email,
-        image: this.image || undefined,
+        name: name || undefined,
+        email: email!,
+        image: image || undefined,
       })
       .subscribe({
         next: () => {
-          this.successMessage.set("Profile updated successfully");
+          this.successMessage.set(Messages.success.profileUpdated);
           this.saving.set(false);
-          // Refresh session to get updated user data
           this.authService.getSession().subscribe();
         },
         error: (err) => {
           this.errorMessage.set(
-            err.error?.error?.message ?? "Failed to update profile",
+            extractErrorMessage(err, Messages.error.failedToUpdateProfile),
           );
           this.saving.set(false);
         },
       });
+  }
+
+  getErrorMessage(field: string): string {
+    return getFormFieldError(this.profileForm, field);
   }
 
   logout(): void {

@@ -3,6 +3,8 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Observable, tap, catchError, of } from "rxjs";
 import { environment } from "@env/environment";
+import { Messages } from "@core/constants/messages.constants";
+import { ApiResponse, extractErrorMessage } from "@core/models/api.models";
 
 export interface User {
   id: string;
@@ -18,13 +20,9 @@ export interface Session {
   expiresAt: string;
 }
 
-export interface AuthResponse {
-  success: boolean;
-  data: {
-    user: User;
-    session: Session;
-  };
-  message?: string;
+export interface AuthData {
+  user: User;
+  session: Session;
 }
 
 export interface LoginRequest {
@@ -66,8 +64,6 @@ export class AuthService {
   }
 
   private initializeFromSession(): void {
-    // Check if user has a valid session by calling the backend
-    // The JWT token is in HttpOnly cookie, so we don't need to check localStorage
     this.getSession().subscribe({
       error: () => {
         // No valid session, do nothing
@@ -75,12 +71,12 @@ export class AuthService {
     });
   }
 
-  register(request: RegisterRequest): Observable<AuthResponse> {
+  register(request: RegisterRequest): Observable<ApiResponse<AuthData>> {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/sign-up/email`, request)
+      .post<ApiResponse<AuthData>>(`${this.apiUrl}/sign-up/email`, request)
       .pipe(
         tap((response) => {
           if (response.success && response.data) {
@@ -90,7 +86,7 @@ export class AuthService {
         }),
         catchError((error) => {
           this.errorSignal.set(
-            error.error?.error?.message ?? "Registration failed",
+            extractErrorMessage(error, Messages.error.registrationFailed),
           );
           this.loadingSignal.set(false);
           throw error;
@@ -99,12 +95,12 @@ export class AuthService {
       );
   }
 
-  login(request: LoginRequest): Observable<AuthResponse> {
+  login(request: LoginRequest): Observable<ApiResponse<AuthData>> {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/sign-in/email`, request)
+      .post<ApiResponse<AuthData>>(`${this.apiUrl}/sign-in/email`, request)
       .pipe(
         tap((response) => {
           if (response.success && response.data) {
@@ -113,7 +109,7 @@ export class AuthService {
           }
         }),
         catchError((error) => {
-          this.errorSignal.set(error.error?.error?.message ?? "Login failed");
+          this.errorSignal.set(extractErrorMessage(error, Messages.error.loginFailed));
           this.loadingSignal.set(false);
           throw error;
         }),
@@ -131,28 +127,30 @@ export class AuthService {
     );
   }
 
-  getSession(): Observable<AuthResponse | null> {
-    return this.http.get<AuthResponse>(`${this.apiUrl}/get-session`).pipe(
-      tap((response) => {
-        if (response?.success && response.data) {
-          this.userSignal.set(response.data.user);
-          this.sessionSignal.set({
-            token: "", // Token is in HttpOnly cookie
-            expiresAt: response.data.session.expiresAt,
-          });
-        }
-      }),
-      catchError(() => {
-        this.clearAuthState();
-        return of(null);
-      }),
-    );
+  getSession(): Observable<ApiResponse<AuthData> | null> {
+    return this.http
+      .get<ApiResponse<AuthData>>(`${this.apiUrl}/get-session`)
+      .pipe(
+        tap((response) => {
+          if (response?.success && response.data) {
+            this.userSignal.set(response.data.user);
+            this.sessionSignal.set({
+              token: "", // Token is in HttpOnly cookie
+              expiresAt: response.data.session.expiresAt,
+            });
+          }
+        }),
+        catchError(() => {
+          this.clearAuthState();
+          return of(null);
+        }),
+      );
   }
 
   forgotPassword(
     email: string,
-  ): Observable<{ success: boolean; message: string }> {
-    return this.http.post<{ success: boolean; message: string }>(
+  ): Observable<ApiResponse<null>> {
+    return this.http.post<ApiResponse<null>>(
       `${this.apiUrl}/forgot-password`,
       { email },
     );
@@ -161,8 +159,8 @@ export class AuthService {
   resetPassword(
     token: string,
     newPassword: string,
-  ): Observable<{ success: boolean; message: string }> {
-    return this.http.post<{ success: boolean; message: string }>(
+  ): Observable<ApiResponse<null>> {
+    return this.http.post<ApiResponse<null>>(
       `${this.apiUrl}/reset-password`,
       { token, newPassword },
     );
@@ -171,13 +169,11 @@ export class AuthService {
   private setAuthState(user: User, session: Session): void {
     this.userSignal.set(user);
     this.sessionSignal.set(session);
-    // Token is stored in HttpOnly cookie by backend, no need to store in localStorage
   }
 
   private clearAuthState(): void {
     this.userSignal.set(null);
     this.sessionSignal.set(null);
-    // Cookie will be cleared by backend on logout
     this.router.navigate(["/login"]);
   }
 
@@ -185,10 +181,6 @@ export class AuthService {
     this.errorSignal.set(null);
   }
 
-  /**
-   * Handle unauthorized (401) responses by clearing auth state
-   * Called by auth interceptor when API returns 401
-   */
   handleUnauthorized(): void {
     this.clearAuthState();
   }

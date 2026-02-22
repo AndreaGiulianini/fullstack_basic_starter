@@ -102,27 +102,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     private void UpdateTimestamps()
     {
-        var entries = ChangeTracker.Entries()
+        var entries = ChangeTracker.Entries<ITimestamped>()
             .Where(e => e.State == EntityState.Modified);
 
         foreach (var entry in entries)
         {
-            if (entry.Entity is ApplicationUser user)
-            {
-                user.UpdatedAt = DateTime.UtcNow;
-            }
-            else if (entry.Entity is Session session)
-            {
-                session.UpdatedAt = DateTime.UtcNow;
-            }
-            else if (entry.Entity is Account account)
-            {
-                account.UpdatedAt = DateTime.UtcNow;
-            }
-            else if (entry.Entity is Verification verification)
-            {
-                verification.UpdatedAt = DateTime.UtcNow;
-            }
+            entry.Entity.UpdatedAt = DateTime.UtcNow;
         }
     }
 }

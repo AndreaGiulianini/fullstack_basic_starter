@@ -1,5 +1,7 @@
+using Api.Core.Constants;
 using Api.Core.DTOs;
 using Api.Core.Entities;
+using Api.Core.Extensions;
 using Api.Core.Interfaces;
 using Api.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +29,7 @@ public class UserService : IUserService
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-        return user is null ? null : MapToDto(user);
+        return user is null ? null : user.ToDto();
     }
 
     public async Task<UserDto?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
@@ -36,7 +38,7 @@ public class UserService : IUserService
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
-        return user is null ? null : MapToDto(user);
+        return user is null ? null : user.ToDto();
     }
 
     public async Task<UserDto> CreateAsync(CreateUserDto dto, CancellationToken cancellationToken = default)
@@ -57,16 +59,16 @@ public class UserService : IUserService
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Failed to create user: {errors}");
+            throw new InvalidOperationException(Messages.User.FailedToCreate(errors));
         }
 
-        return MapToDto(user);
+        return user.ToDto();
     }
 
     public async Task<UserDto> UpdateAsync(string id, UpdateUserDto dto, CancellationToken cancellationToken = default)
     {
         var user = await _context.Users.FindAsync(new object[] { id }, cancellationToken)
-            ?? throw new KeyNotFoundException($"User with id '{id}' not found");
+            ?? throw new KeyNotFoundException(Messages.User.NotFoundById(id));
 
         if (dto.Name is not null)
             user.Name = dto.Name;
@@ -84,7 +86,7 @@ public class UserService : IUserService
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return MapToDto(user);
+        return user.ToDto();
     }
 
     public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
@@ -115,7 +117,7 @@ public class UserService : IUserService
 
         return new PaginatedResponse<UserDto>
         {
-            Data = users.Select(MapToDto),
+            Data = users.Select(u => u.ToDto()),
             Pagination = new PaginationMeta
             {
                 Page = page,
@@ -133,13 +135,4 @@ public class UserService : IUserService
         return await _context.Users.AnyAsync(u => u.Id == id, cancellationToken);
     }
 
-    private static UserDto MapToDto(ApplicationUser user) => new()
-    {
-        Id = user.Id,
-        Email = user.Email!,
-        Name = user.Name,
-        Image = user.Image,
-        EmailVerified = user.EmailVerified,
-        CreatedAt = user.CreatedAt
-    };
 }

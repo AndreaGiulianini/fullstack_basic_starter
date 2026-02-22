@@ -1,3 +1,4 @@
+using Api.Core.Constants;
 using Api.Core.DTOs;
 using Api.Core.Interfaces;
 using Asp.Versioning;
@@ -41,8 +42,8 @@ public class UsersController : ControllerBase
             {
                 Error = new ErrorDetails
                 {
-                    Message = $"User with id '{id}' not found",
-                    Code = "NOT_FOUND",
+                    Message = Messages.User.NotFoundById(id),
+                    Code = ErrorCodes.NotFound,
                     StatusCode = 404
                 }
             });
@@ -71,7 +72,7 @@ public class UsersController : ControllerBase
         {
             Success = true,
             Data = user,
-            Message = "User created successfully"
+            Message = Messages.User.CreatedSuccess
         });
     }
 
@@ -90,7 +91,7 @@ public class UsersController : ControllerBase
         {
             Success = true,
             Data = user,
-            Message = "User updated successfully"
+            Message = Messages.User.UpdatedSuccess
         });
     }
 
@@ -111,8 +112,8 @@ public class UsersController : ControllerBase
             {
                 Error = new ErrorDetails
                 {
-                    Message = $"User with id '{id}' not found",
-                    Code = "NOT_FOUND",
+                    Message = Messages.User.NotFoundById(id),
+                    Code = ErrorCodes.NotFound,
                     StatusCode = 404
                 }
             });
@@ -123,7 +124,7 @@ public class UsersController : ControllerBase
         return Ok(new ApiResponse<object>
         {
             Success = true,
-            Message = "User deleted successfully"
+            Message = Messages.User.DeletedSuccess
         });
     }
 
@@ -135,6 +136,10 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(PaginatedResponse<UserDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
     {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 1;
+        if (pageSize > 100) pageSize = 100;
+
         var result = await _userService.GetAllAsync(page, pageSize, cancellationToken);
         return Ok(result);
     }

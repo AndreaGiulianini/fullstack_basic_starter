@@ -1,8 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Api.Core.Constants;
 using Api.Core.DTOs;
 using Api.Core.Entities;
+using Api.Core.Extensions;
 using Api.Core.Interfaces;
 using Api.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -46,7 +48,7 @@ public class AuthService : IAuthService
         var existingUser = await _userManager.FindByEmailAsync(dto.Email);
         if (existingUser is not null)
         {
-            throw new InvalidOperationException("A user with this email already exists");
+            throw new InvalidOperationException(Messages.Auth.EmailAlreadyExists);
         }
 
         var user = new ApplicationUser
@@ -65,7 +67,7 @@ public class AuthService : IAuthService
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Failed to create user: {errors}");
+            throw new InvalidOperationException(Messages.User.FailedToCreate(errors));
         }
 
         // Create session
@@ -73,7 +75,7 @@ public class AuthService : IAuthService
 
         return new AuthResponseDto
         {
-            User = MapToUserDto(user),
+            User = user.ToDto(),
             Session = new SessionDto
             {
                 Token = session.Token,
@@ -85,16 +87,16 @@ public class AuthService : IAuthService
     public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto, string? ipAddress = null, string? userAgent = null, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email)
-            ?? throw new UnauthorizedAccessException("Invalid email or password");
+            ?? throw new UnauthorizedAccessException(Messages.Auth.InvalidCredentials);
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
 
         if (!result.Succeeded)
         {
             if (result.IsLockedOut)
-                throw new UnauthorizedAccessException("Account is locked. Please try again later.");
+                throw new UnauthorizedAccessException(Messages.Auth.AccountLocked);
 
-            throw new UnauthorizedAccessException("Invalid email or password");
+            throw new UnauthorizedAccessException(Messages.Auth.InvalidCredentials);
         }
 
         // Create session
@@ -102,7 +104,7 @@ public class AuthService : IAuthService
 
         return new AuthResponseDto
         {
-            User = MapToUserDto(user),
+            User = user.ToDto(),
             Session = new SessionDto
             {
                 Token = session.Token,
@@ -136,7 +138,7 @@ public class AuthService : IAuthService
 
         return new AuthResponseDto
         {
-            User = MapToUserDto(session.User),
+            User = session.User.ToDto(),
             Session = new SessionDto
             {
                 Token = session.Token,
@@ -183,17 +185,17 @@ public class AuthService : IAuthService
             .FirstOrDefaultAsync(v => v.Value == dto.Token && v.ExpiresAt > DateTime.UtcNow, cancellationToken);
 
         if (verification is null)
-            throw new InvalidOperationException("Invalid or expired reset token");
+            throw new InvalidOperationException(Messages.Auth.InvalidOrExpiredResetToken);
 
         var user = await _userManager.FindByEmailAsync(verification.Identifier)
-            ?? throw new InvalidOperationException("User not found");
+            ?? throw new InvalidOperationException(Messages.User.NotFound);
 
         var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
 
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Failed to reset password: {errors}");
+            throw new InvalidOperationException(Messages.User.FailedToResetPassword(errors));
         }
 
         // Remove used verification token
@@ -206,14 +208,14 @@ public class AuthService : IAuthService
     public async Task<bool> ChangePasswordAsync(string userId, ChangePasswordRequestDto dto, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId)
-            ?? throw new KeyNotFoundException("User not found");
+            ?? throw new KeyNotFoundException(Messages.User.NotFound);
 
         var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
 
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Failed to change password: {errors}");
+            throw new InvalidOperationException(Messages.User.FailedToChangePassword(errors));
         }
 
         return true;
@@ -262,7 +264,7 @@ public class AuthService : IAuthService
     private string GenerateJwtToken(ApplicationUser user, DateTime expiry)
     {
         var jwtSecret = _configuration["Jwt:Secret"]
-            ?? throw new InvalidOperationException("JWT secret not configured");
+            ?? throw new InvalidOperationException(Messages.Auth.JwtSecretNotConfigured);
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -286,13 +288,4 @@ public class AuthService : IAuthService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private static UserDto MapToUserDto(ApplicationUser user) => new()
-    {
-        Id = user.Id,
-        Email = user.Email!,
-        Name = user.Name,
-        Image = user.Image,
-        EmailVerified = user.EmailVerified,
-        CreatedAt = user.CreatedAt
-    };
 }

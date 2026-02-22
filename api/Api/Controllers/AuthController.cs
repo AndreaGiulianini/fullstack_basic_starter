@@ -1,3 +1,4 @@
+using Api.Core.Constants;
 using Api.Core.DTOs;
 using Api.Core.Interfaces;
 using Asp.Versioning;
@@ -18,11 +19,13 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly ILogger<AuthController> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(IAuthService authService, ILogger<AuthController> logger, IWebHostEnvironment env)
     {
         _authService = authService;
         _logger = logger;
+        _env = env;
     }
 
     /// <summary>
@@ -53,7 +56,7 @@ public class AuthController : ControllerBase
                     ExpiresAt = result.Session.ExpiresAt
                 }
             },
-            Message = "User registered successfully"
+            Message = Messages.Auth.RegisterSuccess
         });
     }
 
@@ -107,8 +110,8 @@ public class AuthController : ControllerBase
             {
                 Error = new ErrorDetails
                 {
-                    Message = "No token provided",
-                    Code = "UNAUTHORIZED",
+                    Message = Messages.Auth.NoTokenProvided,
+                    Code = ErrorCodes.Unauthorized,
                     StatusCode = 401
                 }
             });
@@ -120,8 +123,8 @@ public class AuthController : ControllerBase
             {
                 Error = new ErrorDetails
                 {
-                    Message = "Invalid or expired session",
-                    Code = "UNAUTHORIZED",
+                    Message = Messages.Auth.InvalidOrExpiredSession,
+                    Code = ErrorCodes.Unauthorized,
                     StatusCode = 401
                 }
             });
@@ -164,7 +167,7 @@ public class AuthController : ControllerBase
         return Ok(new ApiResponse<object>
         {
             Success = true,
-            Message = "Logged out successfully"
+            Message = Messages.Auth.LogoutSuccess
         });
     }
 
@@ -181,7 +184,7 @@ public class AuthController : ControllerBase
         return Ok(new ApiResponse<object>
         {
             Success = true,
-            Message = "If an account with that email exists, a password reset link has been sent"
+            Message = Messages.Auth.ForgotPasswordSuccess
         });
     }
 
@@ -198,7 +201,7 @@ public class AuthController : ControllerBase
         return Ok(new ApiResponse<object>
         {
             Success = true,
-            Message = "Password reset successfully"
+            Message = Messages.Auth.PasswordResetSuccess
         });
     }
 
@@ -212,14 +215,14 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto request, CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? throw new UnauthorizedAccessException("User not authenticated");
+            ?? throw new UnauthorizedAccessException(Messages.Auth.UserNotAuthenticated);
 
         await _authService.ChangePasswordAsync(userId, request, cancellationToken);
 
         return Ok(new ApiResponse<object>
         {
             Success = true,
-            Message = "Password changed successfully"
+            Message = Messages.Auth.PasswordChangeSuccess
         });
     }
 
@@ -235,7 +238,7 @@ public class AuthController : ControllerBase
 
     private string? GetTokenFromCookie()
     {
-        return Request.Cookies["auth_token"];
+        return Request.Cookies[CookieNames.AuthToken];
     }
 
     private void SetAuthCookie(string token, DateTime expiresAt)
@@ -243,21 +246,21 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true, // Only send over HTTPS
+            Secure = !_env.IsDevelopment(),
             SameSite = SameSiteMode.Strict,
             Expires = expiresAt,
             Path = "/"
         };
 
-        Response.Cookies.Append("auth_token", token, cookieOptions);
+        Response.Cookies.Append(CookieNames.AuthToken, token, cookieOptions);
     }
 
     private void ClearAuthCookie()
     {
-        Response.Cookies.Delete("auth_token", new CookieOptions
+        Response.Cookies.Delete(CookieNames.AuthToken, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
+            Secure = !_env.IsDevelopment(),
             SameSite = SameSiteMode.Strict,
             Path = "/"
         });

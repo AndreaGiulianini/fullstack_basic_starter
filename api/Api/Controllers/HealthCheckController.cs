@@ -1,3 +1,4 @@
+using Api.Core.Constants;
 using Api.Core.DTOs;
 using Api.Core.Interfaces;
 using Asp.Versioning;
@@ -39,7 +40,7 @@ public class HealthCheckController : ControllerBase
             Success = true,
             Data = new
             {
-                Message = "pong",
+                Message = Messages.General.Pong,
                 CacheConnected = cacheConnected,
                 Timestamp = DateTime.UtcNow
             }

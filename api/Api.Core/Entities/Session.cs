@@ -8,7 +8,7 @@ namespace Api.Core.Entities;
 /// Maps to 'session' table in PostgreSQL
 /// </summary>
 [Table("session")]
-public class Session
+public class Session : ITimestamped
 {
     [Key]
     [Column("id")]

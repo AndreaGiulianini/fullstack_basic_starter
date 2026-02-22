@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { AuthService } from "@core/services/auth.service";
+import { getFormFieldError } from "@core/constants/validation.constants";
 
 @Component({
   selector: "app-login",
@@ -24,29 +25,18 @@ export class LoginComponent {
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.authService.clearError();
-      this.authService.login(this.loginForm.value as any).subscribe({
-        error: () => {
-          // Error is handled in service
-        },
-      });
+      const { email, password, rememberMe } = this.loginForm.getRawValue();
+      this.authService
+        .login({ email: email!, password: password!, rememberMe: rememberMe! })
+        .subscribe({
+          error: () => {
+            // Error is handled in service
+          },
+        });
     }
   }
 
   getErrorMessage(field: string): string {
-    const control = this.loginForm.get(field);
-    if (!control || !control.touched) return "";
-
-    if (control.hasError("required"))
-      return `${this.capitalize(field)} is required`;
-    if (control.hasError("email")) return "Invalid email format";
-    if (control.hasError("minlength")) {
-      const minLength = control.getError("minlength").requiredLength;
-      return `Minimum ${minLength} characters required`;
-    }
-    return "";
-  }
-
-  private capitalize(text: string): string {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+    return getFormFieldError(this.loginForm, field);
   }
 }

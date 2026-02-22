@@ -8,7 +8,7 @@ namespace Api.Core.Entities;
 /// Maps to 'account' table in PostgreSQL
 /// </summary>
 [Table("account")]
-public class Account
+public class Account : ITimestamped
 {
     [Key]
     [Column("id")]

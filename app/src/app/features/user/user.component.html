@@ -23,15 +23,13 @@
                 </div>
             }
 
-            <form (ngSubmit)="onSubmit()" #profileForm="ngForm">
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input
                         type="text"
                         id="name"
-                        name="name"
-                        [(ngModel)]="name"
-                        #nameInput="ngModel"
+                        formControlName="name"
                     />
                 </div>
 
@@ -40,19 +38,14 @@
                     <input
                         type="email"
                         id="email"
-                        name="email"
-                        [(ngModel)]="email"
-                        required
-                        email
-                        #emailInput="ngModel"
+                        formControlName="email"
                         [class.invalid]="
-                            emailInput.invalid && emailInput.touched
+                            profileForm.get('email')?.invalid &&
+                            profileForm.get('email')?.touched
                         "
                     />
-                    @if (emailInput.invalid && emailInput.touched) {
-                        <span class="field-error"
-                            >Please enter a valid email</span
-                        >
+                    @if (getErrorMessage("email")) {
+                        <span class="field-error">{{ getErrorMessage("email") }}</span>
                     }
                 </div>
 
@@ -61,8 +54,7 @@
                     <input
                         type="url"
                         id="image"
-                        name="image"
-                        [(ngModel)]="image"
+                        formControlName="image"
                         placeholder="https://example.com/image.jpg"
                     />
                 </div>

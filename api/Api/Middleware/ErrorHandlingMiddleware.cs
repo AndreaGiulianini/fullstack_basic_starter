@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Api.Core.Constants;
 using Api.Core.DTOs;
 
 namespace Api.Middleware;
@@ -11,11 +12,13 @@ public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ErrorHandlingMiddleware> _logger;
+    private readonly IHostEnvironment _env;
 
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger, IHostEnvironment env)
     {
         _next = next;
         _logger = logger;
+        _env = env;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -38,18 +41,23 @@ public class ErrorHandlingMiddleware
 
         var (statusCode, errorCode) = exception switch
         {
-            UnauthorizedAccessException => (HttpStatusCode.Unauthorized, "UNAUTHORIZED"),
-            KeyNotFoundException => (HttpStatusCode.NotFound, "NOT_FOUND"),
-            InvalidOperationException => (HttpStatusCode.BadRequest, "BAD_REQUEST"),
-            ArgumentException => (HttpStatusCode.BadRequest, "VALIDATION_ERROR"),
-            _ => (HttpStatusCode.InternalServerError, "INTERNAL_ERROR")
+            UnauthorizedAccessException => (HttpStatusCode.Unauthorized, ErrorCodes.Unauthorized),
+            KeyNotFoundException => (HttpStatusCode.NotFound, ErrorCodes.NotFound),
+            InvalidOperationException => (HttpStatusCode.BadRequest, ErrorCodes.BadRequest),
+            ArgumentException => (HttpStatusCode.BadRequest, ErrorCodes.ValidationError),
+            _ => (HttpStatusCode.InternalServerError, ErrorCodes.InternalError)
         };
+
+        // In production, hide internal error details to avoid leaking sensitive info
+        var message = statusCode == HttpStatusCode.InternalServerError && !_env.IsDevelopment()
+            ? Messages.General.UnexpectedError
+            : exception.Message;
 
         var response = new ApiErrorResponse
         {
             Error = new ErrorDetails
             {
-                Message = exception.Message,
+                Message = message,
                 Code = errorCode,
                 StatusCode = (int)statusCode,
                 Timestamp = DateTime.UtcNow,
