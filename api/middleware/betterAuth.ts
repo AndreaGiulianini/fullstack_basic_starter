@@ -41,7 +41,7 @@ export const betterAuthMiddleware = async (request: FastifyRequest, _reply: Fast
     }
 
     // Validate session data
-    if (!session.user || !session.user.id || !session.user.email) {
+    if (!session.user?.id || !session.user.email) {
       logUtils.logAuth({
         event: 'login',
         ip: request.ip,
