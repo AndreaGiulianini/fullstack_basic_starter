@@ -228,4 +228,4 @@ const logUtils = {
 // =============================================================================
 
 export default logUtils
-export { logStartup, logShutdown }
+export { logShutdown, logStartup }

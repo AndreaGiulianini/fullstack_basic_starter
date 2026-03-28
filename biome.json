@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.9/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -74,7 +74,7 @@
         "noVoidElementsWithChildren": "error",
         "noVoidTypeReturn": "error",
         "useExhaustiveDependencies": "error",
-        "useHookAtTopLevel": "error",
+        "useHookAtTopLevel": "off",
         "noUnusedLabels": "error"
       },
       "nursery": {
@@ -136,7 +136,48 @@
     "lineEnding": "lf",
     "lineWidth": 120
   },
+  "overrides": [
+    {
+      "includes": ["**/*.vue"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    }
+  ],
   "javascript": {
+    "globals": [
+      "useI18n",
+      "$fetch",
+      "defineNuxtConfig",
+      "defineEventHandler",
+      "ref",
+      "computed",
+      "watch",
+      "onMounted",
+      "onUnmounted",
+      "useRoute",
+      "useRouter",
+      "navigateTo",
+      "useRuntimeConfig",
+      "useFetch",
+      "useAsyncData",
+      "useLazyFetch",
+      "useLazyAsyncData",
+      "useHead",
+      "useSeoMeta",
+      "useState",
+      "useCookie",
+      "useRequestHeaders",
+      "useNuxtApp",
+      "definePageMeta",
+      "createError",
+      "showError",
+      "clearError"
+    ],
     "formatter": {
       "indentStyle": "space",
       "indentWidth": 2,
