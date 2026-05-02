@@ -45,7 +45,7 @@ export type DatabaseSchema = {
 /**
  * Database connection instance type
  */
-export type DatabaseInstance = NodePgDatabase<DatabaseSchema>
+export type DatabaseInstance = NodePgDatabase
 
 // =============================================================================
 // API RESPONSE TYPES

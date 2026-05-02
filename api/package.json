@@ -15,26 +15,26 @@
   "dependencies": {
     "@elastic/ecs-pino-format": "^1.5.0",
     "@fastify/swagger": "^9.7.0",
-    "@scalar/fastify-api-reference": "^1.49.6",
+    "@scalar/fastify-api-reference": "^1.55.1",
     "bcrypt": "^6.0.0",
-    "better-auth": "^1.5.6",
+    "better-auth": "^1.6.9",
     "dayjs": "^1.11.20",
-    "drizzle-orm": "^1.0.0-beta.20",
-    "fastify": "^5.8.4",
+    "drizzle-orm": "1.0.0-rc.1",
+    "fastify": "^5.8.5",
     "iovalkey": "^0.3.3",
     "pg": "^8.20.0",
     "pino": "^10.3.1",
     "pino-elasticsearch": "^8.1.0",
-    "zod": "^4.3.6"
+    "zod": "^4.4.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.9",
+    "@biomejs/biome": "^2.4.14",
     "@types/bcrypt": "^6.0.0",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.6.0",
     "@types/pg": "^8.20.0",
-    "drizzle-kit": "^1.0.0-beta.20",
+    "drizzle-kit": "1.0.0-rc.1",
     "pino-pretty": "^13.1.3",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   }
 }
