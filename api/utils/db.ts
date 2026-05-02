@@ -6,14 +6,7 @@ import { account, session, user, verification } from './schemas/database'
 
 // Database connection
 const url = `postgres://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`
-const db = drizzle(url, {
-  schema: {
-    user,
-    session,
-    account,
-    verification
-  }
-})
+const db = drizzle(url)
 
 // Better-Auth configuration
 export const auth = betterAuth({

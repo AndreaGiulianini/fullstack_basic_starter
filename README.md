@@ -46,7 +46,7 @@ This setup provides a complete, production-ready foundation for modern web appli
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 18+ (for local development)
+- Node.js 20+ (for local development)
 - Git
 
 ### **1. Clone and Setup**
