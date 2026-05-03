@@ -25,8 +25,8 @@ A comprehensive, production-ready full-stack starter template designed for moder
 - **[Traefik 3.6](https://doc.traefik.io/traefik/)** - Modern reverse proxy and load balancer
 - **[PostgreSQL 18](https://www.postgresql.org/)** - Robust relational database
 - **[Valkey 9](https://valkey.dev/)** - High-performance in-memory data store (Redis-compatible)
-- **[Elasticsearch 9.2](https://www.elastic.co/elasticsearch/)** - Search and analytics engine
-- **[Kibana 9.2](https://www.elastic.co/kibana/)** - Data visualization and monitoring
+- **[Elasticsearch 9.3](https://www.elastic.co/elasticsearch/)** - Search and analytics engine
+- **[Kibana 9.3](https://www.elastic.co/kibana/)** - Data visualization and monitoring
 
 ### **Code Quality & Development**
 - **[Hot Reload](https://docs.microsoft.com/dotnet/core/tools/dotnet-watch)** - Fast development with `dotnet watch` and Angular dev server
@@ -170,7 +170,7 @@ fullstack_basic_starter/
 │   │   └── main.ts               # Application bootstrap
 │   ├── angular.json              # Angular CLI configuration
 │   ├── tsconfig.json             # TypeScript configuration
-│   └── Dockerfile                # Frontend container (Node 24)
+│   └── Dockerfile                # Frontend container (Node 25)
 ├── api/                          # ASP.NET Core backend API
 │   ├── Api/                      # Web API project (presentation layer)
 │   │   ├── Controllers/          # API controllers

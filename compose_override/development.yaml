@@ -66,7 +66,7 @@ services:
       - "valkeydata:/data"
 
   elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:9.3.2"
+    image: "docker.elastic.co/elasticsearch/elasticsearch:9.3.4"
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -78,7 +78,7 @@ services:
       - "esdata:/usr/share/elasticsearch/data"
 
   kibana:
-    image: "docker.elastic.co/kibana/kibana:9.3.2"
+    image: "docker.elastic.co/kibana/kibana:9.3.4"
     container_name: kibana
     environment:
       - "ELASTICSEARCH_HOSTS=http://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}"
