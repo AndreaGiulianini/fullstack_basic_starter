@@ -1,9 +1,7 @@
-'use client'
-
 import { useState } from 'react'
-import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount } from '../../redux/slices/index'
-import { useDispatch, useSelector } from '../../redux/store'
-import { Button } from '../Button'
+import { Button } from '@/components/Button'
+import { counterSlice, incrementAsync, incrementIfOddAsync, selectCount } from '@/redux/slices'
+import { useDispatch, useSelector } from '@/redux/store'
 import styles from './counter.module.css'
 
 function Counter() {
@@ -27,9 +25,11 @@ function Counter() {
       <div className={styles.row}>
         <input
           className={styles.textbox}
+          type='number'
+          min={0}
           aria-label='Set increment amount'
           value={incrementAmount}
-          onChange={(e) => setIncrementAmount(Number(e.target.value ?? 0))}
+          onChange={(e) => setIncrementAmount(Number(e.target.value) || 0)}
         />
         <Button onClick={() => dispatch(counterSlice.actions.incrementByAmount(incrementAmount))}>Add Amount</Button>
         <Button onClick={() => dispatch(incrementAsync(incrementAmount))}>Add Async</Button>

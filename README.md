@@ -5,14 +5,16 @@ A comprehensive, production-ready full-stack starter template designed for moder
 ## **🚀 Technology Stack**
 
 ### **Frontend**
-- **[Next.js 16](https://nextjs.org/)** - The React framework for production with App Router
+- **[TanStack Start](https://tanstack.com/start)** - Full-stack React framework with file-based routing, SSR, and server functions
+- **[TanStack Router](https://tanstack.com/router)** - Type-safe, file-based routing
+- **[Vite](https://vite.dev/)** - Lightning-fast dev server and build tool
 - **[React 19](https://react.dev/)** - A JavaScript library for building user interfaces
 - **[TailwindCSS 4](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** - Modern Redux state management
 - **[Shadcn/UI](https://ui.shadcn.com/)** - Beautifully designed components built with Radix UI
 - **[Radix UI](https://www.radix-ui.com/)** - Accessible UI component primitives
-- **[next-intl](https://next-intl-docs.vercel.app/)** - Internationalization for Next.js
+- **[react-i18next](https://react.i18next.com/)** - Internationalization with i18next
 - **[Lucide React](https://lucide.dev/)** - Beautiful & consistent icon toolkit
 
 ### **Backend**
@@ -34,7 +36,7 @@ A comprehensive, production-ready full-stack starter template designed for moder
 ### **Code Quality & Development**
 - **[Biome](https://biomejs.dev/)** - Ultra-fast formatter and linter written in Rust
 - **[TypeScript](https://www.typescriptlang.org/)** - Static type checking
-- **[Turbopack](https://turbo.build/pack)** - Next.js Turbo build system
+- **[Vite](https://vite.dev/)** - Native ESM dev server with instant HMR
 - **Multi-stage Docker builds** - Optimized container images
 - **Hot reloading** - Fast development experience
 
@@ -131,7 +133,7 @@ Once the application is running, you can access the following services:
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| **Frontend** | [http://localhost](http://localhost) | Next.js application with React 19 |
+| **Frontend** | [http://localhost](http://localhost) | TanStack Start application with React 19 |
 | **API** | [http://localhost/api](http://localhost/api) | Fastify REST API with OpenAPI docs |
 | **API Docs** | [http://localhost/reference](http://localhost/reference) | Interactive Scalar API documentation |
 | **Traefik Dashboard** | [http://localhost:8080](http://localhost:8080) | Reverse proxy management interface |
@@ -142,16 +144,18 @@ Once the application is running, you can access the following services:
 
 ```
 fullstack_basic_starter/
-├── app/                     # Next.js frontend application
+├── app/                     # TanStack Start frontend application
 │   ├── src/
-│   │   ├── app/             # App Router pages and layouts
+│   │   ├── routes/          # File-based routes (`__root.tsx`, `index.tsx`, …)
 │   │   ├── components/      # React components
 │   │   ├── redux/           # Redux Toolkit state management
 │   │   ├── styles/          # Global styles
-│   │   ├── i18n/            # Internationalization setup
+│   │   ├── locales/         # Translation JSON files
+│   │   ├── i18n.ts          # react-i18next initialization
+│   │   ├── router.tsx       # TanStack Router setup
 │   │   └── utils/           # Utility functions and helpers
-│   ├── public/              # Static assets
-│   ├── messages/            # Translation files
+│   ├── public/              # Static assets (incl. fonts)
+│   ├── vite.config.ts       # Vite + TanStack Start plugin config
 │   └── Dockerfile           # Frontend container configuration
 ├── api/                     # Fastify backend API
 │   ├── routes/              # API route handlers
@@ -175,11 +179,11 @@ fullstack_basic_starter/
 
 ### **Frontend Features**
 - 🎨 **Modern UI** - TailwindCSS 4 with Shadcn/UI components built on Radix UI
-- 🌍 **Internationalization** - Multi-language support with next-intl
+- 🌍 **Internationalization** - Multi-language support with react-i18next
 - 📱 **Responsive Design** - Mobile-first approach
 - 🔄 **State Management** - Redux Toolkit for predictable state updates
-- 🎯 **Type Safety** - Full TypeScript support
-- ⚡ **Performance** - Optimized with Next.js App Router, React Server Components, and Turbopack
+- 🎯 **Type Safety** - Full TypeScript support, end-to-end via TanStack Router
+- ⚡ **Performance** - TanStack Start with file-based routing, server functions, route loaders, and Vite-powered HMR
 
 ### **Backend Features**
 - 🚀 **High Performance** - Fastify with excellent benchmarks
@@ -193,7 +197,7 @@ fullstack_basic_starter/
 - 🐳 **Containerized** - Multi-stage Docker builds
 - 🔍 **Code Quality** - Biome for ultra-fast linting and formatting
 - 📈 **Monitoring** - ELK stack for observability
-- 🔄 **Hot Reload** - Fast development with Turbopack
+- 🔄 **Hot Reload** - Fast development with Vite
 - 🛡️ **Security** - Production-ready configurations
 
 ## **🎯 Learning Opportunities**
@@ -206,7 +210,7 @@ This project is perfect for learning modern web development concepts:
 4. **Testing** - Implement unit and integration tests with Vitest/Jest
 5. **CI/CD** - Set up GitHub Actions workflows
 6. **Advanced Auth** - OAuth providers, 2FA, session management with Better-Auth
-7. **Server Components** - Leverage Next.js Server Components for optimal performance
+7. **Server Functions & Loaders** - Leverage TanStack Start server functions and route loaders for optimal data fetching
 
 ## **🚀 Future Enhancements**
 
@@ -353,7 +357,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## **🙏 Acknowledgments**
 
-- [Next.js Team](https://nextjs.org/) for the amazing framework
+- [TanStack Team](https://tanstack.com/) for Start, Router, and the broader ecosystem
 - [React Team](https://react.dev/) for the powerful UI library
 - [Fastify Team](https://www.fastify.io/) for the high-performance server
 - [Biome Team](https://biomejs.dev/) for the ultra-fast formatter and linter

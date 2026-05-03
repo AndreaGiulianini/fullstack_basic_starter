@@ -8,9 +8,11 @@
   "files": {
     "includes": [
       "**",
-      "!!.next/**",
+      "!!.output/**",
+      "!!.tanstack/**",
       "!!node_modules/**",
       "!tailwindcss-animate.css",
+      "!!routeTree.gen.ts",
       "!!dist/**",
       "!!build/**",
       "!**/*.css",

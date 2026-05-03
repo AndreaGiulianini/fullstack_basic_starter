@@ -1,0 +1,16 @@
+node_modules
+.output
+.tanstack
+.vinxi
+dist
+build
+.next
+.angular
+.vscode
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store

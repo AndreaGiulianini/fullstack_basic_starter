@@ -12,11 +12,13 @@ services:
           target: /home/node/app
           ignore:
             - ./app/node_modules/
+            - ./app/.tanstack/
+            - ./app/.output/
+            - ./app/src/routeTree.gen.ts
         - action: rebuild
           path: ./app/package.json
     volumes:
       - /home/node/app/node_modules
-      - /home/node/app/.next
     restart: unless-stopped
     depends_on:
       - postgres_db
