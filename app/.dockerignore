@@ -1,0 +1,14 @@
+node_modules
+.next
+.output
+dist
+build
+.angular
+.vscode
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
