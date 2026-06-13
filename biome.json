@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -73,12 +73,11 @@
         "noVoidTypeReturn": "error",
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
-        "noUnusedLabels": "error"
+        "noUnusedLabels": "error",
+        "noDuplicateAttributes": "error"
       },
       "nursery": {
-        "useSortedClasses": "warn",
-        "noDuplicateAttributes": "error",
-        "noReturnAssign": "error"
+        "useSortedClasses": "warn"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",
@@ -118,7 +117,8 @@
         "noUnsafeNegation": "warn",
         "noVar": "warn",
         "noWith": "warn",
-        "useIsArray": "warn"
+        "useIsArray": "warn",
+        "noReturnAssign": "error"
       },
       "performance": {
         "noDelete": "warn"
