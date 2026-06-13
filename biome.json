@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -52,7 +52,8 @@
         "noUselessElse": "error",
         "useShorthandFunctionType": "error",
         "useBlockStatements": "error",
-        "useConsistentArrayType": "error"
+        "useConsistentArrayType": "error",
+        "noVueOptionsApi": "warn"
       },
       "a11y": {
         "useKeyWithClickEvents": "off",
@@ -76,14 +77,12 @@
         "noVoidTypeReturn": "error",
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "off",
-        "noUnusedLabels": "error"
+        "noUnusedLabels": "error",
+        "noDuplicateAttributes": "error",
+        "useVueValidVCloak": "warn"
       },
       "nursery": {
-        "useSortedClasses": "warn",
-        "noDuplicateAttributes": "error",
-        "noReturnAssign": "error",
-        "noVueOptionsApi": "warn",
-        "useVueValidVCloak": "warn"
+        "useSortedClasses": "warn"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",
@@ -123,7 +122,8 @@
         "noUnsafeNegation": "warn",
         "noVar": "warn",
         "noWith": "warn",
-        "useIsArray": "warn"
+        "useIsArray": "warn",
+        "noReturnAssign": "error"
       },
       "performance": {
         "noDelete": "warn"

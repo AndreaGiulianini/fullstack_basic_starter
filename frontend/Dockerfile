@@ -1,5 +1,5 @@
 # Base stage with common dependencies
-FROM node:25-slim AS base
+FROM node:26-slim AS base
 WORKDIR /home/node/frontend
 
 # Install system dependencies
@@ -57,7 +57,7 @@ RUN npx nuxt prepare && npm run build
 # =============================================================================
 # Production stage
 # =============================================================================
-FROM node:25-slim AS image-production
+FROM node:26-slim AS image-production
 WORKDIR /home/node/frontend
 
 # Create non-root user
