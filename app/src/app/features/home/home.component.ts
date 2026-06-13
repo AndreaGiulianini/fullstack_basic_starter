@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { AuthService } from "@core/services/auth.service";
@@ -9,6 +9,7 @@ import { Messages } from "@core/constants/messages.constants";
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: "./home.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./home.component.scss",
 })
 export class HomeComponent {

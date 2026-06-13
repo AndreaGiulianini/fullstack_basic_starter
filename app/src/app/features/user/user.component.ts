@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from "@angular/core";
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
@@ -13,6 +13,7 @@ import { extractErrorMessage } from "@core/models/api.models";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: "./user.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./user.component.scss",
 })
 export class UserComponent implements OnInit {

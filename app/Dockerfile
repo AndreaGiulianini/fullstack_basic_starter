@@ -6,7 +6,7 @@
 # -----------------------------------------------------------------------------
 # Base stage - Install dependencies
 # -----------------------------------------------------------------------------
-FROM node:25-slim AS base
+FROM node:26-slim AS base
 
 WORKDIR /app
 
@@ -40,7 +40,7 @@ RUN npm run build:prod
 # -----------------------------------------------------------------------------
 # Production stage - Serve with Node.js static server
 # -----------------------------------------------------------------------------
-FROM node:25-slim AS production
+FROM node:26-slim AS production
 
 WORKDIR /app
 

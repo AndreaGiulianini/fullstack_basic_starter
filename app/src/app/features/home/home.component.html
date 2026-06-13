@@ -21,7 +21,7 @@
         </div>
         <div class="stat-item">
           <span class="stat-label">Member Since</span>
-          <span class="stat-value">{{ formatDate(user()?.createdAt) }}</span>
+          <span class="stat-value">{{ formatDate($safeNavigationMigration(user()?.createdAt)) }}</span>
         </div>
       </div>
 

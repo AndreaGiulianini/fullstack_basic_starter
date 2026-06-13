@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
@@ -10,6 +10,7 @@ import { getFormFieldError } from "@core/constants/validation.constants";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: "./login.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./login.component.scss",
 })
 export class LoginComponent {

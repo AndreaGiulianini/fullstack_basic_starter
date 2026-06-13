@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   FormBuilder,
@@ -16,6 +16,7 @@ import { getFormFieldError } from "@core/constants/validation.constants";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: "./register.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./register.component.scss",
 })
 export class RegisterComponent {

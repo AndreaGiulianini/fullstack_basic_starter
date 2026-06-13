@@ -1,4 +1,4 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, signal, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
@@ -12,6 +12,7 @@ import { extractErrorMessage } from "@core/models/api.models";
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: "./forgot-password.component.html",
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: "./forgot-password.component.scss",
 })
 export class ForgotPasswordComponent {
