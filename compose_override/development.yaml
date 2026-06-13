@@ -40,7 +40,7 @@ services:
       - postgres_db
 
   postgres_db:
-    image: "postgres:18.3"
+    image: "postgres:18.4"
     container_name: postgres_db
     environment:
       POSTGRES_USER: "${DB_USER}"
@@ -62,7 +62,7 @@ services:
       - "valkeydata:/data"
 
   elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:9.3.4"
+    image: "docker.elastic.co/elasticsearch/elasticsearch:9.4.2"
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -74,7 +74,7 @@ services:
       - "esdata:/usr/share/elasticsearch/data"
 
   kibana:
-    image: "docker.elastic.co/kibana/kibana:9.3.4"
+    image: "docker.elastic.co/kibana/kibana:9.4.2"
     container_name: kibana
     environment:
       - "ELASTICSEARCH_HOSTS=http://${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}"
