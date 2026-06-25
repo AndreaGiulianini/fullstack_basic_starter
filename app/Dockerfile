@@ -2,7 +2,7 @@ FROM node:26-slim AS base
 WORKDIR /home/node/app
 ENV PATH=/home/node/app/node_modules/.bin:$PATH
 COPY package*.json ./
-RUN npm install --no-audit --loglevel info && npm cache clean --force
+RUN npm install --legacy-peer-deps --no-audit --loglevel info && npm cache clean --force
 COPY ./ ./
 
 FROM base AS base-remote
