@@ -1,0 +1,14 @@
+{
+	frankenphp
+	auto_https off
+	# Trust the Traefik reverse proxy in front of us.
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+:5000 {
+	root * /app/public
+	encode zstd br gzip
+	php_server
+}

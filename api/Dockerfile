@@ -1,13 +1,31 @@
-FROM node:26-slim
+# =============================================================================
+# Laravel 13 API on FrankenPHP (PHP 8.5)
+# =============================================================================
+FROM dunglas/frankenphp:1-php8.5
 
-WORKDIR /home/node/api
+# PHP extensions (predis is pure-PHP, so no redis ext needed)
+RUN install-php-extensions pdo_pgsql intl zip opcache pcntl
 
-COPY package*.json ./
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN npm install --legacy-peer-deps && \
-    npm rebuild esbuild && \
-    npm cache clean --force
+WORKDIR /app
 
-COPY ./ ./
+# Install PHP dependencies first (better layer caching)
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --no-scripts --prefer-dist --no-progress
 
-CMD [ "npm", "run", "dev"]
+# Application source
+COPY . .
+
+# Serve config + runtime env scaffold
+COPY Caddyfile /etc/frankenphp/Caddyfile
+RUN cp .env.example .env \
+    && composer dump-autoload --optimize \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R ug+rwx storage bootstrap/cache
+
+ENV SERVER_NAME=:5000
+EXPOSE 5000
+
+# Default FrankenPHP entrypoint runs `frankenphp run --config /etc/frankenphp/Caddyfile`

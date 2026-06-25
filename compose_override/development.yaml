@@ -26,13 +26,14 @@ services:
       watch:
         - action: sync
           path: ./api
-          target: /home/node/api
+          target: /app
           ignore:
-            - ./api/node_modules/
+            - ./api/vendor/
+            - ./api/.env
         - action: rebuild
-          path: ./api/package.json
+          path: ./api/composer.json
     volumes:
-      - /home/node/api/node_modules
+      - /app/vendor
     restart: always
     depends_on:
       - postgres_db

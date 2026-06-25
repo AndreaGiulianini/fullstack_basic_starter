@@ -2,5 +2,5 @@
 
 set -eu
 
-docker exec api npm run generate
-docker exec api npm run migrate
+# Apply Laravel database migrations (and seeders, if any) inside the api container.
+docker exec api php artisan migrate --force

@@ -47,6 +47,7 @@ services:
       - traefik.http.services.api.loadbalancer.server.port=5000
     environment:
       ENV: "${ENV}"
+      APP_KEY: "${APP_KEY}"
       DB_HOST: "${DB_HOST}"
       DB_USER: "${DB_USER}"
       DB_PASS: "${DB_PASS}"
@@ -57,5 +58,4 @@ services:
       VALKEY_PORT: "${VALKEY_PORT}"
       ELASTICSEARCH_HOST: "${ELASTICSEARCH_HOST}"
       ELASTICSEARCH_PORT: "${ELASTICSEARCH_PORT}"
-      JWT_SECRET: "${JWT_SECRET}"
     restart: always
