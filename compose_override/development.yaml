@@ -36,7 +36,10 @@ services:
       - /app/vendor
     restart: always
     depends_on:
-      - postgres_db
+      postgres_db:
+        condition: service_healthy
+      valkey:
+        condition: service_started
 
   postgres_db:
     image: "postgres:18.4"
@@ -49,6 +52,11 @@ services:
       - "5432:5432"
     volumes:
       - "pgdata:/var/lib/postgresql"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   valkey:
     image: "valkey/valkey:9"
