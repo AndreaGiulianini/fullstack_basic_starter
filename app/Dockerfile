@@ -50,7 +50,7 @@ RUN npm install -g serve
 # Copy built application from build stage
 COPY --from=build /app/dist/fullstack-app/browser ./dist
 
-EXPOSE 80
+EXPOSE 4200
 
-# Serve static files with SPA fallback
-CMD ["serve", "-s", "dist", "-l", "80"]
+# Serve static files with SPA fallback (port matches the Traefik target ${APP_PORT:-4200})
+CMD ["serve", "-s", "dist", "-l", "4200"]
