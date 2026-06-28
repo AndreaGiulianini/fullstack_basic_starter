@@ -30,7 +30,6 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'email_verified' => false,
         ]);
 
         return response()->json($this->sessionPayload($user), 200);
@@ -115,6 +114,9 @@ class AuthController extends Controller
      */
     public function resetPassword(Request $request): JsonResponse
     {
+        // Note: Laravel's password broker keys reset tokens by email, so `email` is required here
+        // (the better-auth endpoint took only { token, password }). The email must match the
+        // address the reset link was issued for.
         $data = $request->validate([
             'token' => ['required', 'string'],
             'email' => ['required', 'email'],

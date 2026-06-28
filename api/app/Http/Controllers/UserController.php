@@ -23,14 +23,13 @@ class UserController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'email_verified' => false,
         ]);
 
         return response()->json([
             'success' => true,
             'data' => $user->toApiArray(),
             'message' => 'User created successfully',
-        ], 201);
+        ]);
     }
 
     /**
