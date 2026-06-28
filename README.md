@@ -5,11 +5,11 @@ A comprehensive, production-ready full-stack starter template designed for moder
 ## **Technology Stack**
 
 ### **Frontend**
-- **[Angular 21](https://angular.dev/)** - The modern web development platform
-- **[TypeScript 5.9](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Angular 22](https://angular.dev/)** - The modern web development platform
+- **[TypeScript 6.0](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Angular Signals](https://angular.dev/guide/signals)** - Fine-grained reactivity for state management
 - **[Standalone Components](https://angular.dev/guide/components)** - Simplified component architecture without NgModules
-- **[Zoneless Change Detection](https://angular.dev/guide/experimental/zoneless)** - Improved performance (default in v21)
+- **[Zoneless Change Detection](https://angular.dev/guide/experimental/zoneless)** - Improved performance (default in v22)
 - **[Vitest](https://vitest.dev/)** - Fast unit testing framework
 
 ### **Backend**
@@ -22,11 +22,11 @@ A comprehensive, production-ready full-stack starter template designed for moder
 
 ### **Infrastructure & DevOps**
 - **[Docker](https://www.docker.com/)** - Containerization platform with multi-stage builds
-- **[Traefik 3.6](https://doc.traefik.io/traefik/)** - Modern reverse proxy and load balancer
+- **[Traefik 3.7](https://doc.traefik.io/traefik/)** - Modern reverse proxy and load balancer
 - **[PostgreSQL 18](https://www.postgresql.org/)** - Robust relational database
 - **[Valkey 9](https://valkey.dev/)** - High-performance in-memory data store (Redis-compatible)
-- **[Elasticsearch 9.3](https://www.elastic.co/elasticsearch/)** - Search and analytics engine
-- **[Kibana 9.3](https://www.elastic.co/kibana/)** - Data visualization and monitoring
+- **[Elasticsearch 9.4](https://www.elastic.co/elasticsearch/)** - Search and analytics engine
+- **[Kibana 9.4](https://www.elastic.co/kibana/)** - Data visualization and monitoring
 
 ### **Code Quality & Development**
 - **[Hot Reload](https://docs.microsoft.com/dotnet/core/tools/dotnet-watch)** - Fast development with `dotnet watch` and Angular dev server
@@ -134,7 +134,7 @@ Once the application is running, you can access the following services:
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| **Frontend** | [http://localhost](http://localhost) | Angular 21 application |
+| **Frontend** | [http://localhost](http://localhost) | Angular 22 application |
 | **API** | [http://localhost/api](http://localhost/api) | ASP.NET Core REST API |
 | **Swagger UI** | [http://localhost/swagger](http://localhost/swagger) | Interactive API documentation |
 | **Health Check** | [http://localhost/api/healthcheck/ping](http://localhost/api/healthcheck/ping) | API health status |
@@ -170,7 +170,7 @@ fullstack_basic_starter/
 │   │   └── main.ts               # Application bootstrap
 │   ├── angular.json              # Angular CLI configuration
 │   ├── tsconfig.json             # TypeScript configuration
-│   └── Dockerfile                # Frontend container (Node 25)
+│   └── Dockerfile                # Frontend container (Node 26)
 ├── api/                          # ASP.NET Core backend API
 │   ├── Api/                      # Web API project (presentation layer)
 │   │   ├── Controllers/          # API controllers
@@ -202,7 +202,7 @@ fullstack_basic_starter/
 ## **Key Features**
 
 ### **Frontend Features**
-- **Zoneless** - Angular 21's default zoneless change detection for better performance
+- **Zoneless** - Angular 22's default zoneless change detection for better performance
 - **Signals** - Fine-grained reactivity with Angular Signals for state management
 - **Standalone** - No NgModules, simplified component architecture
 - **Type Safety** - Full TypeScript support with strict mode
