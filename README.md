@@ -14,13 +14,13 @@ A comprehensive, production-ready full-stack starter template designed for moder
 - **[i18n](https://i18n.nuxtjs.org/)** - Internationalization support
 
 ### **Backend**
-- **[Fastify](https://www.fastify.io/)** - Fast and low overhead web framework
-- **[Drizzle ORM](https://orm.drizzle.team/)** - TypeScript ORM with excellent performance
-- **[Better-Auth](https://www.better-auth.com/)** - Modern authentication library
-- **[Zod](https://zod.dev/)** - TypeScript-first schema validation
-- **[Pino](https://getpino.io/#/)** - Super fast JSON logger
-- **[OpenAPI](https://swagger.io/)** - API documentation standard
-- **[Scalar](https://scalar.com/)** - Beautiful API documentation
+- **[Laravel 13](https://laravel.com/)** - The PHP framework for web artisans
+- **[PHP 8.5](https://www.php.net/)** - Modern PHP runtime
+- **[FrankenPHP](https://frankenphp.dev/)** - Modern PHP application server (built on Caddy)
+- **[Laravel Sanctum](https://laravel.com/docs/sanctum)** - API bearer-token authentication
+- **[Eloquent ORM](https://laravel.com/docs/eloquent)** - Expressive database ORM with migrations
+- **[Monolog](https://github.com/Seldaek/monolog)** - Structured logging, shipped to Elasticsearch
+- **[Scramble](https://scramble.dedoc.co/)** - Auto-generated OpenAPI documentation for Laravel
 
 ### **Infrastructure & DevOps**
 - **[Docker](https://www.docker.com/)** - Containerization platform
@@ -43,7 +43,8 @@ This setup provides a complete, production-ready foundation for modern web appli
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 20+ (for local development)
+- Node.js 20+ (for local frontend development)
+- The PHP 8.5 / Laravel backend runs in Docker — no local PHP required
 - Git
 
 ### **1. Clone and Setup**
@@ -109,11 +110,12 @@ docker compose -f compose.yaml -f compose_override/development.yaml up --build
 cd frontend
 npm run dev
 
-# Backend development
-cd api
-npm run dev
+# Backend (Laravel) runs in the api container; use artisan via docker exec
+docker exec api php artisan migrate
+docker exec api php artisan route:list
 
-# Linting and formatting
+# Frontend linting and formatting (Biome)
+cd frontend
 npm run lint
 npm run format
 ```
@@ -127,8 +129,8 @@ Once the application is running, you can access the following services:
 | Service | URL | Description |
 |---------|-----|-------------|
 | **Frontend** | [http://localhost](http://localhost) | Nuxt 4 application with Vue 3 |
-| **API** | [http://localhost/api](http://localhost/api) | Fastify REST API with OpenAPI docs |
-| **API Docs** | [http://localhost/reference](http://localhost/reference) | Interactive Scalar API documentation |
+| **API** | [http://localhost/api](http://localhost/api) | Laravel REST API (Sanctum auth) |
+| **API Docs** | [http://localhost/reference](http://localhost/reference) | Interactive Scramble (OpenAPI) documentation |
 | **Traefik Dashboard** | [http://localhost:8080](http://localhost:8080) | Reverse proxy management interface |
 | **Elasticsearch** | [http://localhost:9200](http://localhost:9200) | Search and analytics engine |
 | **Kibana** | [http://localhost:5601](http://localhost:5601) | Data visualization and monitoring |
@@ -142,13 +144,13 @@ fullstack_basic_starter/
 │   ├── stores/              # Pinia state management
 │   ├── locales/             # i18n translation files
 │   └── server/              # Server-side API routes
-├── api/                     # Fastify backend API
-│   ├── routes/              # API route handlers
-│   ├── services/            # Business logic services
-│   ├── middleware/          # Express middleware
-│   └── utils/               # Utility functions
+├── api/                     # Laravel backend API
+│   ├── app/                 # Controllers, models, providers
+│   ├── routes/              # API routes (routes/api.php)
+│   ├── database/            # Eloquent migrations & seeders
+│   └── config/              # Framework configuration
 ├── compose.yaml             # Docker Compose configuration
-├── oxlint.json             # Oxlint configuration
+├── biome.json              # Biome formatter/linter configuration (frontend)
 └── README.md               # This file
 ```
 
@@ -165,16 +167,16 @@ fullstack_basic_starter/
 - ⚡ **Performance** - Optimized with Nuxt 4 features
 
 ### **Backend Features**
-- 🚀 **High Performance** - Fastify with excellent benchmarks
-- 🔐 **Authentication** - Better-Auth with modern security
-- 📊 **API Documentation** - Auto-generated OpenAPI/Scalar docs
-- 🗄️ **Database ORM** - Drizzle ORM with type safety
-- 📝 **Logging** - Structured logging with Pino
-- ✅ **Validation** - Zod schema validation
+- 🚀 **Modern PHP** - Laravel 13 on PHP 8.5, served via FrankenPHP
+- 🔐 **Authentication** - Sanctum bearer-token API auth
+- 📊 **API Documentation** - Auto-generated OpenAPI via Scramble
+- 🗄️ **Database ORM** - Eloquent ORM with migrations
+- 📝 **Logging** - Monolog shipped to Elasticsearch
+- ✅ **Validation** - Laravel request validation
 
 ### **DevOps & Quality**
 - 🐳 **Containerized** - Multi-stage Docker builds
-- 🔍 **Code Quality** - Oxlint + ESLint integration
+- 🔍 **Code Quality** - Biome for the frontend; PSR-12 conventions for the Laravel API
 - 📈 **Monitoring** - ELK stack for observability
 - 🔄 **Hot Reload** - Fast development experience
 - 🛡️ **Security** - Production-ready configurations
@@ -183,7 +185,7 @@ fullstack_basic_starter/
 
 This project is perfect for learning modern web development concepts:
 
-1. **Database Transactions** - Implement with [Drizzle ORM transactions](https://orm.drizzle.team/docs/transactions)
+1. **Database Transactions** - Implement with [Laravel database transactions](https://laravel.com/docs/database#database-transactions)
 2. **Admin Dashboard** - Build a backoffice with user management
 3. **Real-time Features** - Add WebSocket support
 4. **Testing** - Implement unit and integration tests
@@ -337,7 +339,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 - [Nuxt Team](https://nuxt.com/) for the amazing framework
 - [Vue Team](https://vuejs.org/) for the reactive framework
-- [Fastify Team](https://www.fastify.io/) for the high-performance server
+- [Laravel Team](https://laravel.com/) for the elegant PHP framework
 - All contributors and the open-source community
 
 ---
