@@ -148,7 +148,7 @@ fullstack_basic_starter/
 │   ├── middleware/          # Express middleware
 │   └── utils/               # Utility functions
 ├── compose.yaml             # Docker Compose configuration
-├── oxlint.json             # Oxlint configuration
+├── biome.json              # Biome formatter/linter configuration
 └── README.md               # This file
 ```
 
@@ -174,7 +174,7 @@ fullstack_basic_starter/
 
 ### **DevOps & Quality**
 - 🐳 **Containerized** - Multi-stage Docker builds
-- 🔍 **Code Quality** - Oxlint + ESLint integration
+- 🔍 **Code Quality** - Biome for ultra-fast linting and formatting
 - 📈 **Monitoring** - ELK stack for observability
 - 🔄 **Hot Reload** - Fast development experience
 - 🛡️ **Security** - Production-ready configurations
