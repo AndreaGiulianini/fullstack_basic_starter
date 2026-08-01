@@ -1,0 +1,134 @@
+# Architecture diagram — migration/nuxt-laravel (Nuxt 4 + Laravel 13 on FrankenPHP)
+#
+# Source of truth: compose.yaml + compose_override/development.yaml
+# Regenerate with ./docs/render.sh
+
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+    pad: 30
+  }
+}
+
+direction: right
+
+classes: {
+  svc: {
+    style: {
+      stroke: "#4a5568"
+      fill: "#ffffff"
+      shadow: true
+      border-radius: 8
+      font-size: 14
+    }
+  }
+  store: {
+    shape: cylinder
+    style: {
+      stroke: "#2c5282"
+      fill: "#ebf8ff"
+      font-size: 14
+    }
+  }
+  flow: {
+    style: {
+      stroke: "#dd6b20"
+      stroke-width: 3
+      font-size: 13
+      bold: true
+    }
+  }
+  infra: {
+    style: {
+      stroke: "#a0aec0"
+      font-size: 12
+    }
+  }
+  ssr: {
+    style: {
+      stroke: "#805ad5"
+      stroke-dash: 4
+      font-size: 12
+    }
+  }
+}
+
+browser: "Browser\nhttp://localhost" {
+  class: svc
+  icon: ./icons/browser.svg
+  style.fill: "#f7fafc"
+}
+
+compose: "Docker Compose — development" {
+  direction: right
+  icon: ./icons/docker.svg
+  style: {
+    stroke: "#2496ed"
+    stroke-dash: 3
+    fill: "#fbfdff"
+    font-size: 16
+    bold: true
+  }
+
+  traefik: "traefik\nTraefik 3.7.8\n:80 · :443 · :8080" {
+    class: svc
+    icon: ./icons/traefik.svg
+    style.fill: "#fffaf0"
+  }
+
+  app: "frontend · Nuxt 4.5 — :3000\nVue 3 · Nitro server routes · Pinia\n@nuxtjs/i18n (en·it·es·fr) · Tailwind" {
+    class: svc
+    icon: ./icons/nuxt.svg
+  }
+
+  api: "api · Laravel 13 — :5000\nFrankenPHP (PHP 8.5) · Caddy php_server\nEloquent · Sanctum tokens\nMonolog logs · Scramble OpenAPI" {
+    class: svc
+    icon: ./icons/laravel.svg
+  }
+
+  data: "Stateful services — defined in compose_override/development.yaml" {
+    direction: down
+    style: {
+      stroke: "#90cdf4"
+      fill: "#f7fbff"
+      font-size: 13
+    }
+
+    pg: "postgres_db · Postgres 18.4 — :5432\nusers · personal_access_tokens\npassword_reset_tokens" {
+      class: store
+      icon: ./icons/postgresql.svg
+    }
+
+    valkey: "valkey · Valkey 9 — :6379\ncache via predis" {
+      class: store
+      icon: ./icons/valkey.svg
+    }
+
+    es: "elasticsearch · 9.4.3 — :9200\nindex api-logs" {
+      class: store
+      icon: ./icons/elasticsearch.svg
+      style.stroke: "#2f855a"
+      style.fill: "#f0fff4"
+    }
+
+    kibana: "kibana · 9.4.3 — :5601" {
+      class: svc
+      icon: ./icons/kibana.svg
+      style.fill: "#f0fff4"
+    }
+  }
+}
+
+# ── Example client request: authenticated GET /api/users/{id} ──────────────
+browser -> compose.traefik: "1 · GET /api/users/{id}\nAuthorization: Bearer <token>" {class: flow}
+compose.traefik -> compose.api: "2 · PathPrefix(/api) → api:5000" {class: flow}
+compose.api -> compose.data.pg: "3 · auth:sanctum resolves token\n4 · Eloquent reads user" {class: flow}
+compose.api -> compose.data.valkey: "4 · cache" {class: flow}
+compose.api -> compose.data.es: "5 · Monolog ships logs" {class: flow}
+
+# ── Static topology ────────────────────────────────────────────────────────
+compose.traefik -> compose.app: "PathPrefix(/) → :3000" {class: infra}
+compose.traefik -> compose.api: "PathPrefix(/reference) → Scramble docs" {class: infra}
+compose.app -> compose.api: "Nitro BFF route — server only\nfetch(http://api:5000/...) · bypasses Traefik" {class: ssr}
+compose.data.kibana -> compose.data.es: "queries" {class: infra}
