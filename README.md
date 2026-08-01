@@ -35,6 +35,32 @@ A comprehensive, production-ready full-stack starter template designed for moder
 
 ---
 
+## **Architecture**
+
+![Architecture diagram](docs/architecture.png)
+
+Everything sits behind **Traefik**, which routes purely by path prefix: `/` goes to the Angular container (priority 1) and `/api` to the ASP.NET Core container (priority 10, so it wins over the catch-all). Because both are served from the same origin (`http://localhost`), the browser never makes a cross-origin call in normal operation.
+
+Unlike the other branches in this repo, the frontend is a **pure SPA** — there is no server-side rendering and no backend-for-frontend hop. Angular talks to the API directly from the browser via `HttpClient`, using the relative base URL `environment.apiUrl = "/api/v1"`.
+
+**The orange path** traces one example client request — an authenticated `GET /api/v1/users/{id}`:
+
+1. The browser sends the request; the JWT rides along in an `HttpOnly` cookie, so JavaScript never reads it
+2. Traefik matches `PathPrefix(/api)` and forwards it to `api:5000`
+3. The JWT bearer handler validates the token and the session record is read from Postgres
+4. The controller queries Postgres through EF Core and touches the Valkey cache
+5. Serilog writes to the Elasticsearch sink (`api-logs-{yyyy.MM.dd}`)
+
+The JSON response returns back along the same hops.
+
+**Authentication** uses ASP.NET Core Identity with JWT bearer tokens. `AuthController` writes the token into an `HttpOnly`, `SameSite=Strict` cookie (`Secure` outside Development) and falls back to the `Authorization` header if no cookie is present. Client-side, `authGuard` protects `/home` and `/user`, `guestGuard` keeps authenticated users away from the login pages, and `authInterceptor` sets `withCredentials` on every request.
+
+> **Note:** the diagram shows the **development** topology. Postgres, Valkey, Elasticsearch and Kibana are defined in `compose_override/development.yaml` only. Swagger UI is registered **only when `ASPNETCORE_ENVIRONMENT=Development`**, so `/swagger` is not available in production. In production the Angular container is served on port 80 via `APP_PORT`.
+
+Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with `./docs/render.sh` (requires [D2](https://d2lang.com)).
+
+---
+
 ## **Quick Start**
 
 ### **Prerequisites**
