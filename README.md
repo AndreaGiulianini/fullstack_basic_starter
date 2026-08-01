@@ -42,6 +42,30 @@ This setup provides a complete, production-ready foundation for modern web appli
 
 ---
 
+## **🏗️ Architecture**
+
+![Architecture diagram](docs/architecture.png)
+
+Everything sits behind **Traefik**, which routes purely by path prefix: `/` goes to the Next.js container and `/api` to the Fastify container. Because both are served from the same origin (`http://localhost`), there is no CORS configuration anywhere in the stack.
+
+**🟠 The numbered path** traces one example client request — an authenticated `GET /api/users/:id`:
+
+1. The browser sends the request with its Better-Auth cookie (or a `Bearer` token)
+2. Traefik matches `PathPrefix(/api)` and forwards it to `api:5000`
+3. `betterAuthMiddleware` resolves the session against Postgres
+4. The handler queries Postgres through Drizzle and reads/writes the Valkey cache
+5. Pino ships a structured ECS log line to Elasticsearch
+
+The JSON response returns back along the same hops.
+
+**🟣 The dashed purple arrow** is server-side rendering: React Server Components fetch through Traefik by Docker service name (`http://traefik/api/...`), never from the browser.
+
+> **Note:** the diagram shows the **development** topology. Postgres, Valkey, Elasticsearch and Kibana are defined in `compose_override/development.yaml` only — `production.yaml` expects them to be provided externally.
+
+Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with `./docs/render.sh` (requires [D2](https://d2lang.com)).
+
+---
+
 ## **🚀 Quick Start**
 
 ### **Prerequisites**
