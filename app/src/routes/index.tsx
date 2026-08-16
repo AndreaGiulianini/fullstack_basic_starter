@@ -4,6 +4,14 @@ import { useTranslation } from 'react-i18next'
 import Counter from '@/components/counter/Counter'
 import styles from '@/styles/Home.module.css'
 
+// Shape of GET /api/healthcheck/ping (api/utils/schemas/validation.ts:157).
+// `createServerFn` validates that whatever it returns is serialisable, so this
+// has to be a concrete type — `unknown` fails that check.
+type HealthcheckPayload = {
+  success: boolean
+  message: string
+}
+
 const fetchHealthcheck = createServerFn({ method: 'GET' }).handler(async () => {
   const res = await fetch('http://traefik/api/healthcheck/ping')
   if (!res.ok) {
@@ -13,7 +21,7 @@ const fetchHealthcheck = createServerFn({ method: 'GET' }).handler(async () => {
   if (!contentType?.includes('application/json')) {
     return { ok: false as const, status: res.status }
   }
-  return { ok: true as const, payload: (await res.json()) as unknown }
+  return { ok: true as const, payload: (await res.json()) as HealthcheckPayload }
 })
 
 export const Route = createFileRoute('/')({

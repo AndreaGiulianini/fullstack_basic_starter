@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && tsc --noEmit",
     "start": "node .output/server/index.mjs",
+    "typecheck": "tsc --noEmit",
     "check": "npx @biomejs/biome check --write .",
     "format": "npx @biomejs/biome format --write .",
     "lint": "npx @biomejs/biome lint ."
