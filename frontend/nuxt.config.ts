@@ -1,25 +1,26 @@
+import tailwindcss from '@tailwindcss/vite'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2026-03-28',
   devtools: { enabled: false },
 
-  // Modules
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@nuxtjs/i18n',
-    '@pinia/nuxt',
-    '@nuxtjs/color-mode',
-    '@nuxtjs/google-fonts',
-    '@vueuse/nuxt'
-  ],
+  // Modules — Tailwind is wired through its Vite plugin rather than
+  // @nuxtjs/tailwindcss, which pins tailwindcss to ~3.4 and has no v4 release.
+  modules: ['@nuxtjs/i18n', '@pinia/nuxt', '@nuxtjs/color-mode', '@nuxtjs/google-fonts', '@vueuse/nuxt'],
+
+  vite: {
+    plugins: [tailwindcss()]
+  },
 
   // TypeScript configuration
   typescript: {
     typeCheck: true
   },
 
-  // CSS
-  css: ['./assets/css/main.css'],
+  // CSS — module id, not a path relative to this file: `~` is the Nuxt 4 srcDir
+  // (app/), so this resolves to app/assets/css/main.css.
+  css: ['~/assets/css/main.css'],
 
   // i18n configuration
   i18n: {

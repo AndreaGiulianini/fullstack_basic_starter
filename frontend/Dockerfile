@@ -60,22 +60,22 @@ RUN npx nuxt prepare && npm run build
 FROM node:26-slim AS image-production
 WORKDIR /home/node/frontend
 
-# Create non-root user
-RUN groupadd -r nodejs && useradd -r -g nodejs nodejs
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
 
-# Install production dependencies (skip scripts since nuxt is in devDependencies)
-COPY package*.json ./
-RUN npm ci --only=production --ignore-scripts && npm cache clean --force
+# Reuse the `node` user the base image already ships. Do NOT create another
+# one: /home/node is mode 700 and owned by `node`, so any other uid cannot even
+# traverse it and every read under /home/node/frontend fails with EACCES.
+#
+# Nitro's .output is self-contained — it needs no package.json, no node_modules
+# and no nuxt CLI at runtime — so this stage only copies that and runs the
+# server directly instead of going through `nuxt preview`, which lives in
+# devDependencies and would not be installed here anyway.
+COPY --from=build-stage --chown=node:node /home/node/frontend/.output ./.output
 
-# Copy built application
-COPY --from=build-stage /home/node/frontend/.output /home/node/frontend/.output
+USER node
 
-# Set ownership and switch user
-RUN chown -R nodejs:nodejs /home/node/frontend
-USER nodejs
-
-# Expose port
 EXPOSE 3000
 
-# Start production server
-CMD ["npm", "run", "preview"]
+CMD ["node", ".output/server/index.mjs"]
