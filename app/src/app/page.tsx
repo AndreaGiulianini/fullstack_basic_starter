@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
+import { Suspense } from 'react'
 import Counter from '@/components/counter/Counter'
 import styles from '@/styles/Home.module.css'
 
@@ -29,12 +30,19 @@ async function fetchServerData() {
   }
 }
 
-export default async function HomePage() {
-  const t = await getTranslations('HomePage')
+// Uncached request data. Under `cacheComponents` it has to sit behind its own
+// Suspense boundary, otherwise it would block the whole route from being
+// prerendered. Renders nothing — it only demonstrates a server-side fetch.
+async function ServerPing() {
   const data = await fetchServerData()
   if (data) {
     console.log('server', data)
   }
+  return null
+}
+
+export default async function HomePage() {
+  const t = await getTranslations('HomePage')
 
   return (
     <div className={styles.container}>
@@ -43,6 +51,9 @@ export default async function HomePage() {
           {t('title')} <a href='https://nextjs.org'>Next.js!</a>
         </h1>
         <Counter />
+        <Suspense fallback={null}>
+          <ServerPing />
+        </Suspense>
       </main>
 
       <footer className={styles.footer}>
