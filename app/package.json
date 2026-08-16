@@ -13,29 +13,29 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
-    "@tanstack/react-router": "^1.170.18",
-    "@tanstack/react-start": "^1.168.31",
+    "@tanstack/react-router": "^1.170.29",
+    "@tanstack/react-start": "^1.168.46",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "i18next": "^26.3.6",
-    "lucide-react": "^1.25.0",
-    "radix-ui": "^1.6.2",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-i18next": "^17.0.10",
+    "lucide-react": "^1.31.0",
+    "radix-ui": "^1.6.7",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-i18next": "^17.0.11",
     "react-redux": "^9.3.0",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.4",
+    "@biomejs/biome": "^2.5.8",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^26.1.1",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
     "nitro": "3.0.260610-beta",
     "tailwindcss": "^4.3.3",
     "typescript": "7.0.2",
-    "vite": "^8.1.5"
+    "vite": "^8.2.1"
   }
 }
