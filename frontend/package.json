@@ -15,19 +15,19 @@
   "dependencies": {
     "@nuxtjs/color-mode": "^4.0.1",
     "@nuxtjs/google-fonts": "^3.2.0",
-    "@nuxtjs/i18n": "^10.4.1",
+    "@nuxtjs/i18n": "^10.6.0",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "class-variance-authority": "^0.7.1",
-    "pinia": "^4.0.2"
+    "pinia": "^4.0.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.4",
-    "@nuxt/devtools": "^3.2.4",
-    "@pinia/nuxt": "^1.0.1",
-    "@types/node": "^26.1.1",
-    "@vueuse/nuxt": "^14.3.0",
-    "nuxt": "^4.5.0",
+    "@biomejs/biome": "^2.5.8",
+    "@nuxt/devtools": "^3.4.1",
+    "@pinia/nuxt": "^1.0.2",
+    "@types/node": "^26.2.0",
+    "@vueuse/nuxt": "^14.4.0",
+    "nuxt": "^4.5.2",
     "typescript": "^6.0.3",
-    "vue-tsc": "^3.3.7"
+    "vue-tsc": "^3.3.10"
   }
 }
