@@ -12,13 +12,13 @@
     "lint": "npx @biomejs/biome lint ."
   },
   "dependencies": {
+    "@base-ui/react": "^1.7.0",
     "@reduxjs/toolkit": "^2.12.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.31.0",
     "next": "^16.3.1",
     "next-intl": "^4.13.6",
-    "radix-ui": "^1.6.7",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-redux": "^9.3.0",
