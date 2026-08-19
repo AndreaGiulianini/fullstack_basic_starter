@@ -12,8 +12,8 @@ A comprehensive, production-ready full-stack starter template designed for moder
 - **[TailwindCSS 4](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** - Modern Redux state management
-- **[Shadcn/UI](https://ui.shadcn.com/)** - Beautifully designed components built with Radix UI
-- **[Radix UI](https://www.radix-ui.com/)** - Accessible UI component primitives
+- **[Shadcn/UI](https://ui.shadcn.com/)** - Beautifully designed components built on Base UI
+- **[Base UI](https://base-ui.com/)** - Accessible headless UI primitives. shadcn/ui made Base UI its default in July 2026; Radix is not deprecated and is still supported upstream, this branch simply follows the new default
 - **[react-i18next](https://react.i18next.com/)** - Internationalization with i18next
 - **[Lucide React](https://lucide.dev/)** - Beautiful & consistent icon toolkit
 
@@ -72,7 +72,7 @@ Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with 
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 20+ (for local development)
+- Node.js 20.9+ (for local development; the Docker images use Node 26)
 - Git
 
 ### **1. Clone and Setup**
@@ -147,6 +147,9 @@ cd app  # or cd api
 npm run check    # Check and auto-fix
 npm run format   # Format code
 npm run lint     # Lint only
+
+# Type check (app only)
+npm run typecheck
 ```
 
 ---
@@ -202,11 +205,11 @@ fullstack_basic_starter/
 ## **✨ Key Features**
 
 ### **Frontend Features**
-- 🎨 **Modern UI** - TailwindCSS 4 with Shadcn/UI components built on Radix UI
+- 🎨 **Modern UI** - TailwindCSS 4 with Shadcn/UI components built on Base UI
 - 🌍 **Internationalization** - Multi-language support with react-i18next
 - 📱 **Responsive Design** - Mobile-first approach
 - 🔄 **State Management** - Redux Toolkit for predictable state updates
-- 🎯 **Type Safety** - Full TypeScript support, end-to-end via TanStack Router
+- 🎯 **Type Safety** - Full TypeScript support, end-to-end via TanStack Router, with `tsc --noEmit` gating every build
 - ⚡ **Performance** - TanStack Start with file-based routing, server functions, route loaders, and Vite-powered HMR
 
 ### **Backend Features**
@@ -257,9 +260,16 @@ npm run check    # Run checks and auto-fix issues
 npm run format   # Format code only
 npm run lint     # Lint code only
 
-# Type check
-npx tsc --noEmit
+# Type check the app
+cd app
+npm run typecheck
 ```
+
+`vite build` bundles with esbuild and does not check types on its own, so the
+app's `build` script is `vite build && tsc --noEmit` — a type error fails the
+build. `tsc` has to run *after* Vite because `src/routeTree.gen.ts` is generated
+by the TanStack plugin during the build and is gitignored, which is also why
+`npm run typecheck` needs a build to have run at least once.
 
 ### **Docker Commands**
 
