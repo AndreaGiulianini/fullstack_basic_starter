@@ -6,12 +6,14 @@ A comprehensive, production-ready full-stack starter template designed for moder
 
 ### **Frontend**
 - **[Next.js 16](https://nextjs.org/)** - The React framework for production with App Router
+- **[Cache Components](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** - Partial Prerendering: a static shell is prerendered and dynamic data streams in through Suspense
+- **[React Compiler](https://react.dev/learn/react-compiler)** - Automatic memoisation (stable in Next 16; runs through Babel, so builds take longer)
 - **[React 19](https://react.dev/)** - A JavaScript library for building user interfaces
 - **[TailwindCSS 4](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** - Modern Redux state management
-- **[Shadcn/UI](https://ui.shadcn.com/)** - Beautifully designed components built with Radix UI
-- **[Radix UI](https://www.radix-ui.com/)** - Accessible UI component primitives
+- **[Shadcn/UI](https://ui.shadcn.com/)** - Beautifully designed components built on Base UI
+- **[Base UI](https://base-ui.com/)** - Accessible headless UI primitives. shadcn/ui made Base UI its default in July 2026; Radix is not deprecated and is still supported upstream, this branch simply follows the new default
 - **[next-intl](https://next-intl-docs.vercel.app/)** - Internationalization for Next.js
 - **[Lucide React](https://lucide.dev/)** - Beautiful & consistent icon toolkit
 
@@ -34,7 +36,7 @@ A comprehensive, production-ready full-stack starter template designed for moder
 ### **Code Quality & Development**
 - **[Biome](https://biomejs.dev/)** - Ultra-fast formatter and linter written in Rust
 - **[TypeScript](https://www.typescriptlang.org/)** - Static type checking
-- **[Turbopack](https://turbo.build/pack)** - Next.js Turbo build system
+- **[Turbopack](https://nextjs.org/docs/app/api-reference/turbopack)** - The default, stable bundler in Next 16
 - **Multi-stage Docker builds** - Optimized container images
 - **Hot reloading** - Fast development experience
 
@@ -62,6 +64,8 @@ The JSON response returns back along the same hops.
 
 > **Note:** the diagram shows the **development** topology. Postgres, Valkey, Elasticsearch and Kibana are defined in `compose_override/development.yaml` only — `production.yaml` expects them to be provided externally.
 
+> **Production build:** the frontend is built with `output: 'standalone'`, so its image carries only the traced server bundle and starts with `node app/server.js` rather than `next start`.
+
 Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with `./docs/render.sh` (requires [D2](https://d2lang.com)).
 
 ---
@@ -70,7 +74,7 @@ Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with 
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 20+ (for local development)
+- Node.js 20.9+ (for local development — the minimum Next 16 accepts; the Docker images use Node 26)
 - Git
 
 ### **1. Clone and Setup**
@@ -198,12 +202,12 @@ fullstack_basic_starter/
 ## **✨ Key Features**
 
 ### **Frontend Features**
-- 🎨 **Modern UI** - TailwindCSS 4 with Shadcn/UI components built on Radix UI
+- 🎨 **Modern UI** - TailwindCSS 4 with Shadcn/UI components built on Base UI
 - 🌍 **Internationalization** - Multi-language support with next-intl
 - 📱 **Responsive Design** - Mobile-first approach
 - 🔄 **State Management** - Redux Toolkit for predictable state updates
 - 🎯 **Type Safety** - Full TypeScript support
-- ⚡ **Performance** - Optimized with Next.js App Router, React Server Components, and Turbopack
+- ⚡ **Performance** - Next.js App Router with Cache Components (Partial Prerendering), React Server Components, React Compiler and Turbopack
 
 ### **Backend Features**
 - 🚀 **High Performance** - Fastify with excellent benchmarks
