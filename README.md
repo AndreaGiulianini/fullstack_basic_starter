@@ -10,7 +10,7 @@ A comprehensive, production-ready full-stack starter template designed for moder
 - **[Angular Signals](https://angular.dev/guide/signals)** - Fine-grained reactivity for state management
 - **[Standalone Components](https://angular.dev/guide/components)** - Simplified component architecture without NgModules
 - **[Zoneless Change Detection](https://angular.dev/guide/experimental/zoneless)** - Improved performance (default in v22)
-- **[Vitest](https://vitest.dev/)** - Unit testing framework — installed, but the `test` target is **not wired up yet**: `angular.json` points at the builder `@angular-devkit/build-angular:vitest`, which that package does not provide (it lives in `@angular/build`), so `npm run test` fails
+- **[Vitest](https://vitest.dev/)** - Unit testing framework (installed; the `test` target is not wired up yet)
 
 ### **Backend**
 - **[ASP.NET Core 10](https://dotnet.microsoft.com/apps/aspnet)** - High-performance, cross-platform web framework
