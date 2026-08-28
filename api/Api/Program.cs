@@ -1,4 +1,5 @@
 using System.Text;
+using Api.Core.Constants;
 using Api.Core.Entities;
 using Api.Core.Interfaces;
 using Api.Infrastructure.Data;
@@ -88,6 +89,20 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
         ClockSkew = TimeSpan.Zero
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (string.IsNullOrEmpty(context.Token)
+                && context.Request.Cookies.TryGetValue(CookieNames.AuthToken, out var cookieToken))
+            {
+                context.Token = cookieToken;
+            }
+
+            return Task.CompletedTask;
+        }
     };
 });
 

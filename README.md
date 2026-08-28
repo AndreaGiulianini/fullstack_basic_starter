@@ -154,6 +154,13 @@ docker compose -f compose.yaml -f compose_override/development.yaml exec -T api 
 
 ---
 
+
+## **Smoke Test**
+```bash
+# Healthcheck, sign-up, sign-in, protected route, frontend, log shipping
+API_PREFIX=/api/v1 ./smoke.sh
+```
+
 ## **Available Services**
 
 Once the application is running, you can access the following services:
