@@ -26,8 +26,6 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale()
 
-  // `NextIntlClientProvider` inherits locale, messages and formats from
-  // `i18n/request.ts` on its own since next-intl 4 — no need to pass them.
   return (
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>

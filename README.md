@@ -6,14 +6,14 @@ A comprehensive, production-ready full-stack starter template designed for moder
 
 ### **Frontend**
 - **[Next.js 16](https://nextjs.org/)** - The React framework for production with App Router
-- **[Cache Components](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** - Partial Prerendering: a static shell is prerendered and dynamic data streams in through Suspense
-- **[React Compiler](https://react.dev/learn/react-compiler)** - Automatic memoisation (stable in Next 16; runs through Babel, so builds take longer)
+- **[Cache Components](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** - Partial Prerendering with the `use cache` directive
+- **[React Compiler](https://react.dev/learn/react-compiler)** - Automatic memoisation
 - **[React 19](https://react.dev/)** - A JavaScript library for building user interfaces
 - **[TailwindCSS 4](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** - Modern Redux state management
 - **[Shadcn/UI](https://ui.shadcn.com/)** - Beautifully designed components built on Base UI
-- **[Base UI](https://base-ui.com/)** - Accessible headless UI primitives. shadcn/ui made Base UI its default in July 2026; Radix is not deprecated and is still supported upstream, this branch simply follows the new default
+- **[Base UI](https://base-ui.com/)** - Accessible headless UI primitives
 - **[next-intl](https://next-intl-docs.vercel.app/)** - Internationalization for Next.js
 - **[Lucide React](https://lucide.dev/)** - Beautiful & consistent icon toolkit
 
@@ -64,7 +64,7 @@ The JSON response returns back along the same hops.
 
 > **Note:** the diagram shows the **development** topology. Postgres, Valkey, Elasticsearch and Kibana are defined in `compose_override/development.yaml` only — `production.yaml` expects them to be provided externally.
 
-> **Production build:** the frontend is built with `output: 'standalone'`, so its image carries only the traced server bundle and starts with `node app/server.js` rather than `next start`.
+> **Production build:** the frontend uses `output: 'standalone'` and starts with `node app/server.js`.
 
 Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with `./docs/render.sh` (requires [D2](https://d2lang.com)).
 
@@ -74,7 +74,7 @@ Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with 
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 20.9+ (for local development — the minimum Next 16 accepts; the Docker images use Node 26)
+- Node.js 20.9+ (for local development)
 - Git
 
 ### **1. Clone and Setup**
@@ -130,7 +130,7 @@ docker compose -f compose.yaml -f compose_override/development.yaml up --build
 
 ### **4. Initialize Database**
 ```bash
-# Populate database with initial data
+# Push the Drizzle schema to the database
 ./populate.sh
 ```
 

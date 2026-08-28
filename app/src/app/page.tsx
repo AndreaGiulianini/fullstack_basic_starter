@@ -30,9 +30,6 @@ async function fetchServerData() {
   }
 }
 
-// Uncached request data. Under `cacheComponents` it has to sit behind its own
-// Suspense boundary, otherwise it would block the whole route from being
-// prerendered. Renders nothing — it only demonstrates a server-side fetch.
 async function ServerPing() {
   const data = await fetchServerData()
   if (data) {
