@@ -4,9 +4,6 @@ import { useTranslation } from 'react-i18next'
 import Counter from '@/components/counter/Counter'
 import styles from '@/styles/Home.module.css'
 
-// Shape of GET /api/healthcheck/ping (api/utils/schemas/validation.ts:157).
-// `createServerFn` validates that whatever it returns is serialisable, so this
-// has to be a concrete type — `unknown` fails that check.
 type HealthcheckPayload = {
   success: boolean
   message: string

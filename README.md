@@ -13,7 +13,7 @@ A comprehensive, production-ready full-stack starter template designed for moder
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** - Modern Redux state management
 - **[Shadcn/UI](https://ui.shadcn.com/)** - Beautifully designed components built on Base UI
-- **[Base UI](https://base-ui.com/)** - Accessible headless UI primitives. shadcn/ui made Base UI its default in July 2026; Radix is not deprecated and is still supported upstream, this branch simply follows the new default
+- **[Base UI](https://base-ui.com/)** - Accessible headless UI primitives
 - **[react-i18next](https://react.i18next.com/)** - Internationalization with i18next
 - **[Lucide React](https://lucide.dev/)** - Beautiful & consistent icon toolkit
 
@@ -72,7 +72,7 @@ Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with 
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 20.9+ (for local development; the Docker images use Node 26)
+- Node.js 20.9+ (for local development)
 - Git
 
 ### **1. Clone and Setup**
@@ -128,7 +128,7 @@ docker compose -f compose.yaml -f compose_override/development.yaml up --build
 
 ### **4. Initialize Database**
 ```bash
-# Populate database with initial data
+# Push the Drizzle schema to the database
 ./populate.sh
 ```
 
@@ -148,7 +148,7 @@ npm run check    # Check and auto-fix
 npm run format   # Format code
 npm run lint     # Lint only
 
-# Type check (app only)
+# Type check the app
 npm run typecheck
 ```
 
@@ -265,11 +265,8 @@ cd app
 npm run typecheck
 ```
 
-`vite build` bundles with esbuild and does not check types on its own, so the
-app's `build` script is `vite build && tsc --noEmit` — a type error fails the
-build. `tsc` has to run *after* Vite because `src/routeTree.gen.ts` is generated
-by the TanStack plugin during the build and is gitignored, which is also why
-`npm run typecheck` needs a build to have run at least once.
+`npm run build` is `vite build && tsc --noEmit`; `npm run typecheck` expects a
+build to have run at least once, since `src/routeTree.gen.ts` is generated.
 
 ### **Docker Commands**
 

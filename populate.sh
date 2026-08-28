@@ -2,5 +2,4 @@
 
 set -eu
 
-docker exec api npm run generate
-docker exec api npm run migrate
+docker exec api npm run push
