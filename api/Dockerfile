@@ -4,7 +4,7 @@ WORKDIR /home/node/api
 
 COPY package*.json ./
 
-RUN npm install --legacy-peer-deps && \
+RUN npm install && \
     npm rebuild esbuild && \
     npm cache clean --force
 

@@ -7,7 +7,7 @@ A comprehensive, production-ready full-stack starter template designed for moder
 ### **Frontend**
 - **[Nuxt 4](https://nuxt.com/)** - The intuitive Vue framework with file-based routing
 - **[Vue 3](https://vuejs.org/)** - Progressive JavaScript framework with Composition API
-- **[TailwindCSS 4](https://tailwindcss.com/)** - Utility-first CSS framework, wired through `@tailwindcss/vite` in `nuxt.config.ts` (**not** `@nuxtjs/tailwindcss`, which pins Tailwind to 3.4 and has no v4 release)
+- **[TailwindCSS 4](https://tailwindcss.com/)** - Utility-first CSS framework, via `@tailwindcss/vite`
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
 - **[Pinia](https://pinia.vuejs.org/)** - Modern state management for Vue
 - **[VueUse](https://vueuse.org/)** - Collection of essential Vue Composition Utilities
@@ -59,7 +59,7 @@ The JSON response returns back along the same hops.
 
 > **Note:** the diagram shows the **development** topology. Postgres, Valkey, Elasticsearch and Kibana are defined in `compose_override/development.yaml` only — `production.yaml` expects them to be provided externally.
 
-> **Production build:** Nitro's `.output` is self-contained, so the frontend's production image copies only that and starts with `node .output/server/index.mjs` — it needs neither `node_modules` nor the Nuxt CLI at runtime.
+> **Production build:** the frontend image ships Nitro's `.output` and starts with `node .output/server/index.mjs`.
 
 Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with `./docs/render.sh` (requires [D2](https://d2lang.com)).
 
@@ -69,7 +69,7 @@ Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with 
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 22.19+ (Nuxt 4.5 requires `^22.19 || ^24.11 || >=26`; the Docker images use Node 26)
+- Node.js 22.19+ (for local development)
 - Git
 
 ### **1. Clone and Setup**
@@ -125,7 +125,7 @@ docker compose -f compose.yaml -f compose_override/development.yaml up --build
 
 ### **4. Initialize Database**
 ```bash
-# Populate database with initial data
+# Push the Drizzle schema to the database
 ./populate.sh
 ```
 
@@ -139,11 +139,11 @@ npm run dev
 cd api
 npm run dev
 
-# Linting and formatting (Biome — run inside frontend/ or api/)
+# Linting and formatting (inside frontend/ or api/)
 npm run lint
 npm run format
 
-# Type check the frontend (vue-tsc)
+# Type check the frontend
 cd frontend
 npx nuxt typecheck
 ```
@@ -187,7 +187,7 @@ fullstack_basic_starter/
 ## **✨ Key Features**
 
 ### **Frontend Features**
-- 🎨 **Modern UI** - TailwindCSS 4 with custom components, themed with CSS-first `@theme` tokens
+- 🎨 **Modern UI** - TailwindCSS 4 with custom components
 - 🌍 **Internationalization** - Multi-language support with i18n
 - 📱 **Responsive Design** - Mobile-first approach
 - 🔄 **State Management** - Pinia stores for global state
@@ -241,7 +241,7 @@ npm run lint
 # Format code
 npm run format
 
-# Type check (there is no `type-check` script — this is the Nuxt CLI command)
+# Type check
 npx nuxt typecheck
 ```
 
