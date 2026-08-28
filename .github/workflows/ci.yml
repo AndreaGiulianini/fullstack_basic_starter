@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend — lint, typecheck & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+      - run: npm install --no-audit --no-fund
+        working-directory: frontend
+      - run: npx @biomejs/biome lint app
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
+      - run: npx nuxt typecheck
+        working-directory: frontend
+
+  api:
+    name: API — build & boot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # No PHP on the runner: the image is the build, exactly as in production.
+      - name: Build the image
+        run: docker build -t api-ci ./api
+      - name: Boot Laravel
+        run: |
+          docker run --rm -e "APP_KEY=base64:$(openssl rand -base64 32)" api-ci php artisan --version
+      - name: Routes register
+        run: |
+          docker run --rm -e "APP_KEY=base64:$(openssl rand -base64 32)" api-ci \
+            php artisan route:list --json > routes.json
+          python3 -c "import json;r=json.load(open('routes.json'));assert len(r)>0,'no routes';print(len(r),'routes')"
+
+  stack:
+    name: Stack — smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Prepare environment
+        run: cp .env.placeholder .env
+      - name: Start the stack
+        run: docker compose -f compose.yaml -f compose_override/development.yaml up -d --build
+      - name: Run database migrations
+        run: bash populate.sh
+      - name: Smoke test
+        run: bash smoke.sh
+      - name: Container logs
+        if: failure()
+        run: docker compose -f compose.yaml -f compose_override/development.yaml logs --tail=200
