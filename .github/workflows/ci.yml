@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API — typecheck & lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+      - run: npm install --no-audit --no-fund
+        working-directory: api
+      - run: npx tsc --noEmit
+        working-directory: api
+      - run: npx @biomejs/biome lint .
+        working-directory: api
+
+  app:
+    name: App — lint & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+      - run: npm install --no-audit --no-fund
+        working-directory: app
+      - run: npx @biomejs/biome lint src
+        working-directory: app
+      # next build runs the TypeScript pass itself
+      - run: npm run build
+        working-directory: app
+
+  stack:
+    name: Stack — smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Prepare environment
+        run: |
+          cp .env.placeholder .env
+      - name: Start the stack
+        run: docker compose -f compose.yaml -f compose_override/development.yaml up -d --build
+      - name: Push the database schema
+        run: bash populate.sh
+      - name: Smoke test
+        run: bash smoke.sh
+      - name: Container logs
+        if: failure()
+        run: docker compose -f compose.yaml -f compose_override/development.yaml logs --tail=200
