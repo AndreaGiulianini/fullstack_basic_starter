@@ -129,7 +129,13 @@ docker compose -f compose.yaml -f compose_override/development.yaml up --build
 ./populate.sh
 ```
 
-### **5. Development Commands**
+### **5. Smoke Test**
+```bash
+# Healthcheck, sign-up, sign-in, protected route, frontend, log shipping
+./smoke.sh
+```
+
+### **6. Development Commands**
 ```bash
 # Frontend development
 cd frontend
