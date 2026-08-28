@@ -12,7 +12,7 @@
       "!!.tanstack/**",
       "!!node_modules/**",
       "!tailwindcss-animate.css",
-      "!!routeTree.gen.ts",
+      "!!**/routeTree.gen.ts",
       "!!dist/**",
       "!!build/**",
       "!**/*.css",
