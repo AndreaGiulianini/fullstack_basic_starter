@@ -216,12 +216,11 @@ const logSecurity = (data: SecurityLogData) => {
 }
 
 // Create a logger wrapper with custom methods
-const logUtils = {
-  ...logger,
+const logUtils = Object.assign(logger, {
   logAuth,
   logPerformance,
   logSecurity
-}
+})
 
 // =============================================================================
 // EXPORTS
