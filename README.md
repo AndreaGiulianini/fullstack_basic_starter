@@ -72,7 +72,7 @@ Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with 
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 20.9+ (for local development)
+- Node.js 22.12+ (for local development)
 - Git
 
 ### **1. Clone and Setup**
