@@ -7,22 +7,22 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "dedoc/scramble": "^0.13.42",
+        "dedoc/scramble": "^0.13.45",
         "elasticsearch/elasticsearch": "^9.5",
-        "laravel/framework": "^13.29",
-        "laravel/octane": "^2.19.1",
+        "laravel/framework": "^13.33",
+        "laravel/octane": "^2.20.0",
         "laravel/sanctum": "^4.3.3",
         "laravel/tinker": "^3.0.2",
-        "predis/predis": "^3.6.0"
+        "predis/predis": "^3.6.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
         "laravel/pail": "^1.2.7",
-        "laravel/pao": "^1.1.4",
-        "laravel/pint": "^1.30.5",
+        "laravel/pao": "^1.1.5",
+        "laravel/pint": "^1.32.1",
         "mockery/mockery": "^1.6.15",
         "nunomaduro/collision": "^8.9.5",
-        "phpunit/phpunit": "^13.3.2"
+        "phpunit/phpunit": "^13.3.4"
     },
     "autoload": {
         "psr-4": {
