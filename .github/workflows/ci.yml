@@ -44,6 +44,7 @@ jobs:
         run: bash smoke.sh
         env:
           API_PREFIX: /api/v1
+          ES_INDEX: api-logs-*
       - name: Container logs
         if: failure()
         run: docker compose -f compose.yaml -f compose_override/development.yaml logs --tail=200
