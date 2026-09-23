@@ -51,7 +51,7 @@ jobs:
       - name: Prepare environment
         run: cp .env.placeholder .env
       - name: Start the stack
-        run: docker compose -f compose.yaml -f compose_override/development.yaml up -d --build
+        run: docker compose -f compose.yaml -f compose_override/development.yaml up -d --build --wait
       - name: Run database migrations
         run: bash populate.sh
       - name: Smoke test

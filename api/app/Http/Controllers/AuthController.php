@@ -7,6 +7,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -32,6 +33,8 @@ class AuthController extends Controller
             'password' => $data['password'],
         ]);
 
+        $this->logAuth('sign-up', true, $request, $user->id);
+
         return response()->json($this->sessionPayload($user), 200);
     }
 
@@ -49,10 +52,14 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->first();
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {
+            $this->logAuth('sign-in', false, $request);
+
             throw ValidationException::withMessages([
                 'email' => ['Invalid email or password.'],
             ])->status(401);
         }
+
+        $this->logAuth('sign-in', true, $request, $user->id);
 
         return response()->json($this->sessionPayload($user), 200);
     }
@@ -137,6 +144,18 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Password has been reset.',
+        ]);
+    }
+
+    private function logAuth(string $event, bool $success, Request $request, ?string $userId = null): void
+    {
+        Log::info("Auth event: {$event} - ".($success ? 'success' : 'failed'), [
+            'eventType' => 'authentication',
+            'event' => $event,
+            'success' => $success,
+            'userId' => $userId,
+            'ip' => $request->ip(),
+            'userAgent' => $request->userAgent(),
         ]);
     }
 
