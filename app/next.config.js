@@ -6,6 +6,7 @@ const withNextIntl = createNextIntlPlugin()
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   cacheComponents: true,
+  partialPrefetching: true,
   reactCompiler: true,
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '..')
