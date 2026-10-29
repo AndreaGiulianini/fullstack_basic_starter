@@ -13,22 +13,22 @@
     "lint": "npx @biomejs/biome lint ."
   },
   "dependencies": {
-    "@nuxtjs/color-mode": "^4.0.1",
+    "@nuxtjs/color-mode": "^4.1.0",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/i18n": "^10.6.0",
     "class-variance-authority": "^0.7.1",
-    "pinia": "^4.0.3"
+    "pinia": "^4.1.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.14",
-    "@nuxt/devtools": "^3.4.2",
-    "@pinia/nuxt": "^1.0.2",
+    "@biomejs/biome": "^2.6.4",
+    "@nuxt/devtools": "^3.4.4",
+    "@pinia/nuxt": "^1.0.3",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^26.6.2",
+    "@types/node": "^26.6.6",
     "@vueuse/nuxt": "^15.0.0",
-    "nuxt": "^4.5.2",
+    "nuxt": "^4.6.3",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "vue-tsc": "^3.3.11"
+    "vue-tsc": "^3.3.14"
   }
 }

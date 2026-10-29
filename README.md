@@ -73,7 +73,7 @@ Diagram source: [`docs/architecture.d2`](docs/architecture.d2). Regenerate with 
 
 ### **Prerequisites**
 - Docker and Docker Compose
-- Node.js 22.19+ (for local frontend development)
+- Node.js 22.22.3+ (for local frontend development)
 - The PHP 8.5 / Laravel backend runs in Docker — no local PHP required
 - Git
 
